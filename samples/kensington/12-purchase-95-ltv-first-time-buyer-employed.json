@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_5yr_95_ltv",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 35,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "C" },
+  "loan": { "propertyValue": 260000, "loanAmount": 247000, "monthlyRepayment": 1350, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1996-09-01",
+      "age": 29,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 68000, "annualBonus": 0, "annualCommission": 0, "annualOvertime": 0, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 100, "creditCardBalances": 600, "overdraftBalances": 0, "otherMonthlyOutgoings": 250, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "purchase, first-time buyer, high 95 LTV product bucket",
+    "fieldsExercised": "Residential Select 5yr/95 product matching, single employed, minimal commitments",
+    "zeroResultPolicy": "A zero result may be lender-valid only if Results explicitly shows no lending.",
+    "kensingtonAssumptions": "Kensington public form does not ask first-time-buyer directly."
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "D"
+  },
+  "loan": {
+    "propertyValue": 320000,
+    "loanAmount": 200000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 2,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 28,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 40000,
+        "annualOvertime": 5000,
+        "annualBonus": 2000,
+        "annualCommission": 3000
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 1100
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 2000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 50,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

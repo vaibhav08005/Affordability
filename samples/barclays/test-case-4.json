@@ -1,0 +1,64 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 750000,
+    "loanAmount": 500000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 45,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 90000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 43,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 70000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 1200,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 350000,
+      "monthlyMortgagePayment": 1200,
+      "monthlyRent": 1800,
+      "currentBalance": 200000,
+      "repaymentType": "interest_only"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "part_and_part",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 200000
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 700000,
+    "loanAmount": 500000
+  },
+  "household": {
+    "dependants": [
+      { "age": 4 },
+      { "age": 9 },
+      { "age": 14 }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 35,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 85000,
+        "annualBonus": 10000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 33,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 42000,
+        "netProfitPreviousYear": 38000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 300,
+    "creditCardBalances": 2500,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 150,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

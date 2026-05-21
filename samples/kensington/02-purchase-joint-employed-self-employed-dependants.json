@@ -1,0 +1,47 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_5yr_joint",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "C" },
+  "loan": { "propertyValue": 450000, "loanAmount": 315000, "monthlyRepayment": 1600, "currentLender": "Existing lender" },
+  "household": { "dependants": [{ "age": 5 }, { "age": 9 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 82000, "annualOvertime": 3000, "annualBonus": 5000, "annualCommission": 2500, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1989-06-20",
+      "age": 37,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "sole_trader", "netProfitCurrentYear": 56000, "netProfitPreviousYear": 52000, "annualGrossIncome": 56000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 450, "creditCardBalances": 3500, "overdraftBalances": 200, "otherMonthlyOutgoings": 600, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "joint application, employed plus self-employed, two dependants",
+    "fieldsExercised": "joint applicant repeat fields, employed variable income, self-employed gross earnings, dependant button 2",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Self-employed subtype does not alter visible public fields."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_further_advance_5yr_contractor",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "further_advance",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "unknown" },
+  "loan": { "propertyValue": 420000, "loanAmount": 260000, "currentBalance": 210000, "monthlyRepayment": 1450, "currentLender": "Kensington" },
+  "household": { "dependants": [{ "age": 4 }, { "age": 14 }, { "age": 17 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1985-02-01",
+      "age": 41,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": true, "annualGrossIncome": 98000, "annualOvertime": 0, "annualBonus": 0, "annualCommission": 0, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 900, "creditCardBalances": 12000, "overdraftBalances": 1500, "otherMonthlyOutgoings": 1200, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "further advance represented as remortgage, contractor, heavy outgoings",
+    "fieldsExercised": "contractor status, 3 dependants, leasehold/service outgoings, high revolving credit",
+    "zeroResultPolicy": "A zero result may be valid only if RESIDENTIAL RESULTS explicitly shows no lending.",
+    "kensingtonAssumptions": "The public calculator has no separate further-advance mode; remortgage is used."
+  }
+}

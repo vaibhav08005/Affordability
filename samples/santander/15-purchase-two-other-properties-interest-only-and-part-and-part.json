@@ -1,0 +1,110 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_purchase_two_other_properties_mixed_repayment",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 540000,
+    "loanAmount": 350000,
+    "monthlyRepayment": 1725,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 10,
+        "relationship": "child"
+      },
+      {
+        "age": 16,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1980-08-08",
+      "age": 45,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 91000,
+        "annualOvertime": 2000,
+        "annualBonus": 7000,
+        "annualCommission": 2000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1981-03-12",
+      "age": 45,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 62000,
+        "netProfitPreviousYear": 57000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 800,
+    "creditCardBalances": 12500,
+    "overdraftBalances": 600,
+    "otherMonthlyOutgoings": 900,
+    "monthlyBuyToLetPayments": 2350,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 300000,
+      "monthlyMortgagePayment": 950,
+      "monthlyRent": 1550,
+      "currentBalance": 190000,
+      "interestOnlyBalance": 190000,
+      "remainingTermYears": 22,
+      "repaymentType": "interest_only"
+    },
+    {
+      "isRental": true,
+      "propertyValue": 410000,
+      "monthlyMortgagePayment": 1400,
+      "monthlyRent": 2100,
+      "currentBalance": 260000,
+      "interestOnlyBalance": 120000,
+      "remainingTermYears": 20,
+      "repaymentType": "part_and_part"
+    }
+  ]
+}

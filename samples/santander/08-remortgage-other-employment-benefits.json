@@ -1,0 +1,75 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_remortgage_other_income",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 260000,
+    "loanAmount": 120000,
+    "currentBalance": 120000,
+    "monthlyRepayment": 625,
+    "currentLender": "Santander"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 5,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "other",
+        "isContractor": false,
+        "annualGrossIncome": 18000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "universal_credit",
+          "annualAmount": 9600
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 5400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 50,
+    "creditCardBalances": 300,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 150,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

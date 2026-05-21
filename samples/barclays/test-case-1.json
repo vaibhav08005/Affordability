@@ -1,0 +1,62 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 400000,
+    "loanAmount": 250000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 8,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 35,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 55000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 34,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 35000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 250,
+    "creditCardBalances": 1500,
+    "overdraftBalances": 200,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

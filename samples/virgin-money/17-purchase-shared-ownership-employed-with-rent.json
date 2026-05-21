@@ -1,0 +1,67 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "extra_shared_ownership_employed_rent",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 625,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 180000,
+    "loanAmount": 135000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 64000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 450,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "purchase shared ownership employed with positive rent",
+    "fieldsExercised": "shared ownership yes, share percentage, rent included in household expenditure",
+    "zeroResultPolicy": "A zero result is valid only if Virgin Money returns the explicit cannot-help results page.",
+    "validityChecks": "Shared ownership rent is positive; LTV is within normal range for a valid calculation attempt.",
+    "virginMoneyAssumptions": "Virgin Money supports Purchase/Remortgage; further advance is represented as remortgage additional borrowing. Interest-only samples keep total income at or above 75000 and age plus term no more than 75. Other-property cases include positive repayment/rent values when Virgin asks for them."
+  }
+}

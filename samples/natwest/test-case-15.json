@@ -1,0 +1,88 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "purchase_first_time_buyer",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 35,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 320000,
+    "loanAmount": 280000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 2
+      },
+      {
+        "age": 5
+      },
+      {
+        "age": 9
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 29,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 38000,
+        "annualOvertime": 2000
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 2200
+        },
+        {
+          "type": "working_tax_credit",
+          "annualAmount": 1800
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "age": 28,
+      "retirementAge": 68,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 25000,
+        "netProfitPreviousYear": 22000
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 2200
+        },
+        {
+          "type": "maintenance",
+          "annualAmount": 3600
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 600,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 100,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

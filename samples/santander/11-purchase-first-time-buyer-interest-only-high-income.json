@@ -1,0 +1,60 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_purchase_first_time_buyer_interest_only",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "interest_only",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 300000,
+    "monthlyRepaymentPlanPremium": 450
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 650000,
+    "loanAmount": 300000,
+    "monthlyRepayment": 1250,
+    "currentLender": "None"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1986-06-14",
+      "age": 39,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 215000,
+        "annualOvertime": 0,
+        "annualBonus": 25000,
+        "annualCommission": 10000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 250,
+    "creditCardBalances": 3000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 500,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

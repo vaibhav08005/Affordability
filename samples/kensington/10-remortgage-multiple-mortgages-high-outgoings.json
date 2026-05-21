@@ -1,0 +1,50 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_remortgage_2yr_high_outgoings",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "unknown" },
+  "loan": { "propertyValue": 600000, "loanAmount": 420000, "currentBalance": 330000, "monthlyRepayment": 2100, "currentLender": "Existing lender" },
+  "household": { "dependants": [{ "age": 8 }, { "age": 11 }, { "age": 16 }, { "age": 20 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1979-10-10",
+      "age": 46,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 110000, "annualOvertime": 6000, "annualBonus": 12000, "annualCommission": 4000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": [{ "type": "shift_allowance", "annualAmount": 3000 }]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1981-01-14",
+      "age": 45,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 76000, "annualOvertime": 0, "annualBonus": 4000, "annualCommission": 0, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 1200, "creditCardBalances": 18000, "overdraftBalances": 2500, "otherMonthlyOutgoings": 1800, "monthlyBuyToLetPayments": 850, "otherMortgageCommitments": [{ "outstandingBalance": 120000, "remainingTermYears": 15 }] },
+  "otherProperties": [
+    { "isRental": true, "propertyValue": 280000, "monthlyMortgagePayment": 850, "monthlyRent": 1400, "currentBalance": 170000, "remainingTermYears": 19, "repaymentType": "interest_only" },
+    { "isRental": false, "propertyValue": 200000, "monthlyMortgagePayment": 500, "currentBalance": 90000, "remainingTermYears": 10, "repaymentType": "capital_and_interest" }
+  ],
+  "_meta": {
+    "expectedBranches": "remortgage, 2yr product preference, joint employed, 4+ dependants, multiple mortgage commitments",
+    "fieldsExercised": "joint employed variable income, dependant 4+ button, high credit commitments/revolving balances",
+    "zeroResultPolicy": "A zero result may be valid only if RESIDENTIAL RESULTS explicitly shows no lending.",
+    "kensingtonAssumptions": "Multiple mortgages are represented in the public monthly credit commitment field."
+  }
+}

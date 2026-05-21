@@ -1,0 +1,85 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "residential_remortgage_capital_raising",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 22,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 90000,
+    "monthlyRepaymentPlanPremium": 180
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 520000,
+    "loanAmount": 280000,
+    "monthlyRepayment": 1350,
+    "currentLender": "NatWest"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 25000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 92000,
+        "netProfitPreviousYear": 86000
+      },
+      "otherIncome": [
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 14400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 450,
+    "creditCardBalances": 9000,
+    "overdraftBalances": 400,
+    "otherMonthlyOutgoings": 750,
+    "monthlyBuyToLetPayments": 850,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 240000,
+      "monthlyMortgagePayment": 850,
+      "monthlyRent": 1200,
+      "currentBalance": 160000,
+      "interestOnlyBalance": 80000,
+      "remainingTermYears": 17,
+      "repaymentType": "part_and_part"
+    }
+  ],
+  "_meta": {
+    "expectedBranches": "remortgage capital raising limited company/director part-and-part",
+    "fieldsExercised": "self-employed limited company fields for dividends and director remuneration, part-and-part interest-only amount",
+    "zeroResultPolicy": "A zero pound result is not expected; treat as failure unless visible Results says zero.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit application-purpose selector; purpose is represented through property/loan/current-balance and expenditure fields."
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 600000,
+    "loanAmount": 450000
+  },
+  "household": {
+    "dependants": [
+      { "age": 4 },
+      { "age": 6 },
+      { "age": 12 }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 40,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 120000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 38,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 40000,
+        "netProfitPreviousYear": 35000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 300,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -1,0 +1,47 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_remortgage_5yr_95_ltv_part_and_part",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 35,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 250000,
+    "monthlyRepaymentPlanPremium": 150
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "A" },
+  "loan": { "propertyValue": 700000, "loanAmount": 665000, "currentBalance": 520000, "monthlyRepayment": 2900, "currentLender": "Existing lender" },
+  "household": { "dependants": [{ "age": 6 }, { "age": 9 }, { "age": 14 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1981-03-03",
+      "age": 45,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 180000, "annualBonus": 35000, "annualCommission": 20000, "annualOvertime": 0, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1984-07-17",
+      "age": 42,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 120000, "annualBonus": 15000, "annualCommission": 0, "annualOvertime": 5000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": [{ "type": "town_area_or_car_allowance", "annualAmount": 6000 }]
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 850, "creditCardBalances": 10000, "overdraftBalances": 1000, "otherMonthlyOutgoings": 1400, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [{ "outstandingBalance": 80000, "remainingTermYears": 8 }] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "joint remortgage capital raising, high income, 95 LTV bucket, part-and-part input",
+    "fieldsExercised": "joint employed variable income, applicant 2 allowance, 3 dependant age fields, high LTV product matching",
+    "zeroResultPolicy": "A zero result may be lender-valid only if Results explicitly shows no lending.",
+    "kensingtonAssumptions": "Part-and-part fields are not exposed by Kensington public calculator; input retained for coverage metadata."
+  }
+}

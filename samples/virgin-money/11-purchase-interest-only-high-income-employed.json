@@ -1,0 +1,67 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "extra_purchase_interest_only_high_income",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 260000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 500000,
+    "loanAmount": 260000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1984-05-01",
+      "age": 42,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 105000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "purchase interest-only single employed high income",
+    "fieldsExercised": "interest-only repayment, mortgage amount, employed salary",
+    "zeroResultPolicy": "A zero result is valid only if Virgin Money returns the explicit cannot-help results page.",
+    "validityChecks": "Age 42 plus 20-year term is below 75; employed income is above 75000 interest-only policy floor.",
+    "virginMoneyAssumptions": "Virgin Money supports Purchase/Remortgage; further advance is represented as remortgage additional borrowing. Interest-only samples keep total income at or above 75000 and age plus term no more than 75. Other-property cases include positive repayment/rent values when Virgin asks for them."
+  }
+}

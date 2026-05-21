@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_shared_ownership_5yr",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 450,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "C" },
+  "loan": { "propertyValue": 280000, "loanAmount": 140000, "monthlyRepayment": 750, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1992-11-30",
+      "age": 33,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "sole_trader", "netProfitCurrentYear": 61000, "netProfitPreviousYear": 57000, "annualGrossIncome": 61000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 150, "creditCardBalances": 800, "overdraftBalances": 0, "otherMonthlyOutgoings": 350, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "shared ownership product range, sole trader, leasehold rent/service charge",
+    "fieldsExercised": "Residential Shared Ownership product range, self-employed income, monthly shared ownership rent",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Shared ownership is represented through the Kensington shared ownership product range and service charge field."
+  }
+}

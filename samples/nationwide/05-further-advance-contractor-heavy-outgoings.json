@@ -1,0 +1,69 @@
+{
+  "lender": "nationwide",
+  "case": {
+    "journey": "residential_further_advance",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "further_advance",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 410000,
+    "loanAmount": 65000,
+    "monthlyRepayment": 420,
+    "currentLender": "HSBC"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 15,
+        "relationship": "child"
+      },
+      {
+        "age": 19,
+        "relationship": "adult dependant"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": true,
+        "annualGrossIncome": 98000,
+        "annualOvertime": 0,
+        "annualBonus": 3000,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 700,
+    "creditCardBalances": 12500,
+    "overdraftBalances": 1200,
+    "otherMonthlyOutgoings": 1100,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -1,0 +1,82 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 800000,
+    "loanAmount": 600000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 40,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 120000,
+        "annualBonus": 15000,
+        "annualCommission": 8000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 38,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 75000
+      },
+      "otherIncome": [
+        {
+          "type": "investment_income",
+          "annualAmount": 3600
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 3000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 500,
+    "monthlyBuyToLetPayments": 1800,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 350000,
+      "monthlyMortgagePayment": 1200,
+      "monthlyRent": 1800,
+      "currentBalance": 180000,
+      "interestOnlyBalance": 120000,
+      "remainingTermYears": 22,
+      "repaymentType": "interest_only"
+    },
+    {
+      "isRental": false,
+      "propertyValue": 280000,
+      "monthlyMortgagePayment": 950,
+      "currentBalance": 220000,
+      "remainingTermYears": 25
+    }
+  ]
+}

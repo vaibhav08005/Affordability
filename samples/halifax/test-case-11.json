@@ -1,0 +1,216 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 50000,
+    "monthlyRepaymentPlanPremium": 150
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 650000,
+    "loanAmount": 390000,
+    "monthlyRepayment": 1850,
+    "currentLender": "Leeds Building Society"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 4,
+        "relationship": "child"
+      },
+      {
+        "age": 9,
+        "relationship": "child"
+      },
+      {
+        "age": 72,
+        "relationship": "parent"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1986-03-12",
+      "age": 40,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": true,
+        "annualGrossIncome": 120000,
+        "annualOvertime": 6000,
+        "annualBonus": 15000,
+        "annualCommission": 8000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "additional_duty_hours",
+          "annualAmount": 1200
+        },
+        {
+          "type": "attendance_allowance",
+          "annualAmount": 900
+        },
+        {
+          "type": "carers_allowance",
+          "annualAmount": 1800
+        },
+        {
+          "type": "child_benefit",
+          "annualAmount": 2200
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 1500
+        },
+        {
+          "type": "colleague_flexible_benefit",
+          "annualAmount": 1000
+        },
+        {
+          "type": "constant_attendance_allowance",
+          "annualAmount": 800
+        },
+        {
+          "type": "disability_living_allowance",
+          "annualAmount": 1400
+        },
+        {
+          "type": "employment_support_allowance",
+          "annualAmount": 1300
+        },
+        {
+          "type": "flight_pay_allowance",
+          "annualAmount": 2400
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 700
+        },
+        {
+          "type": "industrial_injuries_disablement_benefit",
+          "annualAmount": 900
+        },
+        {
+          "type": "investment_income",
+          "annualAmount": 5000
+        },
+        {
+          "type": "maintenance",
+          "annualAmount": 3600
+        },
+        {
+          "type": "mortgage_subsidy",
+          "annualAmount": 1200
+        },
+        {
+          "type": "nursing_bank",
+          "annualAmount": 3000
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 1700
+        },
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 31200
+        },
+        {
+          "type": "shift_allowance",
+          "annualAmount": 4200
+        },
+        {
+          "type": "town_area_or_car_allowance",
+          "annualAmount": 3600
+        },
+        {
+          "type": "trust_income",
+          "annualAmount": 2500
+        },
+        {
+          "type": "universal_credit",
+          "annualAmount": 1000
+        },
+        {
+          "type": "widowed_parents_allowance",
+          "annualAmount": 600
+        },
+        {
+          "type": "working_tax_credit",
+          "annualAmount": 1400
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1988-08-24",
+      "age": 38,
+      "retirementAge": 68,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 85000,
+        "netProfitPreviousYear": 76000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 12000,
+        "otherAnnualPensionIncome": 2000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 850,
+    "creditCardBalances": 12000,
+    "overdraftBalances": 2500,
+    "otherMonthlyOutgoings": 1650,
+    "monthlyBuyToLetPayments": 1550,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 95000,
+        "remainingTermYears": 12
+      }
+    ]
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 280000,
+      "monthlyMortgagePayment": 700,
+      "monthlyRent": 1250,
+      "currentBalance": 150000,
+      "interestOnlyBalance": 150000,
+      "remainingTermYears": 18,
+      "repaymentType": "interest_only"
+    },
+    {
+      "isRental": true,
+      "propertyValue": 360000,
+      "monthlyMortgagePayment": 850,
+      "monthlyRent": 1350,
+      "currentBalance": 190000,
+      "interestOnlyBalance": 50000,
+      "remainingTermYears": 21,
+      "repaymentType": "part_and_part"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 425000,
+    "loanAmount": 310000,
+    "monthlyRepayment": 1450,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 3,
+        "relationship": "child"
+      },
+      {
+        "age": 9,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 69000,
+        "annualOvertime": 1500,
+        "annualBonus": 6000,
+        "annualCommission": 2500,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1988-02-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 54000,
+        "netProfitPreviousYear": 50000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 350,
+    "creditCardBalances": 3500,
+    "overdraftBalances": 250,
+    "otherMonthlyOutgoings": 500,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "joint purchase employed plus self-employed with dependants",
+    "fieldsExercised": "joint applicant radios, employed income, self-employed net profit, dependant counts",
+    "zeroResultPolicy": "A zero pound result is not expected; treat as failure unless visible Results says zero.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit application-purpose selector; purpose is represented through property/loan/current-balance and expenditure fields."
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "purchase_first_time_buyer",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "D"
+  },
+  "loan": {
+    "propertyValue": 450000,
+    "loanAmount": 360000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 5,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 32,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 52000,
+        "annualOvertime": 3000,
+        "annualBonus": 1500
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 30,
+      "retirementAge": 68,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 38000,
+        "netProfitPreviousYear": 34000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 150,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

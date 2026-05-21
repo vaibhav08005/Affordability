@@ -1,0 +1,85 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "extra_purchase_benefits_support_only",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 220000,
+    "loanAmount": 90000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 8,
+        "relationship": "child"
+      },
+      {
+        "age": 11,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1981-06-01",
+      "age": 45,
+      "retirementAge": 70,
+      "employment": {
+        "type": "other",
+        "isContractor": false,
+        "annualGrossIncome": 36000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "universal_credit",
+          "annualAmount": 12000
+        },
+        {
+          "type": "child_benefit",
+          "annualAmount": 2400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "purchase benefits and financial support main income",
+    "fieldsExercised": "Not Employed main income and benefits/support amount",
+    "zeroResultPolicy": "A zero result is valid only if Virgin Money returns the explicit cannot-help results page.",
+    "validityChecks": "Uses capital-and-interest, avoiding interest-only restrictions; age and term are within Virgin limits.",
+    "virginMoneyAssumptions": "Virgin Money supports Purchase/Remortgage; further advance is represented as remortgage additional borrowing. Interest-only samples keep total income at or above 75000 and age plus term no more than 75. Other-property cases include positive repayment/rent values when Virgin asks for them."
+  }
+}

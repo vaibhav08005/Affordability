@@ -1,0 +1,49 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "D"
+  },
+  "loan": {
+    "propertyValue": 350000,
+    "loanAmount": 280000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 42,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 65000,
+        "netProfitPreviousYear": 60000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 500,
+    "creditCardBalances": 5000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 100,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

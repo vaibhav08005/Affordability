@@ -1,0 +1,97 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_purchase_many_dependants_benefit_income",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 35,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 315000,
+    "loanAmount": 235000,
+    "monthlyRepayment": 1125,
+    "currentLender": "None"
+  },
+  "household": {
+    "dependants": [
+      { "age": 1, "relationship": "child" },
+      { "age": 2, "relationship": "child" },
+      { "age": 3, "relationship": "child" },
+      { "age": 4, "relationship": "child" }
+
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1992-04-01",
+      "age": 34,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 62000,
+        "annualOvertime": 0,
+        "annualBonus": 2500,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 8000
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 4200
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1994-07-19",
+      "age": 31,
+      "retirementAge": 68,
+      "employment": {
+        "type": "other",
+        "isContractor": false,
+        "annualGrossIncome": 15000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "universal_credit",
+          "annualAmount": 18000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 1000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 2600,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

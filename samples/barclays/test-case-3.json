@@ -1,0 +1,48 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 10,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "E"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 150000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 65,
+      "retirementAge": 70,
+      "employment": {
+        "type": "pension",
+        "annualPensionIncome": 25000,
+        "otherAnnualPensionIncome": 5000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -1,0 +1,63 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 550000,
+    "loanAmount": 440000
+  },
+  "household": {
+    "dependants": [
+      { "age": 3 },
+      { "age": 8, "relationship": "child" }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 38,
+      "retirementAge": 67,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 75000,
+        "netProfitPreviousYear": 68000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 36,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "isContractor": true,
+        "annualGrossIncome": 85000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 1500,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 200,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

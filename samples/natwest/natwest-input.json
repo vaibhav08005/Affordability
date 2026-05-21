@@ -1,0 +1,73 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 450000,
+    "loanAmount": 300000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 6,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 38,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 72000,
+        "annualOvertime": 2500,
+        "annualBonus": 5000,
+        "annualCommission": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 36,
+      "retirementAge": 68,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 48000,
+        "netProfitPreviousYear": 44000
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 2400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 250,
+    "creditCardBalances": 3000,
+    "overdraftBalances": 500,
+    "otherMonthlyOutgoings": 450,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

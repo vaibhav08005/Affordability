@@ -1,0 +1,68 @@
+{
+  "lender": "nationwide",
+  "case": {
+    "journey": "residential_purchase_shared_ownership",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 35,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 475,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 280000,
+    "loanAmount": 115000,
+    "monthlyRepayment": 575,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 48000,
+        "netProfitPreviousYear": 45500
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 1400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 100,
+    "creditCardBalances": 450,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 250,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

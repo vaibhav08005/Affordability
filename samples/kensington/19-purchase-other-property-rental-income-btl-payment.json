@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_5yr_other_property_rental",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "C" },
+  "loan": { "propertyValue": 475000, "loanAmount": 285000, "monthlyRepayment": 1450, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1978-06-06",
+      "age": 48,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 98000, "annualBonus": 10000, "annualCommission": 0, "annualOvertime": 0, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": [{ "type": "rental_income_btl", "annualAmount": 16800 }]
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 350, "creditCardBalances": 3500, "overdraftBalances": 300, "otherMonthlyOutgoings": 700, "monthlyBuyToLetPayments": 700, "otherMortgageCommitments": [] },
+  "otherProperties": [{ "isRental": true, "propertyValue": 275000, "monthlyMortgagePayment": 700, "monthlyRent": 1400, "currentBalance": 160000, "remainingTermYears": 20, "repaymentType": "interest_only" }],
+  "_meta": {
+    "expectedBranches": "purchase with other rental property and BTL payment",
+    "fieldsExercised": "employed income, rental income other row, leasehold charge, monthly credit commitments include other property payment",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Other property commitments are represented in monthly credit commitments."
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 18,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 150000,
+    "monthlyRepaymentPlanPremium": 250
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 360000,
+    "loanAmount": 150000,
+    "monthlyRepayment": 650,
+    "currentLender": "Barclays"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1980-03-10",
+      "age": 66,
+      "retirementAge": 75,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 42000,
+        "otherAnnualPensionIncome": 8000
+      },
+      "otherIncome": [
+        {
+          "type": "investment_income",
+          "annualAmount": 6000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 200,
+    "creditCardBalances": 1000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 300,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage no additional borrowing with pension/retired income and interest-only repayment",
+    "fieldsExercised": "retired employment status, annual pension income, interest-only repayment radio, residential mortgage balance",
+    "zeroResultPolicy": "A zero pound result is not expected; treat as failure unless visible Results says zero.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit application-purpose selector; purpose is represented through property/loan/current-balance and expenditure fields."
+  }
+}

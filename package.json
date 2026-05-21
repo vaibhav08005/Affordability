@@ -1,0 +1,27 @@
+{
+  "name": "mortgage-affordability-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/cli.ts samples/halifax-input.json",
+    "samples": "npm run build && node scripts/run-samples.mjs",
+    "api": "tsx src/server.ts",
+    "attached:browser": "powershell -ExecutionPolicy Bypass -File scripts/start-attached-browser.ps1",
+    "start": "node dist/cli.js samples/halifax-input.json",
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "playwright": "^1.45.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 100000,
+    "monthlyRepayment": 600,
+    "currentLender": "Leeds Building Society"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 5,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1992-07-15",
+      "age": 33,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "llp",
+        "netProfitCurrentYear": 20000,
+        "netProfitPreviousYear": 20000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 66000
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1995-01-26",
+      "age": 31,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "partnership",
+        "netProfitCurrentYear": 100000,
+        "netProfitPreviousYear": 90000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 400,
+    "creditCardBalances": 0,
+    "overdraftBalances": 10000,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 700,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 300000,
+      "monthlyMortgagePayment": 700,
+      "monthlyRent": 1000,
+      "currentBalance": 100000,
+      "interestOnlyBalance": 50000,
+      "remainingTermYears": 20,
+      "repaymentType": "part_and_part"
+    }
+  ]
+}

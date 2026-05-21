@@ -1,0 +1,47 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_joint_5yr",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "unknown" },
+  "loan": { "propertyValue": 520000, "loanAmount": 360000, "monthlyRepayment": 1750, "currentLender": "Existing lender" },
+  "household": { "dependants": [{ "age": 15 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1964-09-09",
+      "age": 61,
+      "retirementAge": 75,
+      "employment": { "type": "pension", "isContractor": false, "annualGrossIncome": 0, "annualPensionIncome": 46000, "otherAnnualPensionIncome": 9000 },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1982-07-07",
+      "age": 44,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "llp", "netProfitCurrentYear": 88000, "netProfitPreviousYear": 83000, "annualGrossIncome": 88000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 300, "creditCardBalances": 4000, "overdraftBalances": 0, "otherMonthlyOutgoings": 650, "monthlyBuyToLetPayments": 600, "otherMortgageCommitments": [] },
+  "otherProperties": [{ "isRental": true, "propertyValue": 250000, "monthlyMortgagePayment": 600, "monthlyRent": 1200, "currentBalance": 150000, "remainingTermYears": 18, "repaymentType": "capital_and_interest" }],
+  "_meta": {
+    "expectedBranches": "joint pension plus LLP, other property commitments",
+    "fieldsExercised": "joint repeat fields, pension income row, LLP self-employed income, other property monthly commitment",
+    "zeroResultPolicy": "A zero result may be valid only if RESIDENTIAL RESULTS explicitly shows no lending.",
+    "kensingtonAssumptions": "Other property is represented in the public monthly credit commitment field."
+  }
+}

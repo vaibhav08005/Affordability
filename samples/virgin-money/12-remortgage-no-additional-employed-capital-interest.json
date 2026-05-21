@@ -1,0 +1,68 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "extra_remortgage_no_additional_employed",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 22,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 440000,
+    "loanAmount": 240000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender",
+    "currentBalance": 240000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 88000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage no additional borrowing employed capital-and-interest",
+    "fieldsExercised": "remortgage, property value, current mortgage balance, zero additional borrowing",
+    "zeroResultPolicy": "A zero result is valid only if Virgin Money returns the explicit cannot-help results page.",
+    "validityChecks": "Capital-and-interest has no interest-only income floor; current balance equals requested loan for no additional borrowing.",
+    "virginMoneyAssumptions": "Virgin Money supports Purchase/Remortgage; further advance is represented as remortgage additional borrowing. Interest-only samples keep total income at or above 75000 and age plus term no more than 75. Other-property cases include positive repayment/rent values when Virgin asks for them."
+  }
+}

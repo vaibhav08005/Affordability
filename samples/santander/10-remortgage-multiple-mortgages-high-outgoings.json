@@ -1,0 +1,104 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_remortgage_portfolio",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 27,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 125000,
+    "monthlyRepaymentPlanPremium": 300
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 700000,
+    "loanAmount": 420000,
+    "currentBalance": 300000,
+    "monthlyRepayment": 2050,
+    "currentLender": "Nationwide"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 2,
+        "relationship": "child"
+      },
+      {
+        "age": 7,
+        "relationship": "child"
+      },
+      {
+        "age": 13,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 105000,
+        "annualOvertime": 2500,
+        "annualBonus": 12000,
+        "annualCommission": 8000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 950,
+    "creditCardBalances": 18000,
+    "overdraftBalances": 2500,
+    "otherMonthlyOutgoings": 1400,
+    "monthlyBuyToLetPayments": 1650,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 220000,
+        "remainingTermYears": 19
+      },
+      {
+        "outstandingBalance": 145000,
+        "remainingTermYears": 13
+      }
+    ]
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 360000,
+      "monthlyMortgagePayment": 900,
+      "monthlyRent": 1650,
+      "currentBalance": 220000,
+      "interestOnlyBalance": 90000,
+      "remainingTermYears": 19,
+      "repaymentType": "part_and_part"
+    },
+    {
+      "isRental": false,
+      "propertyValue": 210000,
+      "monthlyMortgagePayment": 750,
+      "monthlyRent": 0,
+      "currentBalance": 145000,
+      "interestOnlyBalance": 0,
+      "remainingTermYears": 13,
+      "repaymentType": "capital_and_interest"
+    }
+  ]
+}

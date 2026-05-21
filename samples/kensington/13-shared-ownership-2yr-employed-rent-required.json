@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_shared_ownership_2yr",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 32,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 525,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "B" },
+  "loan": { "propertyValue": 360000, "loanAmount": 180000, "monthlyRepayment": 950, "currentLender": "Existing lender" },
+  "household": { "dependants": [{ "age": 3 }] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1993-03-22",
+      "age": 33,
+      "retirementAge": 70,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 74000, "annualBonus": 3500, "annualCommission": 0, "annualOvertime": 1200, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 180, "creditCardBalances": 1200, "overdraftBalances": 0, "otherMonthlyOutgoings": 400, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "shared ownership, 2yr product, one dependant age, required shared ownership rent",
+    "fieldsExercised": "Residential Shared Ownership product range, shared_ownership_rent, dependant age, childcare",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Shared ownership rent must be separate from ground rent/service charge."
+  }
+}

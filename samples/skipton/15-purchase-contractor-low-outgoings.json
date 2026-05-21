@@ -1,0 +1,67 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "extra_contractor_low_outgoings",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 460000,
+    "loanAmount": 260000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": true,
+        "annualGrossIncome": 115000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 150,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "contractor income with low outgoings",
+    "fieldsExercised": "Other employment radio and Contractor Income additional field",
+    "zeroResultPolicy": "Zero is valid only if Skipton Results explicitly shows zero lending.",
+    "validityChecks": "Contractor flag maps to the visible Contractor Income field, so additional income is populated.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit purpose selector; purpose is represented through property/loan/current-balance and expenditure fields. Additional income is only opened when at least one visible additional-income field is populated."
+  }
+}

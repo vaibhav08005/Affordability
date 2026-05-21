@@ -1,0 +1,77 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "extra_purchase_maintenance_income",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 360000,
+    "loanAmount": 220000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 12,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 70000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 6000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "employed with maintenance income",
+    "fieldsExercised": "Maintenance additional income field",
+    "zeroResultPolicy": "Zero is valid only if Skipton Results explicitly shows zero lending.",
+    "validityChecks": "Maintenance maps to a visible Maintenance field when additional income is opened.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit purpose selector; purpose is represented through property/loan/current-balance and expenditure fields. Additional income is only opened when at least one visible additional-income field is populated."
+  }
+}

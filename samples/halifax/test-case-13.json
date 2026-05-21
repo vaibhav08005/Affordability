@@ -1,0 +1,95 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 525000,
+    "loanAmount": 390000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 7,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 41,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 78000,
+        "annualOvertime": 2500,
+        "annualBonus": 6000,
+        "annualCommission": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 39,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 52000,
+        "annualOvertime": 0,
+        "annualBonus": 2500,
+        "annualCommission": 1200
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 2400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 325,
+    "creditCardBalances": 4500,
+    "overdraftBalances": 500,
+    "otherMonthlyOutgoings": 650,
+    "monthlyBuyToLetPayments": 925,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 88000,
+        "remainingTermYears": 11
+      },
+      {
+        "outstandingBalance": 132000,
+        "remainingTermYears": 18
+      }
+    ]
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 315000,
+      "monthlyMortgagePayment": 925,
+      "monthlyRent": 1450,
+      "currentBalance": 172000,
+      "interestOnlyBalance": 172000,
+      "remainingTermYears": 20,
+      "repaymentType": "interest_only"
+    }
+  ]
+}

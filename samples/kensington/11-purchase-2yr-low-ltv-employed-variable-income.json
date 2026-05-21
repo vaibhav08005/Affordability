@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_2yr_low_ltv_variable_income",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 18,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "B" },
+  "loan": { "propertyValue": 650000, "loanAmount": 325000, "monthlyRepayment": 1800, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1982-02-18",
+      "age": 44,
+      "retirementAge": 68,
+      "employment": { "type": "employed", "isContractor": false, "annualGrossIncome": 140000, "annualBonus": 25000, "annualCommission": 12000, "annualOvertime": 5000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": [{ "type": "shift_allowance", "annualAmount": 4500 }]
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 250, "creditCardBalances": 2000, "overdraftBalances": 0, "otherMonthlyOutgoings": 500, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "purchase, 2yr product preference, low LTV bucket, employed variable income and allowance",
+    "fieldsExercised": "Residential Select product matching by 2yr/75 bucket, salary, bonus, commission, overtime, allowance",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Allowance maps to Kensington's employed Allowance field."
+  }
+}

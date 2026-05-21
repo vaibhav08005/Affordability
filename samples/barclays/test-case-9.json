@@ -1,0 +1,67 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "B"
+  },
+  "loan": {
+    "propertyValue": 450000,
+    "loanAmount": 320000,
+    "currentLender": "NatWest"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 42,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 65000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 40,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 30000,
+        "netProfitPreviousYear": 28000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 400,
+    "creditCardBalances": 2000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 45000,
+        "remainingTermYears": 8
+      },
+      {
+        "outstandingBalance": 15000,
+        "remainingTermYears": 4
+      }
+    ]
+  },
+  "otherProperties": []
+}

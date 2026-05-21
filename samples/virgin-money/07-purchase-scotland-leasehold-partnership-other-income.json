@@ -1,0 +1,78 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "residential_purchase_scotland",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 28,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 390000,
+    "loanAmount": 245000,
+    "monthlyRepayment": 1180,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "partnership",
+        "netProfitCurrentYear": 71000,
+        "netProfitPreviousYear": 68000
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 3600
+        },
+        {
+          "type": "working_tax_credit",
+          "annualAmount": 2400
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 280,
+    "creditCardBalances": 2500,
+    "overdraftBalances": 100,
+    "otherMonthlyOutgoings": 450,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "Scotland leasehold partnership/LLP with other income",
+    "fieldsExercised": "Scotland residency, self-employed profit, second income benefits/support field",
+    "zeroResultPolicy": "A zero pound result is not expected; treat as failure unless visible Results says zero.",
+    "virginMoneyAssumptions": "Virgin Money residential calculator supports Purchase/Remortgage but not a separate further-advance option; further advance is represented as remortgage additional borrowing. Public self-employed fields are generic net profit fields for sole trader, partnership, LLP, and limited company."
+  }
+}

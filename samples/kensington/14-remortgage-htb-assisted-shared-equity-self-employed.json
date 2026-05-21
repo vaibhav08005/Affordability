@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_remortgage_5yr_shared_equity_htb",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 28,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_equity",
+    "monthlySharedOwnershipRent": 325,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "leasehold", "epcRating": "C" },
+  "loan": { "propertyValue": 410000, "loanAmount": 225000, "currentBalance": 190000, "monthlyRepayment": 1100, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1987-05-15",
+      "age": 39,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "limited_company", "netProfitCurrentYear": 88000, "netProfitPreviousYear": 76000, "annualGrossIncome": 88000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 320, "creditCardBalances": 2800, "overdraftBalances": 400, "otherMonthlyOutgoings": 500, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage, Help to Buy assisted purchase yes, shared ownership/equity product range, self-employed director",
+    "fieldsExercised": "remortgage HTB question, Residential Shared Ownership product, self_employed_income, shared ownership rent",
+    "zeroResultPolicy": "A zero result may be lender-valid only if Results explicitly shows no lending.",
+    "kensingtonAssumptions": "Shared equity uses the same visible Kensington shared ownership product/rent branch."
+  }
+}

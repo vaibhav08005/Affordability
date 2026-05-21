@@ -1,0 +1,74 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_remortgage_capital_raising_partnership",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 24,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "F"
+  },
+  "loan": {
+    "propertyValue": 455000,
+    "loanAmount": 270000,
+    "currentBalance": 205000,
+    "monthlyRepayment": 1350,
+    "currentLender": "Halifax"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 6,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1983-10-10",
+      "age": 42,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "partnership",
+        "netProfitCurrentYear": 97000,
+        "netProfitPreviousYear": 88000
+      },
+      "otherIncome": [
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 6000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 475,
+    "creditCardBalances": 8500,
+    "overdraftBalances": 700,
+    "otherMonthlyOutgoings": 850,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

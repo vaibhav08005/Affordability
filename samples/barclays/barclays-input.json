@@ -1,0 +1,59 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 150000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 8,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 38,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 85000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 3000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 350,
+    "creditCardBalances": 2000,
+    "overdraftBalances": 500,
+    "otherMonthlyOutgoings": 600,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

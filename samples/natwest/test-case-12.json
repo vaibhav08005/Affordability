@@ -1,0 +1,59 @@
+{
+  "lender": "natwest",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 380000,
+    "loanAmount": 220000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 48,
+      "retirementAge": 65,
+      "employment": {
+        "type": "employed",
+        "annualGrossIncome": 55000,
+        "annualBonus": 5000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 58,
+      "retirementAge": 65,
+      "employment": {
+        "type": "pension",
+        "annualPensionIncome": 22000,
+        "otherAnnualPensionIncome": 4000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 300,
+    "creditCardBalances": 2000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

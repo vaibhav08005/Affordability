@@ -1,0 +1,70 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "extra_self_employed_previous_lower",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 340000,
+    "loanAmount": 190000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 85000,
+        "netProfitPreviousYear": 52000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "single self-employed with lower previous year profit",
+    "fieldsExercised": "Most recent net profit and previous year net profit",
+    "zeroResultPolicy": "A zero result is valid only if Virgin Money returns the explicit cannot-help results page.",
+    "validityChecks": "Both self-employed profit fields are positive and use Virgin public self-employed net-profit fields.",
+    "virginMoneyAssumptions": "Virgin Money supports Purchase/Remortgage; further advance is represented as remortgage additional borrowing. Interest-only samples keep total income at or above 75000 and age plus term no more than 75. Other-property cases include positive repayment/rent values when Virgin asks for them."
+  }
+}

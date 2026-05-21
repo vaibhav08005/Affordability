@@ -1,0 +1,92 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "extra_joint_director_employed_variable",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 520000,
+    "loanAmount": 310000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 1,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "annualGrossIncome": 52000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 48000,
+        "netProfitPreviousYear": 43000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1991-08-22",
+      "age": 35,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 61000,
+        "annualOvertime": 0,
+        "annualBonus": 7000,
+        "annualCommission": 3500,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 150,
+    "creditCardBalances": 800,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 350,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "joint limited-company director plus employed variable income",
+    "fieldsExercised": "director dividends/remuneration fields, second applicant guaranteed/non-guaranteed other",
+    "zeroResultPolicy": "Zero is valid only if Skipton Results explicitly shows zero lending.",
+    "validityChecks": "Director income fields are positive; variable employed income maps to visible additional-income fields.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit purpose selector; purpose is represented through property/loan/current-balance and expenditure fields. Additional income is only opened when at least one visible additional-income field is populated."
+  }
+}

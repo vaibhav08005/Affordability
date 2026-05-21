@@ -1,0 +1,87 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_purchase_joint_part_and_part_variable_income",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 85000,
+    "monthlyRepaymentPlanPremium": 140
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 475000,
+    "loanAmount": 320000,
+    "monthlyRepayment": 1650,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 4,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1984-09-20",
+      "age": 41,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 72000,
+        "annualOvertime": 3500,
+        "annualBonus": 9000,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1987-11-02",
+      "age": 38,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 59000,
+        "annualOvertime": 0,
+        "annualBonus": 4000,
+        "annualCommission": 6500,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 3600
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 325,
+    "creditCardBalances": 4200,
+    "overdraftBalances": 250,
+    "otherMonthlyOutgoings": 650,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

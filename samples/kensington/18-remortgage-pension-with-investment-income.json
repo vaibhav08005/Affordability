@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_remortgage_2yr_pension_investment",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 12,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 120000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "unknown" },
+  "loan": { "propertyValue": 420000, "loanAmount": 120000, "currentBalance": 120000, "monthlyRepayment": 600, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1958-12-21",
+      "age": 67,
+      "retirementAge": 75,
+      "employment": { "type": "pension", "isContractor": false, "annualGrossIncome": 0, "annualPensionIncome": 39000, "otherAnnualPensionIncome": 6000 },
+      "otherIncome": [{ "type": "investment_income", "annualAmount": 7000 }]
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 50, "creditCardBalances": 300, "overdraftBalances": 0, "otherMonthlyOutgoings": 300, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage, retired/pension plus investment income, 2yr product",
+    "fieldsExercised": "Retired status, other income row, remortgage HTB no, short term",
+    "zeroResultPolicy": "A zero result may be valid for older/short-term interest-only input.",
+    "kensingtonAssumptions": "Public calculator has no repayment-type selector; interest-only is documented input only."
+  }
+}

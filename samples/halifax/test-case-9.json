@@ -1,0 +1,59 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "D"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 180000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 63,
+      "retirementAge": 68,
+      "employment": {
+        "type": "pension",
+        "annualPensionIncome": 28000,
+        "otherAnnualPensionIncome": 6000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 65,
+      "retirementAge": 68,
+      "employment": {
+        "type": "pension",
+        "annualPensionIncome": 18000,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

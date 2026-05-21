@@ -1,0 +1,65 @@
+{
+  "lender": "hsbc",
+  "case": {
+    "journey": "residential_remortgage",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "C"
+  },
+  "loan": {
+    "propertyValue": 500000,
+    "loanAmount": 100000,
+    "monthlyRepayment": 500,
+    "currentLender": "Barclays"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1971-03-10",
+      "age": 55,
+      "retirementAge": 80,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 90000,
+        "otherAnnualPensionIncome": 20000
+      },
+      "otherIncome": [
+        {
+          "type": "investment_income",
+        "annualAmount": 12000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 50,
+    "creditCardBalances": 250,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 100,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

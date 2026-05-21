@@ -1,0 +1,66 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 180000,
+    "monthlyRepayment": 900,
+    "currentLender": "Existing lender"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1990-01-10",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 75000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 200,
+    "creditCardBalances": 1000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 300,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "standard purchase single employed",
+    "fieldsExercised": "purchase loan details, single application, employed salary, baseline outgoings",
+    "zeroResultPolicy": "A zero pound result is not expected; treat as failure unless visible Results says zero.",
+    "virginMoneyAssumptions": "Virgin Money residential calculator supports Purchase/Remortgage but not a separate further-advance option; further advance is represented as remortgage additional borrowing. Public self-employed fields are generic net profit fields for sole trader, partnership, LLP, and limited company."
+  }
+}

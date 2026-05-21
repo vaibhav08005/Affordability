@@ -1,0 +1,68 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "extra_remortgage_current_balance_no_extra",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 410000,
+    "loanAmount": 210000,
+    "monthlyRepayment": 1100,
+    "currentLender": "Existing lender",
+    "currentBalance": 210000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1988-04-12",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 84000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 250,
+    "creditCardBalances": 1200,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 400,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage no additional borrowing employed",
+    "fieldsExercised": "Skipton purpose represented through balance/expenditure fields",
+    "zeroResultPolicy": "Zero is valid only if Skipton Results explicitly shows zero lending.",
+    "validityChecks": "Current balance equals requested loan and all numeric fields are non-negative.",
+    "skiptonAssumptions": "Skipton public calculator has no explicit purpose selector; purpose is represented through property/loan/current-balance and expenditure fields. Additional income is only opened when at least one visible additional-income field is populated."
+  }
+}

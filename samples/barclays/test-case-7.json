@@ -1,0 +1,59 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "residential_purchase",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "D"
+  },
+  "loan": {
+    "propertyValue": 500000,
+    "loanAmount": 400000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 36,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "partnership",
+        "netProfitCurrentYear": 48000,
+        "netProfitPreviousYear": 42000
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "age": 34,
+      "employment": {
+        "type": "self_employed",
+        "businessType": "llp",
+        "netProfitCurrentYear": 55000,
+        "netProfitPreviousYear": 50000
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 500,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

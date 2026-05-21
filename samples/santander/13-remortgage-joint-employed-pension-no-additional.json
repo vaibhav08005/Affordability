@@ -1,0 +1,83 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "residential_remortgage_joint_employed_pension_no_additional",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 12,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "A"
+  },
+  "loan": {
+    "propertyValue": 390000,
+    "loanAmount": 145000,
+    "currentBalance": 145000,
+    "monthlyRepayment": 1225,
+    "currentLender": "Virgin Money"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1974-12-05",
+      "age": 51,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 48000,
+        "annualOvertime": 1200,
+        "annualBonus": 2500,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1959-05-18",
+      "age": 66,
+      "retirementAge": 75,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 28000,
+        "otherAnnualPensionIncome": 9000
+      },
+      "otherIncome": [
+        {
+          "type": "investment_income",
+          "annualAmount": 4200
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 100,
+    "creditCardBalances": 900,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 250,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

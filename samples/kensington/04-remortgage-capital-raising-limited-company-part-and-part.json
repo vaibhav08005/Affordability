@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_remortgage_2yr_capital_raising",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 120000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": false, "tenure": "freehold", "epcRating": "B" },
+  "loan": { "propertyValue": 500000, "loanAmount": 300000, "currentBalance": 220000, "monthlyRepayment": 1300, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1980-08-08",
+      "age": 46,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "limited_company", "netProfitCurrentYear": 95000, "netProfitPreviousYear": 88000, "annualGrossIncome": 95000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 350, "creditCardBalances": 2000, "overdraftBalances": 0, "otherMonthlyOutgoings": 500, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "remortgage capital raising, limited company, part-and-part input",
+    "fieldsExercised": "2yr product preference, self-employed public income field, higher LTV bucket",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Limited company/director maps to public self-employed gross earnings field."
+  }
+}

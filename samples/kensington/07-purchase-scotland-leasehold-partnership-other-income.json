@@ -1,0 +1,39 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "residential_purchase_scotland_5yr",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 0,
+    "hasInterestOnly": false,
+    "interestOnlyLoanAmount": 0,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": { "isInScotland": true, "tenure": "leasehold", "epcRating": "D" },
+  "loan": { "propertyValue": 320000, "loanAmount": 240000, "monthlyRepayment": 1150, "currentLender": "Existing lender" },
+  "household": { "dependants": [] },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "1983-12-12",
+      "age": 42,
+      "retirementAge": 70,
+      "employment": { "type": "self_employed", "isContractor": false, "businessType": "partnership", "netProfitCurrentYear": 72000, "netProfitPreviousYear": 69000, "annualGrossIncome": 72000, "annualPensionIncome": 0, "otherAnnualPensionIncome": 0 },
+      "otherIncome": [{ "type": "investment_income", "annualAmount": 6000 }]
+    }
+  ],
+  "outgoings": { "monthlyLoanRepayments": 250, "creditCardBalances": 2500, "overdraftBalances": 0, "otherMonthlyOutgoings": 500, "monthlyBuyToLetPayments": 0, "otherMortgageCommitments": [] },
+  "otherProperties": [],
+  "_meta": {
+    "expectedBranches": "Scotland postcode, leasehold, partnership, investment income",
+    "fieldsExercised": "Scottish postcode, self-employed partnership income, other income row Investment",
+    "zeroResultPolicy": "A zero result is not expected.",
+    "kensingtonAssumptions": "Partnership/LLP share the public self-employed gross earnings field."
+  }
+}
