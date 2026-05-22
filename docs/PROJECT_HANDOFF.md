@@ -2,7 +2,7 @@
 
 This project automates UK mortgage intermediary affordability calculators with Playwright. It accepts a lender-ready JSON input, chooses the matching lender adapter, fills the lender calculator, extracts the result, and returns structured JSON with screenshot evidence.
 
-Use this document first when opening a fresh conversation. It captures the project shape and the implementation lessons from the recent HSBC, Santander, and Nationwide work.
+Use this document first when opening a fresh conversation. It captures the current project shape, the supported lenders, the validation status, and the implementation lessons from the adapter expansion work.
 
 ## Quick Commands
 
@@ -18,10 +18,20 @@ Useful checks:
 
 ```powershell
 npm.cmd run check
+npm.cmd test
 npm.cmd run samples
 ```
 
-`npm run samples` currently scans only JSON files directly inside `samples/`; lender subfolders such as `samples\nationwide\*.json` need to be run directly unless the runner is extended.
+Current verification status:
+
+```text
+npm.cmd run check passes.
+All 139 sample JSON files currently validate against src/domain/validation.ts.
+npm.cmd test currently runs 0 tests because there are no compiled *.test.js files.
+npm.cmd run samples builds successfully, then fails because scripts/run-samples.mjs scans only top-level samples/*.json.
+```
+
+`npm.cmd run samples` currently does not exercise the real lender samples. The real sample files live under lender subfolders such as `samples\nationwide\*.json`; run individual samples directly or extend the runner to recurse into subfolders.
 
 ## Main Files
 
@@ -50,15 +60,32 @@ docs/SANTANDER_COMPLETION_ANALYSIS.md Santander stabilization plan and known iss
 Supported lenders are currently declared in `src/domain/contracts.ts` and registered in `src/adapters/registry.ts`:
 
 ```text
-halifax
 barclays
-natwest
+halifax
 hsbc
+kensington
+natwest
 santander
 nationwide
+skipton
+virgin_money
 ```
 
 To add another lender, update both places and add `src/adapters/<lender>/adapter.ts`, `src/adapters/<lender>/mapping.ts`, plus samples.
+
+Current sample counts by folder:
+
+```text
+barclays      12
+halifax       14
+hsbc          10
+kensington    20
+nationwide    10
+natwest       12
+santander     21
+skipton       20
+virgin-money  20
+```
 
 ## Input Contract
 
@@ -152,6 +179,8 @@ Do not report success unless the form is on the real Results section.
 Some pages can display a previously requested amount or page text that looks like a result.
 Self-employed income fields and remortgage current-balance fields need exact mapping.
 Other properties / other mortgages need exact indexed card filling before sample 09/10 can be trusted.
+The current adapter also mutates Santander Vue/Pinia internal state for details/income stabilization.
+Treat that as a pragmatic but fragile integration point; prefer visible field filling where possible.
 ```
 
 HSBC examples:
@@ -160,6 +189,38 @@ HSBC examples:
 Fields with similar surrounding labels can resolve to radios instead of text inputs.
 Dates and term fields require exact formatting and exact target fields.
 Application type and required selects must be validated on screenshot before changing code.
+```
+
+Kensington examples:
+
+```text
+Product selection is part of the calculator state, not just decoration.
+The adapter chooses a product range and product before entering property and income data.
+The calculator can return a backend webcalculator response; visible RESIDENTIAL RESULTS still gates success.
+```
+
+Skipton and Virgin Money examples:
+
+```text
+These adapters rely heavily on stable IDs and focused result-page checks.
+Keep extraction tied to explicit result text, not arbitrary currency values on the page.
+Virgin Money zero lending is valid only when the explicit cannot-help results page is returned.
+```
+
+## Current Reliability Priorities
+
+The architecture is sound, but reliability now depends on regression coverage and exact lender field mapping.
+
+Recommended next work:
+
+```text
+1. Extend scripts/run-samples.mjs to recursively run samples/<lender>/*.json and support a lender filter.
+2. Add validation-only tests for every sample JSON file.
+3. Add unit tests for shared extraction helpers and lender-specific result parsing where possible.
+4. Consolidate duplicated browser/session/evidence/error helpers into src/adapters/shared/browser.ts.
+5. Mark adapter confidence levels in docs: production-ish, experimental, needs field-map pass.
+6. Tighten domain validation for branch-specific requirements such as interest-only amounts, remortgage current balance, and applicant count/application type consistency.
+7. Revisit Santander store mutation and replace it with visible-field automation where practical.
 ```
 
 ## New Lender Workflow
@@ -278,7 +339,7 @@ node dist\cli.js .\samples\nationwide\10-remortgage-multiple-mortgages-high-outg
 Start attached browser mode when a lender rejects fresh automation:
 
 ```powershell
-npm run attached:browser
+npm.cmd run attached:browser
 ```
 
 Then set:
@@ -287,7 +348,7 @@ Then set:
 $env:BROWSER_EXECUTION_MODE="attached"
 $env:BROWSER_WS_ENDPOINT="ws://127.0.0.1:9222/devtools/browser/..."
 $env:HEADLESS="false"
-node dist\cli.js .\samples\halifax-input.json
+node dist\cli.js .\samples\halifax\test-case-1.json
 ```
 
 ## Current Caveats
@@ -296,6 +357,9 @@ node dist\cli.js .\samples\halifax-input.json
 dist/ is generated output from TypeScript build.
 artifacts/screenshots/ and tmp/ are runtime artifacts.
 node_modules/ is local dependency output.
-Some lender sample subfolders are not covered by scripts/run-samples.mjs yet.
-Some older docs mention Halifax/Barclays as early slices; registry now contains more lenders.
+scripts/run-samples.mjs does not recurse into lender sample folders yet.
+npm.cmd test currently runs zero tests.
+Some older field-map docs were written during early lender slices; verify against source before relying on them.
+Santander has a complex adapter with Vue/Pinia internal state writes; treat it as higher maintenance risk.
+The API is a synchronous proof-of-concept: POST /runs and GET /health only. There is no queue, persistence, auth, retention policy, or GET /runs/:id yet.
 ```
