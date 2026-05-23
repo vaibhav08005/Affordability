@@ -1,0 +1,54 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "ftb",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 280000,
+    "loanAmount": 235000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "631152000",
+      "age": 36,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 52000,
+        "annualOvertime": 1800,
+        "annualBonus": 2500,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 2200,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

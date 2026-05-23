@@ -1,0 +1,78 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_equity",
+    "sharedEquityCustomerStakePercent": 92,
+    "monthlySharedEquityInterestPayment": 0,
+    "equityLoanBalance": 40000,
+    "equityLoanInterestRatePercent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 380000,
+    "monthlyRepaymentPlanPremium": 650
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 500000,
+    "loanAmount": 380000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "473385600",
+      "age": 41,
+      "retirementAge": 72,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 92000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "536457600",
+      "age": 39,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 68000,
+        "annualOvertime": 3600,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

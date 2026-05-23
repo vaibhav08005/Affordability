@@ -1,0 +1,57 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 10,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 90000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 310000,
+    "loanAmount": 90000,
+    "currentBalance": 90000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "157766400",
+      "age": 51,
+      "retirementAge": 80,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 33600,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 3400,
+    "overdraftBalances": 800,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

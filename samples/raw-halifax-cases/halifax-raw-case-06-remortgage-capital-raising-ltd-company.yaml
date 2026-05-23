@@ -1,0 +1,42 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 2
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: part_and_part
+var_interest_only_amount: 90000
+var_property_value: 650000
+var_remo_remaining_balance: 310000
+var_equity_release_amount: 65000
+var_pay_down_amount: 10000
+var_mortgage_term: 300
+var_repay_vehicle_type: investments
+var_repay_vehicle_mthly_contribution: 900
+var_property_details_address:
+  postcode: HA3 0HD
+  country: England
+var_property_details_tenure: freehold
+var_appl1_joint_rel_status: live_in_partner
+var_appl1_date_of_birth: 504921600
+var_appl1_retirement_age: 70
+var_appl1_dependents_details:
+- age: '12'
+  relationship: child
+- age: '9'
+  relationship: child
+- age: '1'
+  relationship: child
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: limited_company
+var_appl1_employed_company_details_ownership_percentage: 50
+var_appl1_business_salary: 18000
+var_appl1_business_curr_yr_dividends: 72000
+var_appl1_business_prev_yr_dividends: 61000
+var_appl1_mthly_maint_amt: 250
+var_appl2_date_of_birth: 599616000
+var_appl2_retirement_age: 70
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 54000
+var_appl2_outgoings_pension_contribution: 300
+var_appl2_outgoings_investments: 200

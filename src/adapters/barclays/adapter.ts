@@ -3,7 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
-import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels } from "./mapping.js";
+import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels, selfEmploymentTypeLabels } from "./mapping.js";
 
 export const barclaysAdapter: LenderAdapter = {
   lender: "barclays",
@@ -138,6 +138,10 @@ async function fillIncomeAndCommitments(page: Page, input: LenderReadyInput): Pr
   await fillCurrency(page, "Any other monthly financial commitments including council tax (if applicable)", input.outgoings.otherMonthlyOutgoings + input.outgoings.monthlyLoanRepayments);
   await page.getByLabel("Number of financial dependants (if applicable)", { exact: true }).fill(String(input.household.dependants.length));
   await chooseRadio(page, "Does your client have an equity loan for the property in this application?", input.case.sharedOwnershipOrEquity ? "Yes" : "No");
+  if (input.case.sharedOwnershipOrEquity) {
+    await fillOptionalCurrency(page, ["Remaining equity loan balance"], input.case.equityLoanBalance ?? 0);
+    await fillOptionalTextByLabelOrText(page, "Equity loan interest rate", String(input.case.equityLoanInterestRatePercent ?? 0));
+  }
   await clickNextOrCalculate(page);
 }
 
@@ -151,9 +155,9 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
   await chooseLooseRadio(employmentGroup, employmentLabel);
 
   if (employmentLabel === "Fixed-term contractor") {
-    await fillNthCurrency(page, "Annualised income before tax", 0, applicant.employment.annualGrossIncome ?? 0);
+    await fillLastAvailableCurrency(page, ["Annualised income before tax"], applicant.employment.annualGrossIncome ?? 0);
   } else if (employmentLabel === "Employed") {
-    await fillFirstAvailableCurrencyAtIndex(
+    await fillLastAvailableCurrency(
       page,
       [
         "Annual gross income and taxable allowance",
@@ -161,18 +165,26 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
         "Annual basic salary",
         "Gross annual basic salary"
       ],
-      applicant.index - 1,
       applicant.employment.annualGrossIncome ?? 0
     );
     await chooseLooseRadioAtIndex(page, "Does your client receive any bonuses, overtime, or commission?", applicant.index - 1, hasVariableIncome(applicant) ? "Yes" : "No");
     if (hasVariableIncome(applicant)) {
       await chooseVariableIncomeFrequency(page, applicant);
-      await fillOptionalCurrency(page, ["Annual bonuses, overtime, or commission", "Bonuses, overtime, or commission"], variableIncomeTotal(applicant));
+      await fillLastAvailableCurrency(page, [
+        "Annualised bonus and commission paid weekly, fortnightly, or monthly (if applicable)",
+        "Annual bonuses, overtime, or commission",
+        "Bonuses, overtime, or commission"
+      ], (applicant.employment.annualBonus ?? 0) + (applicant.employment.annualCommission ?? 0));
+      await fillLastAvailableCurrency(page, [
+        "Annual overtime income (if applicable)",
+        "Annual overtime"
+      ], applicant.employment.annualOvertime ?? 0);
+      await chooseLastLooseRadioIfPresent(page, "Does your client have a P60 for this employment income?", "Yes");
     }
   } else if (employmentLabel === "Self-employed") {
-    await selectFirstOption(page.getByLabel("Select the type of self-employment", { exact: true }).nth(selfEmploymentIndex(page, applicant.index)));
-    await fillApplicantCurrencyAfterText(page, applicant.index, "Latest year", applicant.employment.netProfitCurrentYear ?? 0);
-    await fillApplicantCurrencyAfterText(page, applicant.index, "Previous year", applicant.employment.netProfitPreviousYear ?? 0);
+    await selectSelfEmploymentType(page, applicant);
+    await fillLastCurrencyByLabelOrText(page, "Latest year", applicant.employment.netProfitCurrentYear ?? 0);
+    await fillLastCurrencyByLabelOrText(page, "Previous year", applicant.employment.netProfitPreviousYear ?? 0);
   }
 
   await fillNthCurrency(page, "Annual pension income (if applicable)", applicant.index - 1, applicant.employment.annualPensionIncome ?? 0);
@@ -293,12 +305,11 @@ async function fillOtherMortgageSummary(page: Page, input: LenderReadyInput): Pr
 }
 
 async function waitForResult(page: Page, context: RunContext): Promise<void> {
-  const resultTimeoutMs = Math.min(context.timeoutMs, 15000);
+  const resultTimeoutMs = Math.min(context.timeoutMs, 60000);
   await page.waitForFunction(
     () => {
       const text = document.body.innerText;
       return (
-        /\bResult\b/i.test(text) ||
         /lend\s+them\s+up\s+to/i.test(text) ||
         /could\s+lend/i.test(text) ||
         /There are errors on this page/i.test(text)
@@ -383,22 +394,30 @@ async function chooseLooseRadioAtIndex(page: Page, groupName: string, index: num
   await chooseLooseRadio(page, optionName);
 }
 
+async function chooseLastLooseRadioIfPresent(page: Page, groupName: string, optionName: string): Promise<void> {
+  const groups = page.getByRole("radiogroup", { name: groupName });
+  const count = await groups.count();
+  if (count === 0) return;
+  await chooseLooseRadio(groups.nth(count - 1), optionName);
+}
+
 async function chooseVariableIncomeFrequency(page: Page, applicant: Applicant): Promise<void> {
   if ((applicant.employment.annualOvertime ?? 0) > 0 || (applicant.employment.annualCommission ?? 0) > 0) {
-    await checkFirstAvailable(page, ["Weekly, fortnightly, or monthly"]);
+    await checkLastAvailable(page, ["Weekly, fortnightly, or monthly"]);
     return;
   }
 
   if ((applicant.employment.annualBonus ?? 0) > 0) {
-    await checkFirstAvailable(page, ["Two-monthly, quarterly, half-yearly or yearly"]);
+    await checkLastAvailable(page, ["Two-monthly, quarterly, half-yearly or yearly"]);
   }
 }
 
-async function checkFirstAvailable(scope: Page | Locator, labels: string[]): Promise<void> {
+async function checkLastAvailable(scope: Page | Locator, labels: string[]): Promise<void> {
   for (const label of labels) {
     const checkbox = scope.getByRole("checkbox", { name: label });
-    if (await checkbox.count() > 0) {
-      await checkbox.first().check({ force: true });
+    const count = await checkbox.count();
+    if (count > 0) {
+      await checkbox.nth(count - 1).check({ force: true });
       return;
     }
   }
@@ -413,39 +432,32 @@ async function fillNthCurrency(page: Page, label: string, index: number, value: 
   await field.fill(currencyValue(value));
 }
 
-async function fillFirstAvailableCurrency(scope: Page | Locator, labels: string[], value: number): Promise<void> {
+async function fillLastAvailableCurrency(scope: Page | Locator, labels: string[], value: number): Promise<void> {
   for (const label of labels) {
-    const field = scope.getByLabel(label, { exact: true });
-    if (await field.count() > 0) {
-      await field.first().fill(currencyValue(value));
+    const fields = scope.getByLabel(label, { exact: true });
+    const count = await fields.count();
+    if (count > 0) {
+      await fields.nth(count - 1).fill(currencyValue(value));
       return;
     }
   }
-
-  throw new Error(`Unable to find Barclays currency field: ${labels.join(", ")}.`);
 }
 
-async function fillFirstAvailableCurrencyAtIndex(scope: Page | Locator, labels: string[], index: number, value: number): Promise<void> {
-  for (const label of labels) {
-    const field = scope.getByLabel(label, { exact: true });
-    if (await field.count() > index) {
-      await field.nth(index).fill(currencyValue(value));
-      return;
-    }
+async function fillLastCurrencyByLabelOrText(page: Page, label: string, value: number): Promise<void> {
+  const fields = page.getByLabel(label, { exact: true });
+  const count = await fields.count();
+  if (count > 0) {
+    await fields.nth(count - 1).fill(currencyValue(value));
+    return;
   }
 
-  throw new Error(`Unable to find Barclays currency field at index ${index}: ${labels.join(", ")}.`);
-}
-
-async function fillApplicantCurrencyAfterText(page: Page, applicantIndex: 1 | 2, text: string, value: number): Promise<void> {
-  const field = page.locator(
-    `xpath=//*[normalize-space(.)="Applicant ${applicantIndex}"]/following::*[normalize-space(.)="${text}"][1]/following::input[1]`
-  );
-  if (await field.count() === 0) {
-    throw new Error(`Unable to find Barclays currency field after text "${text}" for applicant ${applicantIndex}.`);
+  const field = page.locator(`xpath=(//*[normalize-space(.)="${label}"]/following::input[1])[last()]`);
+  if (await field.count() > 0) {
+    await field.fill(currencyValue(value));
+    return;
   }
 
-  await field.first().fill(currencyValue(value));
+  throw new Error(`Unable to find Barclays currency field by label or text: ${label}.`);
 }
 
 async function fillOptionalCurrency(scope: Page | Locator, labels: string[], value: number): Promise<void> {
@@ -478,6 +490,20 @@ async function fillOptionalText(scope: Page | Locator, labels: string[], value: 
   }
 }
 
+async function fillOptionalTextByLabelOrText(page: Page, label: string, value: string): Promise<void> {
+  const fields = page.getByLabel(label, { exact: true });
+  const count = await fields.count();
+  if (count > 0) {
+    await fields.nth(count - 1).fill(value);
+    return;
+  }
+
+  const field = page.locator(`xpath=(//*[normalize-space(.)="${label}"]/following::input[1])[last()]`);
+  if (await field.count() > 0) {
+    await field.fill(value);
+  }
+}
+
 async function fillOptionalTextAtIndex(scope: Page | Locator, labels: string[], index: number, value: string): Promise<void> {
   for (const label of labels) {
     const field = scope.getByLabel(label, { exact: true });
@@ -488,10 +514,40 @@ async function fillOptionalTextAtIndex(scope: Page | Locator, labels: string[], 
   }
 }
 
-async function selectFirstOption(select: Locator): Promise<void> {
-  if (await select.count() === 1) {
-    await select.selectOption({ index: 1 });
+async function selectSelfEmploymentType(page: Page, applicant: Applicant): Promise<void> {
+  const fields = page.getByLabel("Select the type of self-employment", { exact: true });
+  const count = await fields.count();
+  if (count === 0) {
+    throw new Error("Unable to find Barclays self-employment type field.");
   }
+
+  const field = fields.nth(count - 1);
+  const businessType = applicant.employment.businessType ?? "sole_trader";
+  const options = await field.locator("option").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.textContent?.trim() ?? "",
+      value: (item as HTMLOptionElement).value
+    }))
+  );
+  const desired = findSelfEmploymentOption(options, businessType);
+  if (!desired) {
+    throw new Error(`Unable to find Barclays self-employment type option "${selfEmploymentTypeLabels[businessType]}".`);
+  }
+
+  await field.selectOption({ value: desired.value });
+}
+
+function findSelfEmploymentOption(
+  options: Array<{ label: string; value: string }>,
+  businessType: NonNullable<Applicant["employment"]["businessType"]>
+): { label: string; value: string } | undefined {
+  const candidates = options.filter((option) => option.label.length > 0 && option.value.length > 0);
+  const byPattern = (pattern: RegExp) => candidates.find((option) => pattern.test(option.label));
+
+  if (businessType === "sole_trader") return byPattern(/sole\s*trader/i) ?? byPattern(/\bsole\b/i);
+  if (businessType === "partnership") return byPattern(/^partnership$/i) ?? byPattern(/\bpartnership\b/i);
+  if (businessType === "llp") return byPattern(/\bllp\b/i);
+  return byPattern(/limited|ltd|company\s+director/i);
 }
 
 async function clickNext(page: Page): Promise<void> {
@@ -539,10 +595,6 @@ function extractMaximumCurrency(text: string): number | null {
   const matches = [...text.matchAll(/\u00a3\s*([0-9][0-9,]*)/g)];
   if (matches.length === 0) return null;
   return Math.max(...matches.map((match) => Number(match[1]?.replace(/,/g, ""))));
-}
-
-function selfEmploymentIndex(_page: Page, applicantIndex: 1 | 2): number {
-  return applicantIndex - 1;
 }
 
 async function captureEvidence(page: Page, context: RunContext, name: string): Promise<string> {

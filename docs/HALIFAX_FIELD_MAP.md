@@ -25,7 +25,9 @@ This adapter accepts lender-ready JSON. Raw fact-find conversion remains upstrea
 | Loan term (years) | Number | `case.termYears` |
 | Shared ownership / shared equity? | Yes; No | `case.sharedOwnershipOrEquity` |
 | Scheme type | Shared ownership; Shared equity | `case.sharedOwnershipScheme` |
-| Monthly rent payable | Currency, shown for shared scheme | `case.monthlySharedOwnershipRent` |
+| Monthly rent payable | Currency, shown for shared ownership | `case.monthlySharedOwnershipRent` |
+| Equity stake held by customer | Percentage, shown for shared equity | `case.sharedEquityCustomerStakePercent` |
+| Monthly interest payment | Currency, shown for shared equity | `case.monthlySharedEquityInterestPayment` |
 | Interest-only? | Yes; No | `case.hasInterestOnly` |
 | Interest-only loan amount | Currency, shown for interest-only | `case.interestOnlyLoanAmount` |
 | Monthly premium for repayment plans | Currency, shown for interest-only | `case.monthlyRepaymentPlanPremium` |

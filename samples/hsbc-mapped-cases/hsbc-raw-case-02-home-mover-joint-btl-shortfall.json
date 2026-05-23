@@ -1,0 +1,95 @@
+{
+  "lender": "hsbc",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 420000,
+    "loanAmount": 320000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 7,
+        "relationship": "child"
+      },
+      {
+        "age": 4,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "568080000",
+      "age": 38,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 78000,
+        "annualOvertime": 0,
+        "annualBonus": 6000,
+        "annualCommission": 6000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "662688000",
+      "age": 35,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 61000,
+        "annualOvertime": 0,
+        "annualBonus": 4000,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 2540,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 1450,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 90000,
+        "remainingTermYears": 15
+      }
+    ]
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 0,
+      "monthlyMortgagePayment": 1450,
+      "monthlyRent": 1100,
+      "currentBalance": 160000,
+      "remainingTermYears": 20,
+      "repaymentType": "capital_and_interest"
+    }
+  ]
+}

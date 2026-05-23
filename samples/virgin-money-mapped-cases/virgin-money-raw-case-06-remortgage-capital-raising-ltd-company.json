@@ -1,0 +1,95 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 90000,
+    "monthlyRepaymentPlanPremium": 900
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 650000,
+    "loanAmount": 365000,
+    "currentBalance": 310000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 12,
+        "relationship": "child"
+      },
+      {
+        "age": 9,
+        "relationship": "child"
+      },
+      {
+        "age": 1,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "504921600",
+      "age": 40,
+      "retirementAge": 70,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 90000,
+        "netProfitPreviousYear": 79000,
+        "annualGrossIncome": 18000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "maintenance",
+          "annualAmount": 3000
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "599616000",
+      "age": 37,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 54000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 500,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -72,6 +72,10 @@ export const lenderReadyInputSchema = z.object({
     sharedOwnershipOrEquity: z.boolean(),
     sharedOwnershipScheme: z.enum(["shared_ownership", "shared_equity"]).optional(),
     monthlySharedOwnershipRent: money.optional(),
+    sharedEquityCustomerStakePercent: z.number().finite().min(0).max(100).optional(),
+    monthlySharedEquityInterestPayment: money.optional(),
+    equityLoanBalance: money.optional(),
+    equityLoanInterestRatePercent: z.number().finite().nonnegative().optional(),
     hasInterestOnly: z.boolean(),
     interestOnlyLoanAmount: money.optional(),
     monthlyRepaymentPlanPremium: money.optional()

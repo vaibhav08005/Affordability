@@ -1,0 +1,66 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "ftb",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 420,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 180000,
+    "loanAmount": 155000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 2,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "725846400",
+      "age": 33,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 47000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 1352
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 515,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -8,6 +8,16 @@
     "samples": "npm run build && node scripts/run-samples.mjs",
     "api": "tsx src/server.ts",
     "attached:browser": "powershell -ExecutionPolicy Bypass -File scripts/start-attached-browser.ps1",
+    "map:halifax": "tsx src/map-halifax.ts input.yaml samples/halifax-mapped-from-input.json",
+    "map:halifax:cases": "npm run build && node scripts/map-halifax-raw-cases.mjs",
+    "map:barclays": "tsx src/map-barclays.ts input.yaml samples/barclays-mapped-from-input.json",
+    "map:barclays:cases": "npm run build && node scripts/map-barclays-raw-cases.mjs",
+    "map:skipton": "tsx src/map-skipton.ts input.yaml samples/skipton-mapped-from-input.json",
+    "map:skipton:cases": "npm run build && node scripts/map-skipton-raw-cases.mjs",
+    "map:virgin-money": "tsx src/map-virgin-money.ts input.yaml samples/virgin-money-mapped-from-input.json",
+    "map:virgin-money:cases": "npm run build && node scripts/map-virgin-money-raw-cases.mjs",
+    "map:hsbc": "tsx src/map-hsbc.ts input.yaml samples/hsbc-mapped-from-input.json",
+    "map:hsbc:cases": "npm run build && node scripts/map-hsbc-raw-cases.mjs",
     "start": "node dist/cli.js samples/halifax-input.json",
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
@@ -16,6 +26,7 @@
   "dependencies": {
     "express": "^4.19.2",
     "playwright": "^1.45.3",
+    "yaml": "^2.9.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -157,17 +157,23 @@ async function fillHalifaxCalculator(page: Page, input: LenderReadyInput): Promi
   await chooseRadioInGroupIfPresent(page, "Who is the customer?", customerTypeLabels[input.case.customerType]);
 
   await fillFirstAvailableCurrency(page, ["Property purchase price", "Property value"], input.loan.propertyValue);
-  await fillCurrency(page, "Loan amount", input.loan.loanAmount);
-  await page.getByLabel("Loan term (years)").fill(String(input.case.termYears));
+  await fillFirstAvailableCurrency(page, ["Loan amount", "Further advance amount"], input.loan.loanAmount);
+  await fillFirstAvailableText(page, ["Loan term (years)", "Further advance loan term (years)"], String(input.case.termYears));
 
   await chooseYesNo(page, "Is the mortgage part of a shared ownership / shared equity scheme?", input.case.sharedOwnershipOrEquity);
   if (input.case.sharedOwnershipOrEquity) {
+    const scheme = input.case.sharedOwnershipScheme ?? "shared_ownership";
     await chooseCustomListOption(
       page,
       "Scheme type",
-      sharedOwnershipSchemeLabels[input.case.sharedOwnershipScheme ?? "shared_ownership"]
+      sharedOwnershipSchemeLabels[scheme]
     );
-    await fillCurrency(page, "Monthly rent payable", input.case.monthlySharedOwnershipRent ?? 0);
+    if (scheme === "shared_ownership") {
+      await fillCurrency(page, "Monthly rent payable", input.case.monthlySharedOwnershipRent ?? 0);
+    } else {
+      await fillFirstAvailableText(page, ["Equity stake held by customer"], String(input.case.sharedEquityCustomerStakePercent ?? 100));
+      await fillCurrency(page, "Monthly interest payment", input.case.monthlySharedEquityInterestPayment ?? 0);
+    }
   }
 
   await chooseYesNo(page, "Is any of the loan interest-only?", input.case.hasInterestOnly);
@@ -193,11 +199,16 @@ async function fillHalifaxCalculator(page: Page, input: LenderReadyInput): Promi
   await fillCurrency(page, "Total outstanding overdraft balances", input.outgoings.overdraftBalances);
   await fillCurrency(page, "Total amount of other monthly outgoings", input.outgoings.otherMonthlyOutgoings);
   await fillCurrency(page, "Monthly Buy to Let mortgage payments", input.outgoings.monthlyBuyToLetPayments);
-  await chooseYesNo(page, "Do the applicants have any other properties owned other than Buy to Lets?", input.otherProperties.length > 0);
+  const hasResidentialMortgageCommitments = input.outgoings.otherMortgageCommitments.length > 0;
+  await chooseYesNo(
+    page,
+    "Do the applicants have any other properties owned other than Buy to Lets?",
+    input.otherProperties.length > 0 || hasResidentialMortgageCommitments
+  );
   await chooseYesNoIfPresent(
     page,
     "Do the applicants have any other mortgage commitments to remain?",
-    input.outgoings.otherMortgageCommitments.length > 0
+    hasResidentialMortgageCommitments
   );
   await fillOtherMortgageCommitments(page, input);
 }
@@ -430,6 +441,18 @@ async function fillFirstAvailableCurrency(page: Page, labels: string[], value: n
   }
 
   throw new Error(`Unable to find any currency field: ${labels.join(", ")}.`);
+}
+
+async function fillFirstAvailableText(page: Page, labels: string[], value: string): Promise<void> {
+  for (const label of labels) {
+    const field = page.getByLabel(label);
+    if (await field.count() === 1) {
+      await field.fill(value);
+      return;
+    }
+  }
+
+  throw new Error(`Unable to find any text field: ${labels.join(", ")}.`);
 }
 
 async function fillCurrencyNearText(scope: Page | Locator, text: string, value: number): Promise<void> {

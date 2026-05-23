@@ -1,0 +1,26 @@
+---
+var_journey: further_advance
+var_no_of_applicants: 1
+var_mortgage_type: further_advance
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 390000
+var_remo_remaining_balance: 210000
+var_equity_release_amount: 45000
+var_mortgage_term: 180
+var_property_details_address:
+  postcode: CB1 2JW
+  country: England
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 694224000
+var_appl1_retirement_age: 70
+var_appl1_employment_details_employment_type: contractor
+var_appl1_employment_details_contract_type: on_contract
+var_appl1_contract_details_rate_amount: 550
+var_appl1_contract_details_rate_frequency: daily
+var_appl1_recent_commission: 0
+var_appl1_credit_commitments:
+- type: loans
+  monthly_payment: 320
+  current_balance: 12000
+  include_afford: 'yes'

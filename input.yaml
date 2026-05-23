@@ -1,0 +1,493 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_case_type: aip
+var_residing_at_property: 
+var_mortgage_type: moving_home
+var_ltd_co_sic_details: 
+var_deposit_source_details:
+- source: savings
+  amount: 50000
+- source: incentive_builder
+  amount: 50000
+var_ownership_type: standard
+var_ownership_type_ftb: 
+var_htb_loan_amount: 
+var_shared_equity_loan_amount: 
+var_value_of_share: 
+var_repayment_type: principal_over_mortgage_term
+var_interest_only_amount: 
+var_property_value: 300000
+var_btl_rent_option: 
+var_rent_income: 
+var_mortgage_term: 240
+var_length_of_intro_period: '2'
+var_rate_type: fixed
+var_repay_vehicle_type: 
+var_repay_vehicle_value: 
+var_repay_vehicle_mthly_contribution: 
+var_current_lender: 
+var_remo_remaining_balance: 
+var_mthly_repay_amount: 
+var_new_repayment_type: 
+var_new_interest_only_amount: 
+var_new_mortgage_term: 
+var_remo_options: 
+var_pay_down_amount: 
+var_equity_release_amount: 
+var_property_details_address: 
+var_property_details_property_type: 
+var_property_details_description: 
+var_property_details_year_built: 
+var_property_details_construction_material: 
+var_property_details_kitchens: 
+var_property_details_bedrooms: 
+var_property_details_tenure: 
+var_property_details_special_condition: 
+var_property_occupancy_usage: 
+var_property_details_no_of_floors: 
+var_property_details_floor_no: 
+var_property_details_flat_lift_availibility: 
+var_property_details_flat_above_commercial: 
+var_property_details_commercial_info: 
+var_property_details_has_ews1_cert: 
+var_property_details_leasehold_term: 
+var_property_details_mthly_serv_charges: 
+var_property_details_mthly_grnd_rent: 
+var_property_details_mthly_bldg_ins: 
+var_property_details_mthly_council_tax: 
+var_add_borrow_details: 
+var_other_properties:
+- is_rental_property: 'yes'
+  address:
+    city: Belvedere
+    house: '23'
+    line1: 23 Kentish Road
+    line2: ''
+    county: Kent
+    country: England
+    postcode: DA17 5BW
+    manual_address: false
+  property_value: 200000
+  amount_borrowed: 
+  monthly_council_tax: 120
+  occupancy_status: let
+  current_rate: 
+  monthly_repayment: 900
+  monthly_rent: 1000
+  io_balance: 
+  mortgage_account_number: 
+  mortgage_status: 'yes'
+  repayment_type: principal_over_mortgage_term
+  current_lender: NatWest
+  current_balance: 50000
+  product_type: 
+  original_term: 
+  remaining_term: 240
+  deal_expiry: 
+  ownership_status: fully_owned
+- is_rental_property: 'no'
+  address:
+    city: Tunbridge Wells
+    house: '29'
+    line1: 29 Kentish Gardens
+    line2: ''
+    county: Kent
+    country: England
+    postcode: TN2 5XU
+    manual_address: false
+  property_value: 200000
+  amount_borrowed: 
+  monthly_council_tax: 120
+  occupancy_status: to_be_let
+  current_rate: 
+  monthly_repayment: 700
+  monthly_rent: 
+  io_balance: 
+  mortgage_account_number: 
+  mortgage_status: 'yes'
+  repayment_type: principal_over_mortgage_term
+  current_lender: Aldermore
+  current_balance: 70000
+  product_type: 
+  original_term: 
+  remaining_term: 216
+  deal_expiry: 
+  ownership_status: fully_co_applicant_owned
+- is_rental_property: 'no'
+  address:
+    city: Tunbridge Wells
+    house: '21'
+    line1: 21 Kentish Gardens
+    line2: ''
+    county: Kent
+    country: England
+    postcode: TN2 5XU
+    manual_address: false
+  property_value: 600000
+  amount_borrowed: 
+  monthly_council_tax: 120
+  occupancy_status: main_residence
+  current_rate: 
+  monthly_repayment: 
+  monthly_rent: 
+  io_balance: 
+  mortgage_account_number: 
+  mortgage_status: 'no'
+  repayment_type: principal_over_mortgage_term
+  current_lender: 
+  current_balance: 
+  product_type: 
+  original_term: 
+  remaining_term: 
+  deal_expiry: 
+  ownership_status: joint_co_applicant
+var_deposit: 100000
+var_appl1_property_count: 2
+var_appl2_property_count: 2
+var_ltdco_property_count: 0
+var_joint_property_count: 1
+var_intend_to_purchase_flat: 
+var_appl1_first_name: 
+var_appl1_last_name: 
+var_appl1_date_of_birth: 
+var_appl1_title: mr
+var_appl1_gender: 
+var_appl1_owner_occupier: 
+var_appl1_uk_residency_period: 
+var_appl1_sole_rel_status: 
+var_appl1_joint_rel_status: family
+var_appl1_dependents_details:
+- age: '3'
+  relationship: child
+  date_of_birth: 
+  relationship_other: 
+- age: '27'
+  relationship: other_family
+  date_of_birth: 
+  relationship_other: EX
+var_appl1_employment_details_on_maternity: 
+var_appl1_maternity_start_date: 
+var_appl1_maternity_end_date: 
+var_appl1_current_address_details_address:
+  city: Belvedere
+  house: '31'
+  line1: 31 Kentish Road
+  line2: ''
+  county: Kent
+  country: England
+  postcode: DA17 5BW
+  manual_address: false
+var_appl1_current_address_details_address_date: 1601510400
+var_appl1_current_address_details_occupant_type: home_owner
+var_appl1_current_address_details_occupant_type_ftb: 
+var_appl1_previous_address_details1_address: 
+var_appl1_previous_address_details1_address_date: 
+var_appl1_previous_address_details1_occupant_type_ftb: 
+var_appl1_previous_address_details1_occupant_type: 
+var_appl1_previous_address_details2_address: 
+var_appl1_previous_address_details2_address_date: 
+var_appl1_previous_address_details2_occupant_type_ftb: 
+var_appl1_previous_address_details2_occupant_type: 
+var_appl1_previous_address_details3_address: 
+var_appl1_previous_address_details3_address_date: 
+var_appl1_previous_address_details3_occupant_type_ftb: 
+var_appl1_previous_address_details3_occupant_type: 
+var_appl1_previous_address_details4_address: 
+var_appl1_previous_address_details4_address_date: 
+var_appl1_previous_address_details4_occupant_type_ftb: 
+var_appl1_previous_address_details4_occupant_type: 
+var_appl1_previous_address_details5_address: 
+var_appl1_previous_address_details5_address_date: 
+var_appl1_previous_address_details5_occupant_type_ftb: 
+var_appl1_previous_address_details5_occupant_type: 
+var_appl1_previous_address_details6_address: 
+var_appl1_previous_address_details6_address_date: 
+var_appl1_previous_address_details6_occupant_type_ftb: 
+var_appl1_previous_address_details6_occupant_type: 
+var_appl1_previous_address_details7_address: 
+var_appl1_previous_address_details7_address_date: 
+var_appl1_previous_address_details7_occupant_type_ftb: 
+var_appl1_previous_address_details7_occupant_type: 
+var_appl1_nationality_label: British
+var_appl1_nationality: british
+var_appl1_residency_status: 
+var_appl1_visa_end_date: 
+var_appl1_employer_visa_sponsor: 
+var_appl1_dir_partnr_curr_yr_salary: 
+var_appl1_is_same_address_history: 
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employment_details_is_ten_percent: 'no'
+var_appl1_employment_details_contract_type: 
+var_appl1_business_setup_type: 
+var_appl1_employed_company_details_ownership_percentage: 
+var_appl1_employed_permanent_temporary_start_date: 1577836800
+var_appl1_workperiodukmonths: 
+var_appl1_employment_change_expected: 'no'
+var_appl1_employment_details_contracting_period: 
+var_appl1_employment_details_contract_no_gaps_period: 
+var_appl1_employment_details_contract_gap_weeks: 
+var_appl1_contract_details_start_date: 
+var_appl1_contract_details_end_date: 
+var_appl1_contractor_company_percent_share: 
+var_appl1_contract_details_prev_contract_start_date: 
+var_appl1_contract_details_prev_contract_end_date: 
+var_appl1_business_start_date: 
+var_appl1_business_tax_evidence: 
+var_appl1_retirement_age: 70
+var_appl1_income_sterling: 'yes'
+var_appl1_gross_annual_salary: 70000
+var_appl1_recent_nongtd_bonus: 10000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 10000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_recent_commission: 1000
+var_appl1_recent_commission_frequency: annually
+var_appl1_recent_nursing_bank: 20
+var_appl1_recent_nursing_bank_frequency: quarterly
+var_appl1_recent_overtime: 30
+var_appl1_recent_overtime_frequency: fortnightly
+var_appl1_recent_additional_hours: 10
+var_appl1_recent_additional_hours_frequency: monthly
+var_appl1_recent_regular_allowance: 20
+var_appl1_recent_regular_allowance_frequency: monthly
+var_appl1_recent_other_allowance: 1000
+var_appl1_recent_other_allowance_frequency: annually
+var_appl1_recent_yr_nongtd_bonus_btl: 
+var_appl1_prev_yr_nongtd_bonus_btl: 
+var_appl1_other_employed_inc_btl: 
+var_appl1_take_home_pay: 6000
+var_appl1_contract_details_rate_amount: 
+var_appl1_contract_details_rate_frequency: 
+var_appl1_ir35_status: 
+var_appl1_business_salary: 
+var_appl1_business_curr_yr_dividends: 
+var_appl1_business_prev_yr_dividends: 
+var_appl1_business_curr_yr_net_profit: 
+var_appl1_business_prev_yr_net_profit: 
+var_appl1_business_curr_yr_share_profit: 
+var_appl1_business_prev_yr_share_profit: 
+var_appl1_st_curr_yr_profit: 
+var_appl1_st_prev_yr_profit: 
+var_appl1_other_se_income: 
+var_appl1_contract_salary: 
+var_appl1_mthly_pension: 
+var_appl1_land_curr_profit: 1000
+var_appl1_land_prev_profit: 1000
+var_appl1_child_benefits_amt: 1000
+var_appl1_child_benefits_frequency: annually
+var_appl1_child_tax_credits: 100
+var_appl1_child_tax_credits_frequency: quarterly
+var_appl1_employment_and_support_allowance: 100
+var_appl1_employment_and_support_allowance_frequency: monthly
+var_appl1_personal_independence_payment: 1000
+var_appl1_personal_independence_payment_frequency: fortnightly
+var_appl1_disability_living_allowance: 20
+var_appl1_disability_living_allowance_frequency: fortnightly
+var_appl1_carers_allowance: 30
+var_appl1_carers_allowance_frequency: every_4_weeks
+var_appl1_income_support: 2000
+var_appl1_income_support_frequency: annually
+var_appl1_other_state_benefits: 100
+var_appl1_other_state_benefits_frequency: annually
+var_appl1_mthly_maint_amt: 3000
+var_appl1_outgoings_food_clothing: 489
+var_appl1_outgoings_transport_travel: 300
+var_appl1_outgoings_utilities: 337
+var_appl1_outgoings_household_goods_services: 511
+var_appl1_outgoings_entertainment: 372
+var_appl1_outgoings_phone_internet: 104
+var_appl1_outgoings_holidays: 248
+var_appl1_outgoings_miscellaneous_spends: 33
+var_appl1_outgoings_nursery_school_fee: 0
+var_appl1_outgoings_childcare_cost: 0
+var_appl1_outgoings_pension_contribution: 200
+var_appl1_outgoings_investments: 300
+var_appl1_outgoings_other_committed_exp: 0
+var_appl1_outgoings_rental_payment: 
+var_appl1_outgoings_maintenance_payment: 0
+var_appl1_credit_commitments:
+- type: cards
+  provider: TSB
+  end_date: 1885507200
+  monthly_payment: 400
+  current_balance: 10000
+  include_afford: 'yes'
+var_appl1_is_name_changed: 'no'
+var_appl1_prev_title: 
+var_appl1_prev_first_name: 
+var_appl1_prev_last_name: 
+var_appl1_email_id: 
+var_appl1_contact_number: 
+var_appl1_employer_name: ABC
+var_appl1_latest_yr_turnover: 
+var_appl1_latest_yr_gross_profit: 
+var_appl1_latest_yr_curr_assets: 
+var_appl1_latest_yr_curr_liabilities: 
+var_appl1_prev_yr_turnover: 
+var_appl1_prev_yr_gross_profit: 
+var_appl1_prev_yr_curr_assets: 
+var_appl1_prev_yr_curr_liabilities: 
+var_appl1_is_halifax_bank_account: 
+var_appl2_first_name: 
+var_appl2_last_name: 
+var_appl2_date_of_birth: 
+var_appl2_title: 
+var_appl2_gender: 
+var_appl2_owner_occupier: 
+var_appl2_uk_residency_period: 
+var_appl2_sole_rel_status: 
+var_appl2_joint_rel_status: 
+var_appl2_dependents_details: 
+var_appl2_employment_details_on_maternity: 
+var_appl2_maternity_start_date: 
+var_appl2_maternity_end_date: 
+var_appl2_current_address_details_address: 
+var_appl2_current_address_details_address_date: 
+var_appl2_current_address_details_occupant_type: 
+var_appl2_current_address_details_occupant_type_ftb: 
+var_appl2_previous_address_details1_address: 
+var_appl2_previous_address_details1_address_date: 
+var_appl2_previous_address_details1_occupant_type_ftb: 
+var_appl2_previous_address_details1_occupant_type: 
+var_appl2_previous_address_details2_address: 
+var_appl2_previous_address_details2_address_date: 
+var_appl2_previous_address_details2_occupant_type_ftb: 
+var_appl2_previous_address_details2_occupant_type: 
+var_appl2_previous_address_details3_address: 
+var_appl2_previous_address_details3_address_date: 
+var_appl2_previous_address_details3_occupant_type_ftb: 
+var_appl2_previous_address_details3_occupant_type: 
+var_appl2_previous_address_details4_address: 
+var_appl2_previous_address_details4_address_date: 
+var_appl2_previous_address_details4_occupant_type_ftb: 
+var_appl2_previous_address_details4_occupant_type: 
+var_appl2_previous_address_details5_address: 
+var_appl2_previous_address_details5_address_date: 
+var_appl2_previous_address_details5_occupant_type_ftb: 
+var_appl2_previous_address_details5_occupant_type: 
+var_appl2_previous_address_details6_address: 
+var_appl2_previous_address_details6_address_date: 
+var_appl2_previous_address_details6_occupant_type_ftb: 
+var_appl2_previous_address_details6_occupant_type: 
+var_appl2_previous_address_details7_address: 
+var_appl2_previous_address_details7_address_date: 
+var_appl2_previous_address_details7_occupant_type_ftb: 
+var_appl2_previous_address_details7_occupant_type: 
+var_appl2_nationality_label: India
+var_appl2_nationality: india
+var_appl2_residency_status: indefinite_leave_to_remain
+var_appl2_visa_end_date: 
+var_appl2_employer_visa_sponsor: 
+var_appl2_dir_partnr_curr_yr_salary: 
+var_appl2_is_same_address_history: 'yes'
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_employment_details_is_ten_percent: 'no'
+var_appl2_employment_details_contract_type: 
+var_appl2_business_setup_type: 
+var_appl2_employed_company_details_ownership_percentage: 
+var_appl2_employed_permanent_temporary_start_date: 1577836800
+var_appl2_workperiodukmonths: 1577836800
+var_appl2_employment_change_expected: 'no'
+var_appl2_employment_details_contracting_period: 
+var_appl2_employment_details_contract_no_gaps_period: 
+var_appl2_employment_details_contract_gap_weeks: 
+var_appl2_contract_details_start_date: 
+var_appl2_contract_details_end_date: 
+var_appl2_contractor_company_percent_share: 
+var_appl2_contract_details_prev_contract_start_date: 
+var_appl2_contract_details_prev_contract_end_date: 
+var_appl2_business_start_date: 
+var_appl2_business_tax_evidence: 
+var_appl2_retirement_age: 70
+var_appl2_income_sterling: 'yes'
+var_appl2_gross_annual_salary: 60000
+var_appl2_recent_nongtd_bonus: 
+var_appl2_recent_nongtd_bonus_frequency: 
+var_appl2_prev_nongtd_bonus: 
+var_appl2_prev_nongtd_bonus_frequency: 
+var_appl2_recent_commission: 
+var_appl2_recent_commission_frequency: 
+var_appl2_recent_nursing_bank: 
+var_appl2_recent_nursing_bank_frequency: 
+var_appl2_recent_overtime: 
+var_appl2_recent_overtime_frequency: 
+var_appl2_recent_additional_hours: 
+var_appl2_recent_additional_hours_frequency: 
+var_appl2_recent_regular_allowance: 
+var_appl2_recent_regular_allowance_frequency: 
+var_appl2_recent_other_allowance: 
+var_appl2_recent_other_allowance_frequency: 
+var_appl2_recent_yr_nongtd_bonus_btl: 
+var_appl2_prev_yr_nongtd_bonus_btl: 
+var_appl2_other_employed_inc_btl: 
+var_appl2_take_home_pay: 5000
+var_appl2_contract_details_rate_amount: 
+var_appl2_contract_details_rate_frequency: 
+var_appl2_ir35_status: 
+var_appl2_business_salary: 
+var_appl2_business_curr_yr_dividends: 
+var_appl2_business_prev_yr_dividends: 
+var_appl2_business_curr_yr_net_profit: 
+var_appl2_business_prev_yr_net_profit: 
+var_appl2_business_curr_yr_share_profit: 
+var_appl2_business_prev_yr_share_profit: 
+var_appl2_st_curr_yr_profit: 
+var_appl2_st_prev_yr_profit: 
+var_appl2_other_se_income: 
+var_appl2_contract_salary: 
+var_appl2_mthly_pension: 
+var_appl2_land_curr_profit: 0
+var_appl2_land_prev_profit: 0
+var_appl2_child_benefits_amt: 
+var_appl2_child_benefits_frequency: 
+var_appl2_child_tax_credits: 
+var_appl2_child_tax_credits_frequency: 
+var_appl2_employment_and_support_allowance: 
+var_appl2_employment_and_support_allowance_frequency: 
+var_appl2_personal_independence_payment: 
+var_appl2_personal_independence_payment_frequency: 
+var_appl2_disability_living_allowance: 
+var_appl2_disability_living_allowance_frequency: 
+var_appl2_carers_allowance: 
+var_appl2_carers_allowance_frequency: 
+var_appl2_income_support: 
+var_appl2_income_support_frequency: 
+var_appl2_other_state_benefits: 
+var_appl2_other_state_benefits_frequency: 
+var_appl2_mthly_maint_amt: 0
+var_appl2_outgoings_food_clothing: 239
+var_appl2_outgoings_transport_travel: 159
+var_appl2_outgoings_utilities: 188
+var_appl2_outgoings_household_goods_services: 205
+var_appl2_outgoings_entertainment: 208
+var_appl2_outgoings_phone_internet: 53
+var_appl2_outgoings_holidays: 95
+var_appl2_outgoings_miscellaneous_spends: 33
+var_appl2_outgoings_nursery_school_fee: 
+var_appl2_outgoings_childcare_cost: 
+var_appl2_outgoings_pension_contribution: 200
+var_appl2_outgoings_investments: 300
+var_appl2_outgoings_other_committed_exp: 0
+var_appl2_outgoings_rental_payment: 
+var_appl2_outgoings_maintenance_payment: 0
+var_appl2_credit_commitments: 
+var_appl2_is_name_changed: 'no'
+var_appl2_prev_title: 
+var_appl2_prev_first_name: 
+var_appl2_prev_last_name: 
+var_appl2_email_id: 
+var_appl2_contact_number: 
+var_appl2_employer_name: ABC
+var_appl2_latest_yr_turnover: 
+var_appl2_latest_yr_gross_profit: 
+var_appl2_latest_yr_curr_assets: 
+var_appl2_latest_yr_curr_liabilities: 
+var_appl2_prev_yr_turnover: 
+var_appl2_prev_yr_gross_profit: 
+var_appl2_prev_yr_curr_assets: 
+var_appl2_prev_yr_curr_liabilities: 
+var_appl2_is_halifax_bank_account: 
+

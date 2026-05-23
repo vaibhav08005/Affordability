@@ -1,0 +1,66 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "hm",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 340000,
+    "loanAmount": 280000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "347155200",
+      "age": 45,
+      "retirementAge": 75,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 60500,
+        "netProfitPreviousYear": 57000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 4200,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 6000
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 1440
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 210,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -1,0 +1,47 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 720000
+var_deposit: 180000
+var_mortgage_term: 360
+var_property_details_address:
+  postcode: W1A 1AA
+  country: England
+var_property_details_tenure: freehold
+var_other_properties:
+- is_rental_property: 'no'
+  occupancy_status: second_home
+  mortgage_status: 'yes'
+  monthly_repayment: 950
+  current_balance: 125000
+  remaining_term: 192
+var_appl1_joint_rel_status: family
+var_appl1_date_of_birth: 441763200
+var_appl1_retirement_age: 72
+var_appl1_dependents_details:
+- age: '16'
+  relationship: child
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: partnership
+var_appl1_business_salary: 12000
+var_appl1_business_curr_yr_share_profit: 88000
+var_appl1_business_prev_yr_share_profit: 81000
+var_appl1_credit_commitments:
+- type: student_loans
+  monthly_payment: 180
+  current_balance: 14000
+  include_afford: 'yes'
+var_appl2_date_of_birth: 473385600
+var_appl2_retirement_age: 72
+var_appl2_employment_details_employment_type: self_employed
+var_appl2_business_setup_type: llp
+var_appl2_business_curr_yr_share_profit: 76000
+var_appl2_business_prev_yr_share_profit: 69000
+var_appl2_credit_commitments:
+- type: cards
+  monthly_payment: 100
+  current_balance: 5000
+  include_afford: 'yes'

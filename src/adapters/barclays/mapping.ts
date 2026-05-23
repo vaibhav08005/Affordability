@@ -13,3 +13,10 @@ export const employmentStatusLabels = {
   pension: "Non-employed or retired",
   other: "Non-employed or retired"
 } as const;
+
+export const selfEmploymentTypeLabels = {
+  sole_trader: "Sole Trader",
+  partnership: "Partnership",
+  llp: "Equity Partner in an LLP",
+  limited_company: "Company director (20% ownership or more in a Ltd. Co)"
+} as const;

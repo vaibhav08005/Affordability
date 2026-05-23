@@ -1,0 +1,55 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "further_advance",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "further_advance",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 390000,
+    "loanAmount": 45000,
+    "currentBalance": 210000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "694224000",
+      "age": 34,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": true,
+        "annualGrossIncome": 126500,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 320,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

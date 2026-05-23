@@ -63,6 +63,10 @@ export interface LenderReadyInput {
     sharedOwnershipOrEquity: boolean;
     sharedOwnershipScheme?: SharedOwnershipScheme;
     monthlySharedOwnershipRent?: number;
+    sharedEquityCustomerStakePercent?: number;
+    monthlySharedEquityInterestPayment?: number;
+    equityLoanBalance?: number;
+    equityLoanInterestRatePercent?: number;
     hasInterestOnly: boolean;
     interestOnlyLoanAmount?: number;
     monthlyRepaymentPlanPremium?: number;

@@ -1,0 +1,28 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: interest_only
+var_property_value: 310000
+var_remo_remaining_balance: 90000
+var_mortgage_term: 120
+var_repay_vehicle_type: main_residence
+var_property_details_address:
+  postcode: G12 8QQ
+  country: Scotland
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 157766400
+var_appl1_retirement_age: 80
+var_appl1_employment_details_employment_type: retired
+var_appl1_mthly_pension: 2800
+var_appl1_child_tax_credits: 0
+var_appl1_credit_commitments:
+- type: overdrafts
+  monthly_payment: 0
+  current_balance: 800
+  include_afford: 'yes'
+- type: cards
+  monthly_payment: 160
+  current_balance: 3400
+  include_afford: 'yes'
