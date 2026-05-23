@@ -1,0 +1,84 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_equity",
+    "sharedEquityCustomerStakePercent": 85,
+    "monthlySharedEquityInterestPayment": 0,
+    "equityLoanBalance": 78000,
+    "equityLoanInterestRatePercent": 0,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 90000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 520000,
+    "loanAmount": 289000,
+    "currentBalance": 260000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 8,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "599616000",
+      "age": 37,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 76000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 4500,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "631152000",
+      "age": 36,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 44000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

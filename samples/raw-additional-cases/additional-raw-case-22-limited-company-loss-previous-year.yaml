@@ -1,0 +1,23 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 700000
+var_remo_remaining_balance: 330000
+var_equity_release_amount: 0
+var_mortgage_term: 240
+var_property_details_address: { postcode: W1U 8EW }
+var_property_details_tenure: leasehold
+var_appl1_date_of_birth: 441763200
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: limited_company
+var_appl1_employed_company_details_ownership_percentage: 75
+var_appl1_business_start_date: 1420070400
+var_appl1_business_salary: 36000
+var_appl1_business_curr_yr_dividends: 42000
+var_appl1_business_prev_yr_dividends: 0
+var_appl1_business_curr_yr_net_profit: 58000
+var_appl1_business_prev_yr_net_profit: -12000
+var_appl1_retirement_age: 70

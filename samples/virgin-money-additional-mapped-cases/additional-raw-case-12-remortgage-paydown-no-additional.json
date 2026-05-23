@@ -1,0 +1,57 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 18,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 390000,
+    "loanAmount": 185000,
+    "currentBalance": 220000,
+    "monthlyRepayment": 1030,
+    "currentLender": "Nationwide"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "536457600",
+      "age": 39,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 58000,
+        "annualOvertime": 2400,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 1200,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

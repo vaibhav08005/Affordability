@@ -1,0 +1,71 @@
+{
+  "lender": "halifax",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "leasehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 410000,
+    "loanAmount": 310000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "504921600",
+      "age": 40,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 69000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "536457600",
+      "age": 39,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 39000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 260,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

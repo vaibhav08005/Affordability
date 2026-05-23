@@ -1,0 +1,80 @@
+{
+  "lender": "hsbc",
+  "case": {
+    "journey": "hm",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 185000,
+    "loanAmount": 120000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 4,
+        "relationship": "child"
+      },
+      {
+        "age": 10,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "725846400",
+      "age": 33,
+      "retirementAge": 70,
+      "employment": {
+        "type": "other",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 1920
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 2520
+        },
+        {
+          "type": "universal_credit",
+          "annualAmount": 7800
+        },
+        {
+          "type": "maintenance",
+          "annualAmount": 6000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 360,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

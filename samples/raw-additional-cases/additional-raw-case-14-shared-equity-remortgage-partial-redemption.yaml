@@ -1,0 +1,28 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 2
+var_mortgage_type: resi
+var_ownership_type: htb
+var_repayment_type: part_and_part
+var_new_interest_only_amount: 90000
+var_property_value: 520000
+var_htb_loan_amount: 78000
+var_remo_remaining_balance: 260000
+var_pay_down_amount: 10000
+var_equity_release_amount: 39000
+var_add_borrow_details: help_to_buy_partial_repayment
+var_mortgage_term: 300
+var_property_details_address: { postcode: M20 2LT }
+var_property_details_tenure: leasehold
+var_property_details_mthly_serv_charges: 90
+var_appl1_date_of_birth: 599616000
+var_appl1_joint_rel_status: spouse
+var_appl1_dependents_details:
+  - { age: 8, relationship: child }
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 76000
+var_appl1_recent_commission: 4500
+var_appl1_recent_commission_frequency: annually
+var_appl2_date_of_birth: 631152000
+var_appl2_employment_details_employment_type: employed
+var_appl2_gross_annual_salary: 44000

@@ -1,0 +1,29 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 390000
+var_remo_remaining_balance: 220000
+var_pay_down_amount: 35000
+var_equity_release_amount: 0
+var_mortgage_term: 216
+var_current_lender: Nationwide
+var_mthly_repay_amount: 1030
+var_property_details_address: { postcode: YO1 7PR }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 536457600
+var_appl1_current_address_details_occupant_type: home_owner
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employed_company_details_ownership_percentage: 0
+var_appl1_retirement_age: 67
+var_appl1_gross_annual_salary: 58000
+var_appl1_recent_overtime: 200
+var_appl1_recent_overtime_frequency: monthly
+var_appl1_credit_commitments:
+  - type: overdraft
+    current_balance: 1200
+    monthly_payment: 0
+    include_afford: "yes"

@@ -1,0 +1,55 @@
+{
+  "lender": "hsbc",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_capital_raising",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 275000,
+    "loanAmount": 170000,
+    "currentBalance": 150000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "662688000",
+      "age": 35,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 51000,
+        "annualOvertime": 1800,
+        "annualBonus": 4000,
+        "annualCommission": 2200,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 115,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

@@ -1,0 +1,73 @@
+{
+  "lender": "barclays",
+  "case": {
+    "journey": "further_advance",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "further_advance",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 15,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "outright_or_absolute_ownership",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 610000,
+    "loanAmount": 55000,
+    "currentBalance": 180000,
+    "currentLender": "HSBC"
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "220924800",
+      "age": 49,
+      "retirementAge": 66,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 37200,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "536457600",
+      "age": 39,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 52000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

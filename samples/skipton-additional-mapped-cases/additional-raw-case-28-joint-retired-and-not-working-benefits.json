@@ -1,0 +1,87 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "interest_only",
+    "termYears": 10,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 115000,
+    "monthlyRepaymentPlanPremium": 0
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 340000,
+    "loanAmount": 115000,
+    "currentBalance": 115000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "126230400",
+      "age": 52,
+      "retirementAge": 65,
+      "employment": {
+        "type": "pension",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 28800,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "220924800",
+      "age": 49,
+      "retirementAge": 65,
+      "employment": {
+        "type": "other",
+        "isContractor": false,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 6960
+        },
+        {
+          "type": "disability_living_allowance",
+          "annualAmount": 3840
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 2520
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

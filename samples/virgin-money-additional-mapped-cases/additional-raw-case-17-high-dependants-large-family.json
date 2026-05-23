@@ -1,0 +1,112 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 360000,
+    "loanAmount": 270000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 1,
+        "relationship": "child"
+      },
+      {
+        "age": 3,
+        "relationship": "child"
+      },
+      {
+        "age": 5,
+        "relationship": "child"
+      },
+      {
+        "age": 7,
+        "relationship": "child"
+      },
+      {
+        "age": 9,
+        "relationship": "child"
+      },
+      {
+        "age": 11,
+        "relationship": "child"
+      },
+      {
+        "age": 13,
+        "relationship": "child"
+      },
+      {
+        "age": 15,
+        "relationship": "child"
+      },
+      {
+        "age": 19,
+        "relationship": "other_family"
+      },
+      {
+        "age": 76,
+        "relationship": "parent"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "473385600",
+      "age": 41,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 88000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "504921600",
+      "age": 40,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 36000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 1300,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

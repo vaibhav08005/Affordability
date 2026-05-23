@@ -1,0 +1,28 @@
+---
+var_journey: further_advance
+var_no_of_applicants: 2
+var_mortgage_type: further_advance
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 610000
+var_remo_remaining_balance: 180000
+var_equity_release_amount: 55000
+var_mortgage_term: 180
+var_current_lender: HSBC
+var_property_details_address: { postcode: GU1 3QT }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 220924800
+var_appl1_joint_rel_status: spouse
+var_appl1_employment_details_employment_type: retired
+var_appl1_mthly_pension: 3100
+var_appl1_retirement_age: 66
+var_appl2_date_of_birth: 536457600
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 52000
+var_appl2_retirement_age: 67
+var_appl2_credit_commitments:
+  - type: personal_loans
+    current_balance: 7800
+    monthly_payment: 260
+    include_afford: "yes"

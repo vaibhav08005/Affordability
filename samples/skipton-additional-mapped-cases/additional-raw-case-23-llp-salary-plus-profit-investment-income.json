@@ -1,0 +1,59 @@
+{
+  "lender": "skipton",
+  "case": {
+    "journey": "hm",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "part_and_part",
+    "termYears": 25,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 110000,
+    "monthlyRepaymentPlanPremium": 450
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 560000,
+    "loanAmount": 405000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "473385600",
+      "age": 41,
+      "retirementAge": 68,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "llp",
+        "netProfitCurrentYear": 58000,
+        "netProfitPreviousYear": 55000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

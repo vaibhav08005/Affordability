@@ -1,0 +1,31 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 360000
+var_deposit: 90000
+var_mortgage_term: 300
+var_property_details_address: { postcode: PE1 1XH }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 473385600
+var_appl1_joint_rel_status: spouse
+var_appl1_dependents_details:
+  - { age: 1, relationship: child }
+  - { age: 3, relationship: child }
+  - { age: 5, relationship: child }
+  - { age: 7, relationship: child }
+  - { age: 9, relationship: child }
+  - { age: 11, relationship: child }
+  - { age: 13, relationship: child }
+  - { age: 15, relationship: child }
+  - { age: 19, relationship: other_family }
+  - { age: 76, relationship: parent }
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 88000
+var_appl2_date_of_birth: 504921600
+var_appl2_employment_details_employment_type: employed
+var_appl2_gross_annual_salary: 36000
+var_appl1_outgoings_childcare_cost: 900
+var_appl1_outgoings_nursery_school_fee: 400

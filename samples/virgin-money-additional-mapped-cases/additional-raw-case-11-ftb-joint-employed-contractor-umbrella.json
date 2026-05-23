@@ -1,0 +1,76 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "ftb",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 425000,
+    "loanAmount": 340000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "631152000",
+      "age": 36,
+      "retirementAge": 68,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 75000,
+        "annualOvertime": 0,
+        "annualBonus": 5000,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "town_area_or_car_allowance",
+          "annualAmount": 3000
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "694224000",
+      "age": 34,
+      "retirementAge": 70,
+      "employment": {
+        "type": "other",
+        "isContractor": true,
+        "annualGrossIncome": 71600,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 3600,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 275,
+    "creditCardBalances": 3200,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

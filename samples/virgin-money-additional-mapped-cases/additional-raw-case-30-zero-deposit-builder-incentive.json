@@ -1,0 +1,54 @@
+{
+  "lender": "virgin_money",
+  "case": {
+    "journey": "ftb",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "purchase",
+    "customerType": "first_time_buyer",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 250000,
+    "loanAmount": 250000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "757382400",
+      "age": 32,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 43000,
+        "annualOvertime": 0,
+        "annualBonus": 1200,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

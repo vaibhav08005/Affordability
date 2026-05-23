@@ -1,0 +1,24 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 275000
+var_remo_remaining_balance: 150000
+var_equity_release_amount: 20000
+var_mortgage_term: 240
+var_property_details_address: { postcode: BT1 5GS }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 662688000
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 51000
+var_appl1_recent_overtime: 150
+var_appl1_recent_overtime_frequency: monthly
+var_appl1_recent_commission: 2200
+var_appl1_recent_commission_frequency: annually
+var_appl1_credit_commitments:
+  - type: student_loan
+    current_balance: 12000
+    monthly_payment: 115
+    include_afford: "yes"

@@ -1,0 +1,24 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: shared_ownership
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 420000
+var_value_of_share: 210000
+var_remo_remaining_balance: 118000
+var_equity_release_amount: 62000
+var_add_borrow_details: shared_ownership_additional_share
+var_rent_income: 410
+var_mortgage_term: 300
+var_property_details_address: { postcode: E15 1AZ }
+var_property_details_tenure: leasehold
+var_property_details_mthly_serv_charges: 155
+var_property_details_mthly_grnd_rent: 20
+var_appl1_date_of_birth: 662688000
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 64000
+var_appl1_recent_other_allowance: 1800
+var_appl1_recent_other_allowance_frequency: annually
+var_appl1_retirement_age: 70
