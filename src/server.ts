@@ -5,12 +5,13 @@ import path from "node:path";
 import { loadRunContext } from "./config.js";
 import { runAffordabilityAutomation } from "./service.js";
 import type { AffordabilityResult, LenderId, LenderReadyInput, RunStatus } from "./domain/contracts.js";
+import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
 
 const app = express();
 const rootDir = process.cwd();
 const samplesDir = path.join(rootDir, "samples", "halifax-mapped-cases");
 const publicDir = path.join(rootDir, "public");
-const runResults = new Map<string, AffordabilityResult>();
+const runRepository = new InMemoryRunRepository();
 type MappedLender = "barclays" | "halifax" | "hsbc" | "skipton" | "virgin_money";
 const mappedLenders: MappedLender[] = ["barclays", "halifax", "hsbc", "skipton", "virgin_money"];
 const lenderSampleFolders: Record<MappedLender, string[]> = {
@@ -76,12 +77,12 @@ app.post("/runs", async (request, response) => {
   const runId = randomUUID();
   try {
     const result = await runAffordabilityAutomation(request.body, loadRunContext());
-    rememberRunResult(request.body, result);
+    await rememberRunResult(request.body, result);
     response.status(result.status === "success" ? 200 : 422).json({ runId, result });
   } catch (error) {
     const lender = isLenderId(request.body?.lender) ? request.body.lender : "halifax";
     const result = failedResult(lender, error instanceof Error ? error.message : String(error));
-    rememberRunResult(request.body, result);
+    await rememberRunResult(request.body, result);
     response.status(400).json({
       runId,
       result
@@ -153,8 +154,8 @@ async function loadCaseDetails(caseId: string) {
     mappedLenders.map<Promise<LenderRunView>>(async (lender) => {
       const sample = await loadMappedSampleForCase(caseId, lender);
       const result =
-        runResults.get(runResultKey(caseId, lender)) ??
-        (sample ? runResults.get(runResultKey(caseIdFromInput(sample.input), lender)) : undefined);
+        (await runRepository.getLenderResult(caseId, lender)) ??
+        (sample ? await runRepository.getLenderResult(caseIdFromInput(sample.input), lender) : undefined);
 
       return {
         lender,
@@ -216,19 +217,19 @@ async function runMappedLenderForCase(caseId: string, lender: MappedLender): Pro
   const sample = await loadMappedSampleForCase(caseId, lender);
   if (!sample) {
     const result = failedResult(lender, "No mapped input found for this lender and case.");
-    rememberCaseRunResult(caseId, result);
+    await rememberCaseRunResult(caseId, result);
     return toLenderRunView(result);
   }
 
   try {
     const result = await runAffordabilityAutomation(sample.input, loadRunContext());
-    rememberRunResult(sample.input, result);
-    rememberCaseRunResult(caseId, result);
+    await rememberRunResult(sample.input, result);
+    await rememberCaseRunResult(caseId, result);
     return toLenderRunView(result);
   } catch (error) {
     const result = failedResult(lender, error instanceof Error ? error.message : String(error));
-    rememberRunResult(sample.input, result);
-    rememberCaseRunResult(caseId, result);
+    await rememberRunResult(sample.input, result);
+    await rememberCaseRunResult(caseId, result);
     return toLenderRunView(result);
   }
 }
@@ -299,17 +300,17 @@ function dedupeLenderCases() {
   };
 }
 
-function rememberRunResult(value: unknown, result: AffordabilityResult): void {
+async function rememberRunResult(value: unknown, result: AffordabilityResult): Promise<void> {
   if (!isLenderReadyInput(value as Partial<LenderReadyInput>)) {
     return;
   }
 
   const input = value as LenderReadyInput;
-  runResults.set(runResultKey(caseIdFromInput(input), result.lender), result);
+  await runRepository.saveLenderResult(caseIdFromInput(input), result);
 }
 
-function rememberCaseRunResult(caseId: string, result: AffordabilityResult): void {
-  runResults.set(runResultKey(caseId, result.lender), result);
+async function rememberCaseRunResult(caseId: string, result: AffordabilityResult): Promise<void> {
+  await runRepository.saveLenderResult(caseId, result);
 }
 
 function failedResult(lender: LenderId, message: string): AffordabilityResult {
@@ -378,10 +379,6 @@ function titleFromCaseId(caseId: string): string {
     .filter(Boolean)
     .map((part) => (part.match(/^\d+$/) ? part : part[0].toUpperCase() + part.slice(1)))
     .join(" ");
-}
-
-function runResultKey(caseId: string, lender: LenderId): string {
-  return `${caseId}:${lender}`;
 }
 
 function humanize(value: string): string {

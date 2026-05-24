@@ -187,17 +187,26 @@ The endpoint responds after all five lenders complete or fail.
 
 ## Result Storage
 
-Run results are stored in memory only:
+Run results are accessed through a repository interface:
 
 ```text
-const runResults = new Map<string, AffordabilityResult>();
+src/repositories/run-repository.ts
 ```
+
+The current implementation is `InMemoryRunRepository`, which keeps results in memory. This gives the server a clean storage boundary now and allows a Firestore implementation to be added later without rewriting the interface routes.
 
 This means:
 
 - Results are visible while the server process is running.
 - Results disappear when the server restarts.
-- There is no database or persisted run history.
+- There is no database or persisted run history yet.
+
+Future Firestore implementation should keep the same repository contract:
+
+```text
+getLenderResult(caseId, lender)
+saveLenderResult(caseId, result)
+```
 
 ## Timeout Behavior
 
