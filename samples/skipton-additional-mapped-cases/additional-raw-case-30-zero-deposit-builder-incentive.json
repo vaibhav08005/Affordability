@@ -18,7 +18,7 @@
   },
   "loan": {
     "propertyValue": 250000,
-    "loanAmount": 250000
+    "loanAmount": 200000
   },
   "household": {
     "dependants": []

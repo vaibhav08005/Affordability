@@ -46,7 +46,7 @@ export function mapVirginMoneyRawInput(raw: RawRecord): VirginMoneyRawMappingRes
   const mortgagePurpose = mapMortgagePurpose(raw);
   const repaymentType = mapRepaymentType(raw.var_new_repayment_type ?? raw.var_repayment_type);
   const propertyValue = mapPropertyValue(raw, mortgagePurpose);
-  const deposit = rawNumber(raw.var_deposit, sumDepositSources(raw));
+  const deposit = mapDeposit(raw);
   const loanAmount = mapLoanAmount(raw, mortgagePurpose, propertyValue, deposit);
   const applicants = buildApplicants(raw, numberOfApplicants, issues);
   const postcode = propertyPostcode(raw);
@@ -552,6 +552,12 @@ function sumApplicantNumbers(raw: RawRecord, suffix: string): number {
 
 function sumDepositSources(raw: RawRecord): number {
   return rawArray(raw.var_deposit_source_details).reduce<number>((sum, item) => sum + rawNumber((item as RawRecord).amount, 0), 0);
+}
+
+function mapDeposit(raw: RawRecord): number {
+  const explicitDeposit = rawNumber(raw.var_deposit, 0);
+  const sourceDeposit = sumDepositSources(raw);
+  return explicitDeposit > 0 ? explicitDeposit : sourceDeposit;
 }
 
 function propertyPostcode(raw: RawRecord): string {

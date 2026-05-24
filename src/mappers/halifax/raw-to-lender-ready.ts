@@ -46,7 +46,7 @@ export function mapHalifaxRawInput(raw: RawRecord): HalifaxRawMappingResult {
   const mortgagePurpose = mapMortgagePurpose(raw);
   const repaymentType = mapRepaymentType(raw.var_new_repayment_type ?? raw.var_repayment_type);
   const propertyValue = mapPropertyValue(raw, mortgagePurpose);
-  const deposit = rawNumber(raw.var_deposit, sumDepositSources(raw));
+  const deposit = mapDeposit(raw);
   const loanAmount = mapLoanAmount(raw, mortgagePurpose, propertyValue, deposit);
   const termYears = monthsToYears(rawNumber(raw.var_new_mortgage_term ?? raw.var_mortgage_term, 300));
   const sharedOwnershipOrEquity = mapSharedOwnershipFlag(raw);
@@ -488,6 +488,12 @@ function sumApplicantNumbers(raw: RawRecord, suffix: string): number {
 
 function sumDepositSources(raw: RawRecord): number {
   return rawArray(raw.var_deposit_source_details).reduce<number>((sum, item) => sum + rawNumber((item as RawRecord).amount, 0), 0);
+}
+
+function mapDeposit(raw: RawRecord): number {
+  const explicitDeposit = rawNumber(raw.var_deposit, 0);
+  const sourceDeposit = sumDepositSources(raw);
+  return explicitDeposit > 0 ? explicitDeposit : sourceDeposit;
 }
 
 function propertyPostcode(raw: RawRecord): string {
