@@ -53,6 +53,13 @@
         white-space: nowrap;
       }
 
+      .input-link {
+        color: #2563eb;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
       .run-button:disabled {
         background: #9aa5b1;
         cursor: wait;
@@ -117,6 +124,10 @@
         background: #c2410c;
       }
 
+      .status.not_run::before {
+        background: #facc15;
+      }
+
       .muted {
         color: #697586;
       }
@@ -132,6 +143,59 @@
         background: #ffffff;
         border: 1px solid #d8dee6;
         color: #697586;
+      }
+
+      .modal {
+        align-items: center;
+        background: rgba(15, 23, 42, 0.5);
+        display: flex;
+        inset: 0;
+        justify-content: center;
+        padding: 20px;
+        position: fixed;
+        z-index: 10;
+      }
+
+      .modal-panel {
+        background: #ffffff;
+        border-radius: 6px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.24);
+        max-height: 84vh;
+        max-width: 860px;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      .modal-header {
+        align-items: center;
+        border-bottom: 1px solid #e5e9ef;
+        display: flex;
+        justify-content: space-between;
+        padding: 14px 18px;
+      }
+
+      .modal-header h2 {
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .close-button {
+        color: #52606d;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .input-json {
+        background: #0f172a;
+        color: #e5e7eb;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 0;
+        max-height: calc(84vh - 58px);
+        overflow: auto;
+        padding: 18px;
+        white-space: pre-wrap;
       }
 
       @media (max-width: 720px) {
@@ -190,6 +254,7 @@
                 <th>Loan</th>
                 <th>Value</th>
                 <th>Lenders</th>
+                <th>Raw input</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -203,6 +268,7 @@
                       <td>${money.format(item.loanAmount)}</td>
                       <td>${money.format(item.propertyValue)}</td>
                       <td>${item.lendersRun}</td>
+                      <td><button class="input-link" data-input-id="${escapeHtml(item.id)}">View raw</button></td>
                       <td><button class="run-button" data-run-id="${escapeHtml(item.id)}">Run affordability</button></td>
                     </tr>
                   `
@@ -222,6 +288,13 @@
           button.addEventListener("click", async (event) => {
             event.stopPropagation();
             await runAffordability(button);
+          });
+        });
+
+        app.querySelectorAll(".input-link").forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            await showInput(button.dataset.inputId);
           });
         });
       }
@@ -262,8 +335,8 @@
                 <th>Lender</th>
                 <th>Status</th>
                 <th>Affordability</th>
-                <th>Monthly</th>
                 <th>Message</th>
+                <th>Output</th>
               </tr>
             </thead>
             <tbody>
@@ -273,9 +346,9 @@
                     <tr>
                       <td><strong>${formatLender(run.lender)}</strong></td>
                       <td><span class="status ${run.status}">${formatStatus(run.status)}</span></td>
-                      <td class="amount">${run.affordabilityAmount == null ? "Failed" : money.format(run.affordabilityAmount)}</td>
-                      <td>${run.monthlyPayment == null ? "-" : money.format(run.monthlyPayment)}</td>
-                      <td class="muted">${escapeHtml(run.message)}</td>
+                      <td class="amount">${formatAffordability(run)}</td>
+                      <td class="muted">${escapeHtml(formatMessage(run))}</td>
+                      <td>${run.output == null ? "-" : `<button class="input-link" data-output-lender="${escapeHtml(run.lender)}">View JSON</button>`}</td>
                     </tr>
                   `
                 )
@@ -286,6 +359,15 @@
 
         app.querySelector(".back").addEventListener("click", () => {
           location.hash = "";
+        });
+
+        app.querySelectorAll("[data-output-lender]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const run = details.lenders.find((candidate) => candidate.lender === button.dataset.outputLender);
+            if (run?.output) {
+              showJson(`Mapped output: ${formatLender(run.lender)}`, run.output);
+            }
+          });
         });
       }
 
@@ -298,6 +380,49 @@
         return response.json();
       }
 
+      async function showInput(caseId) {
+        const input = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/input`);
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
+          <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Case input">
+            <div class="modal-header">
+              <h2>Raw ${escapeHtml(input.format.toUpperCase())}: ${escapeHtml(input.fileName)}</h2>
+              <button class="close-button" aria-label="Close">&times;</button>
+            </div>
+            <pre class="input-json">${escapeHtml(input.content)}</pre>
+          </div>
+        `;
+
+        document.body.append(modal);
+        const close = () => modal.remove();
+        modal.querySelector(".close-button").addEventListener("click", close);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) close();
+        });
+      }
+
+      function showJson(title, value) {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
+          <div class="modal-panel" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+            <div class="modal-header">
+              <h2>${escapeHtml(title)}</h2>
+              <button class="close-button" aria-label="Close">&times;</button>
+            </div>
+            <pre class="input-json">${escapeHtml(JSON.stringify(value, null, 2))}</pre>
+          </div>
+        `;
+
+        document.body.append(modal);
+        const close = () => modal.remove();
+        modal.querySelector(".close-button").addEventListener("click", close);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) close();
+        });
+      }
+
       function formatLender(value) {
         return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
       }
@@ -305,7 +430,18 @@
       function formatStatus(value) {
         if (value === "success") return "Success";
         if (value === "failed") return "Failed";
-        return "Failed / not run";
+        return "Not run";
+      }
+
+      function formatAffordability(run) {
+        if (run.status === "not_run") return "-";
+        if (run.affordabilityAmount == null) return "Failed";
+        return money.format(run.affordabilityAmount);
+      }
+
+      function formatMessage(run) {
+        if (run.status === "success") return "Congratulations, affordability result returned successfully.";
+        return run.message;
       }
 
       function escapeHtml(value) {

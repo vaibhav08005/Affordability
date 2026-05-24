@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx src/cli.ts samples/halifax-input.json",
+    "dev": "tsx src/cli.ts samples/halifax/test-case-1.json",
     "samples": "npm run build && node scripts/run-samples.mjs",
     "api": "tsx src/server.ts",
     "attached:browser": "powershell -ExecutionPolicy Bypass -File scripts/start-attached-browser.ps1",
@@ -18,7 +18,8 @@
     "map:virgin-money:cases": "npm run build && node scripts/map-virgin-money-raw-cases.mjs",
     "map:hsbc": "tsx src/map-hsbc.ts input.yaml samples/hsbc-mapped-from-input.json",
     "map:hsbc:cases": "npm run build && node scripts/map-hsbc-raw-cases.mjs",
-    "start": "node dist/cli.js samples/halifax-input.json",
+    "start": "node dist/server.js",
+    "start:cli": "node dist/cli.js samples/halifax/test-case-1.json",
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test dist/**/*.test.js"

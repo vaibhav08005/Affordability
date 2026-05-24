@@ -10,6 +10,10 @@ import { InMemoryRunRepository, runResultKey } from "./repositories/run-reposito
 const app = express();
 const rootDir = process.cwd();
 const samplesDir = path.join(rootDir, "samples", "halifax-mapped-cases");
+const rawInputDirs = [
+  path.join(rootDir, "samples", "raw-halifax-cases"),
+  path.join(rootDir, "samples", "raw-additional-cases")
+];
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
 type MappedLender = "barclays" | "halifax" | "hsbc" | "skipton" | "virgin_money";
@@ -47,6 +51,20 @@ app.get("/api/cases/:caseId", async (request, response) => {
     }
 
     response.json(caseDetails);
+  } catch (error) {
+    response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.get("/api/cases/:caseId/input", async (request, response) => {
+  try {
+    const rawInput = await loadRawInputForCase(request.params.caseId);
+    if (!rawInput) {
+      response.status(404).json({ error: "Case not found." });
+      return;
+    }
+
+    response.json(rawInput);
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
@@ -103,6 +121,13 @@ interface CaseSample {
   filePath: string;
 }
 
+interface RawCaseInput {
+  caseId: string;
+  fileName: string;
+  format: "yaml" | "json";
+  content: string;
+}
+
 interface CaseSummary {
   id: string;
   title: string;
@@ -119,6 +144,7 @@ interface LenderRunView {
   affordabilityAmount: number | null;
   monthlyPayment: number | null;
   message: string;
+  output: LenderReadyInput | null;
 }
 
 async function loadCaseSummaries(): Promise<CaseSummary[]> {
@@ -165,7 +191,8 @@ async function loadCaseDetails(caseId: string) {
         message:
           result?.error?.message ??
           result?.messages[0] ??
-          (sample ? "No run result saved for this server session." : "No mapped input found for this lender and case.")
+          (sample ? "No run result saved for this server session." : "No mapped input found for this lender and case."),
+        output: result && sample ? sample.input : null
       };
     })
   );
@@ -213,6 +240,26 @@ async function loadMappedSampleForCase(caseId: string, lender: MappedLender): Pr
   return null;
 }
 
+async function loadRawInputForCase(caseId: string): Promise<RawCaseInput | null> {
+  for (const directory of rawInputDirs) {
+    const files = await findInputFiles(directory);
+    const filePath = files.find((file) => caseIdFromPath(file) === caseId);
+
+    if (filePath) {
+      const fileName = path.basename(filePath);
+      const extension = path.extname(fileName).toLowerCase();
+      return {
+        caseId,
+        fileName,
+        format: extension === ".json" ? "json" : "yaml",
+        content: await readFile(filePath, "utf8")
+      };
+    }
+  }
+
+  return null;
+}
+
 async function runMappedLenderForCase(caseId: string, lender: MappedLender): Promise<LenderRunView> {
   const sample = await loadMappedSampleForCase(caseId, lender);
   if (!sample) {
@@ -232,6 +279,22 @@ async function runMappedLenderForCase(caseId: string, lender: MappedLender): Pro
     await rememberCaseRunResult(caseId, result);
     return toLenderRunView(result);
   }
+}
+
+async function findInputFiles(directory: string): Promise<string[]> {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const entryPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        return findInputFiles(entryPath);
+      }
+
+      return entry.isFile() && /\.(ya?ml|json)$/i.test(entry.name) ? [entryPath] : [];
+    })
+  );
+
+  return files.flat();
 }
 
 async function readCaseSample(filePath: string): Promise<CaseSample | null> {
@@ -334,7 +397,8 @@ function toLenderRunView(result: AffordabilityResult): LenderRunView {
     status: result.status,
     affordabilityAmount: result.maximumBorrowing,
     monthlyPayment: result.monthlyPayment,
-    message: result.error?.message ?? result.messages[0] ?? ""
+    message: result.error?.message ?? result.messages[0] ?? "",
+    output: null
   };
 }
 
@@ -364,7 +428,7 @@ function caseIdFromInput(input: LenderReadyInput): string {
 }
 
 function caseIdFromPath(filePath: string): string {
-  const basename = path.basename(filePath, ".json").toLowerCase();
+  const basename = path.basename(filePath).replace(/\.(ya?ml|json)$/i, "").toLowerCase();
   return basename
     .replace(/^(barclays|halifax|hsbc|skipton|virgin-money)-raw-case-/, "")
     .replace(/^additional-raw-case-/, "")

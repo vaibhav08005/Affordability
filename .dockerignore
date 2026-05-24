@@ -1,0 +1,17 @@
+.browser-profiles
+.git
+.gitignore
+artifacts
+dist
+docs
+Mapping_xlxs
+node_modules
+tmp
+
+.env
+.env.*
+input.yaml
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
