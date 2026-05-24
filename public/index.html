@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Affordability Cases</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2933;
+        background: #f6f7f9;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 32px 18px;
+      }
+
+      h1 {
+        margin: 0 0 20px;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      button {
+        border: 0;
+        background: transparent;
+        font: inherit;
+        color: inherit;
+      }
+
+      .back {
+        margin-bottom: 18px;
+        color: #2563eb;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .run-button {
+        background: #1f2933;
+        border-radius: 6px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+
+      .run-button:disabled {
+        background: #9aa5b1;
+        cursor: wait;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border: 1px solid #d8dee6;
+      }
+
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #e5e9ef;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        background: #eef2f6;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #52606d;
+      }
+
+      tr.case-row {
+        cursor: pointer;
+      }
+
+      tr.case-row:hover {
+        background: #f8fafc;
+      }
+
+      .amount {
+        font-weight: 700;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+      }
+
+      .status::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #9aa5b1;
+      }
+
+      .status.success::before {
+        background: #14804a;
+      }
+
+      .status.failed::before,
+      .status.not_run::before {
+        background: #c2410c;
+      }
+
+      .muted {
+        color: #697586;
+      }
+
+      .summary {
+        margin: -8px 0 20px;
+        color: #52606d;
+        line-height: 1.6;
+      }
+
+      .empty {
+        padding: 28px;
+        background: #ffffff;
+        border: 1px solid #d8dee6;
+        color: #697586;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 22px 12px;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3),
+        th:nth-child(4),
+        td:nth-child(4) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="app"></main>
+
+    <script>
+      const app = document.querySelector("#app");
+      const money = new Intl.NumberFormat("en-GB", {
+        style: "currency",
+        currency: "GBP",
+        maximumFractionDigits: 0
+      });
+
+      window.addEventListener("hashchange", render);
+      render();
+
+      async function render() {
+        const caseId = decodeURIComponent(location.hash.replace(/^#case=/, ""));
+        if (caseId) {
+          await renderCase(caseId);
+        } else {
+          await renderCases();
+        }
+      }
+
+      async function renderCases() {
+        app.innerHTML = "<h1>Cases</h1><div class='empty'>Loading cases...</div>";
+        const { cases } = await fetchJson("/api/cases");
+
+        if (!cases.length) {
+          app.innerHTML = "<h1>Cases</h1><div class='empty'>No cases found.</div>";
+          return;
+        }
+
+        app.innerHTML = `
+          <h1>Cases</h1>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Purpose</th>
+                <th>Loan</th>
+                <th>Value</th>
+                <th>Lenders</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${cases
+                .map(
+                  (item) => `
+                    <tr class="case-row" data-id="${escapeHtml(item.id)}">
+                      <td><strong>${escapeHtml(item.title)}</strong></td>
+                      <td>${escapeHtml(item.mortgagePurpose)}</td>
+                      <td>${money.format(item.loanAmount)}</td>
+                      <td>${money.format(item.propertyValue)}</td>
+                      <td>${item.lendersRun}</td>
+                      <td><button class="run-button" data-run-id="${escapeHtml(item.id)}">Run affordability</button></td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        `;
+
+        app.querySelectorAll(".case-row").forEach((row) => {
+          row.addEventListener("click", () => {
+            location.hash = `case=${encodeURIComponent(row.dataset.id)}`;
+          });
+        });
+
+        app.querySelectorAll(".run-button").forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            await runAffordability(button);
+          });
+        });
+      }
+
+      async function runAffordability(button) {
+        const caseId = button.dataset.runId;
+        button.disabled = true;
+        button.textContent = "Running...";
+
+        try {
+          await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/run-affordability`, {
+            method: "POST"
+          });
+          location.hash = `case=${encodeURIComponent(caseId)}`;
+        } catch (error) {
+          button.textContent = "Run failed";
+          button.disabled = false;
+          console.error(error);
+        }
+      }
+
+      async function renderCase(caseId) {
+        app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading case...</div>";
+        const details = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}`);
+
+        app.innerHTML = `
+          <button class="back">Back to cases</button>
+          <h1>${escapeHtml(details.title)}</h1>
+          <div class="summary">
+            ${escapeHtml(details.summary.mortgagePurpose)} /
+            ${escapeHtml(details.summary.applicationType)} /
+            ${escapeHtml(details.summary.repaymentType)} /
+            ${details.summary.termYears} years
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Lender</th>
+                <th>Status</th>
+                <th>Affordability</th>
+                <th>Monthly</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${details.lenders
+                .map(
+                  (run) => `
+                    <tr>
+                      <td><strong>${formatLender(run.lender)}</strong></td>
+                      <td><span class="status ${run.status}">${formatStatus(run.status)}</span></td>
+                      <td class="amount">${run.affordabilityAmount == null ? "Failed" : money.format(run.affordabilityAmount)}</td>
+                      <td>${run.monthlyPayment == null ? "-" : money.format(run.monthlyPayment)}</td>
+                      <td class="muted">${escapeHtml(run.message)}</td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        `;
+
+        app.querySelector(".back").addEventListener("click", () => {
+          location.hash = "";
+        });
+      }
+
+      async function fetchJson(url, options = undefined) {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        return response.json();
+      }
+
+      function formatLender(value) {
+        return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+      }
+
+      function formatStatus(value) {
+        if (value === "success") return "Success";
+        if (value === "failed") return "Failed";
+        return "Failed / not run";
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+    </script>
+  </body>
+</html>

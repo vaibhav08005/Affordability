@@ -224,6 +224,7 @@ PORT                     API port, default 3000
 Useful project docs:
 
 - `docs/PROJECT_HANDOFF.md`
+- `docs/WEB_INTERFACE.md`
 - `docs/PLAN.md`
 - `docs/HALIFAX_FIELD_MAP.md`
 - `docs/BARCLAYS_FIELD_MAP.md`
