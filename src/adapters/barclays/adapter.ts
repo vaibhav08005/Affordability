@@ -1,9 +1,14 @@
 import { chromium, type Browser, type Locator, type Page } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels, selfEmploymentTypeLabels } from "./mapping.js";
+
+interface PageEvidence {
+  title: string;
+  path: string;
+}
 
 export const barclaysAdapter: LenderAdapter = {
   lender: "barclays",
@@ -14,12 +19,13 @@ export const barclaysAdapter: LenderAdapter = {
     await page.setViewportSize({ width: 584, height: 900 }).catch(() => undefined);
     page.setDefaultTimeout(context.timeoutMs);
     page.setDefaultNavigationTimeout(context.timeoutMs);
+    const pageEvidence: PageEvidence[] = [];
 
     try {
       await openBarclaysCalculator(page, context);
-      await fillMortgageRequirements(page, input);
-      await fillIncomeAndCommitments(page, input);
-      await fillOtherMortgages(page, input);
+      await fillMortgageRequirements(page, input, context, pageEvidence);
+      await fillIncomeAndCommitments(page, input, context, pageEvidence);
+      await fillOtherMortgages(page, input, context, pageEvidence);
       await waitForResult(page, context);
       await page.waitForTimeout(1000);
 
@@ -28,7 +34,8 @@ export const barclaysAdapter: LenderAdapter = {
         throw new Error("Result extraction failed: Barclays did not return a maximum borrowing amount.");
       }
 
-      const screenshotPath = await captureEvidence(page, context, "barclays-success");
+      await capturePageEvidence(page, context, pageEvidence, "04-result");
+      const pdfPath = await createEvidencePdf(context, "barclays-filled-pages", pageEvidence);
       return {
         lender: "barclays",
         status: "success",
@@ -36,7 +43,8 @@ export const barclaysAdapter: LenderAdapter = {
         monthlyPayment: result.monthlyPayment,
         messages: result.messages,
         evidence: {
-          screenshotPath,
+          pdfPath,
+          screenshotPaths: pageEvidence.map((item) => item.path),
           timestamp: startedAt
         }
       };
@@ -114,7 +122,7 @@ async function createBrowserSession(context: RunContext): Promise<BrowserSession
   };
 }
 
-async function fillMortgageRequirements(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillMortgageRequirements(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await fillCurrency(page, "Estimated property price or value (optional)", input.loan.propertyValue);
   await fillCurrency(page, "Total mortgage amount (optional)", input.loan.loanAmount);
   await chooseRadio(page, "Is this property in Scotland?", input.property.isInScotland ? "Yes" : "No");
@@ -123,11 +131,12 @@ async function fillMortgageRequirements(page: Page, input: LenderReadyInput): Pr
   await page.getByLabel("Years", { exact: true }).fill(String(input.case.termYears));
   await page.getByLabel("Months", { exact: true }).fill("0");
   await chooseRadio(page, "Select a repayment method", repaymentMethodLabels[input.case.repaymentType]);
+  await capturePageEvidence(page, context, pageEvidence, "01-mortgage-requirements");
   await clickNext(page);
   await ensureIncomeStepVisible(page);
 }
 
-async function fillIncomeAndCommitments(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillIncomeAndCommitments(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await chooseLooseRadio(page, input.case.numberOfApplicants === 1 ? "Single" : "Joint");
 
   for (const applicant of input.applicants) {
@@ -142,6 +151,7 @@ async function fillIncomeAndCommitments(page: Page, input: LenderReadyInput): Pr
     await fillOptionalCurrency(page, ["Remaining equity loan balance"], input.case.equityLoanBalance ?? 0);
     await fillOptionalTextByLabelOrText(page, "Equity loan interest rate", String(input.case.equityLoanInterestRatePercent ?? 0));
   }
+  await capturePageEvidence(page, context, pageEvidence, "02-income-and-commitments");
   await clickNextOrCalculate(page);
 }
 
@@ -191,7 +201,7 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
   await fillNthCurrency(page, "Any other annual income (if applicable)", applicant.index - 1, totalOtherIncome(applicant));
 }
 
-async function fillOtherMortgages(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillOtherMortgages(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await ensureOtherMortgagesStepVisible(page);
   const residentialCommitments = input.outgoings.otherMortgageCommitments;
   const buyToLetProperties = input.otherProperties.filter((property) => property.isRental);
@@ -241,6 +251,7 @@ async function fillOtherMortgages(page: Page, input: LenderReadyInput): Promise<
     }
   }
 
+  await capturePageEvidence(page, context, pageEvidence, "03-other-mortgages");
   await clickNextOrCalculate(page);
 }
 
@@ -602,6 +613,114 @@ async function captureEvidence(page: Page, context: RunContext, name: string): P
   const path = join(context.screenshotDir, `${name}-${Date.now()}.png`);
   await page.screenshot({ path, fullPage: true });
   return path;
+}
+
+async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  await page.waitForTimeout(300);
+  const path = await captureEvidence(page, context, `barclays-${name}`);
+  pageEvidence.push({
+    title: evidenceTitle(name),
+    path
+  });
+}
+
+async function createEvidencePdf(context: RunContext, name: string, pageEvidence: PageEvidence[]): Promise<string> {
+  if (pageEvidence.length === 0) {
+    throw new Error("Unable to create Barclays evidence PDF because no page screenshots were captured.");
+  }
+
+  await mkdir(context.screenshotDir, { recursive: true });
+  const pdfPath = join(context.screenshotDir, `${name}-${Date.now()}.pdf`);
+  const html = await evidencePdfHtml(pageEvidence);
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "load" });
+    await page.pdf({
+      path: pdfPath,
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "10mm",
+        right: "8mm",
+        bottom: "10mm",
+        left: "8mm"
+      }
+    });
+  } finally {
+    await browser.close();
+  }
+
+  return pdfPath;
+}
+
+async function evidencePdfHtml(pageEvidence: PageEvidence[]): Promise<string> {
+  const sections = await Promise.all(
+    pageEvidence.map(async (item, index) => {
+      const image = await readFile(item.path);
+      const dataUrl = `data:image/png;base64,${image.toString("base64")}`;
+      return `
+        <section class="page-shot">
+          <h1>${escapeHtml(`${index + 1}. ${item.title}`)}</h1>
+          <img src="${dataUrl}" alt="${escapeHtml(item.title)}" />
+        </section>
+      `;
+    })
+  );
+
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <style>
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            background: #ffffff;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+          .page-shot {
+            break-after: page;
+            page-break-after: always;
+          }
+          .page-shot:last-child {
+            break-after: auto;
+            page-break-after: auto;
+          }
+          h1 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 700;
+          }
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid #d1d5db;
+          }
+        </style>
+      </head>
+      <body>${sections.join("\n")}</body>
+    </html>
+  `;
+}
+
+function evidenceTitle(name: string): string {
+  return name
+    .replace(/^\d+-/, "")
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function categorizeError(error: unknown): NonNullable<AffordabilityResult["error"]>["category"] {

@@ -143,6 +143,8 @@ export interface OtherMortgageCommitment {
 
 export interface AutomationEvidence {
   screenshotPath?: string;
+  screenshotPaths?: string[];
+  pdfPath?: string;
   timestamp: string;
 }
 

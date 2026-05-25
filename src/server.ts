@@ -29,6 +29,26 @@ const lenderSampleFolders: Record<MappedLender, string[]> = {
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
 
+app.get("/api/artifact", (request, response) => {
+  const requestedPath = typeof request.query.path === "string" ? request.query.path : "";
+  const resolvedPath = path.resolve(rootDir, requestedPath);
+  const allowedArtifactRoots = [
+    path.resolve(rootDir, "artifacts"),
+    path.resolve(rootDir, loadRunContext().screenshotDir)
+  ];
+
+  if (!allowedArtifactRoots.some((root) => isPathInside(resolvedPath, root))) {
+    response.status(400).json({ error: "Invalid artifact path." });
+    return;
+  }
+
+  response.sendFile(resolvedPath, (error) => {
+    if (error) {
+      response.status(404).json({ error: "Artifact not found." });
+    }
+  });
+});
+
 app.get("/health", (_request, response) => {
   response.json({ status: "ok" });
 });
@@ -145,6 +165,8 @@ interface LenderRunView {
   monthlyPayment: number | null;
   message: string;
   output: LenderReadyInput | null;
+  evidenceUrl: string | null;
+  evidenceType: "pdf" | "image" | null;
 }
 
 async function loadCaseSummaries(): Promise<CaseSummary[]> {
@@ -192,7 +214,9 @@ async function loadCaseDetails(caseId: string) {
           result?.error?.message ??
           result?.messages[0] ??
           (sample ? "No run result saved for this server session." : "No mapped input found for this lender and case."),
-        output: result && sample ? sample.input : null
+        output: result && sample ? sample.input : null,
+        evidenceUrl: result ? evidenceUrl(result) : null,
+        evidenceType: result ? evidenceType(result) : null
       };
     })
   );
@@ -398,8 +422,21 @@ function toLenderRunView(result: AffordabilityResult): LenderRunView {
     affordabilityAmount: result.maximumBorrowing,
     monthlyPayment: result.monthlyPayment,
     message: result.error?.message ?? result.messages[0] ?? "",
-    output: null
+    output: null,
+    evidenceUrl: evidenceUrl(result),
+    evidenceType: evidenceType(result)
   };
+}
+
+function evidenceUrl(result: AffordabilityResult): string | null {
+  const artifactPath = result.evidence.pdfPath ?? result.evidence.screenshotPath;
+  return artifactPath ? `/api/artifact?path=${encodeURIComponent(artifactPath)}` : null;
+}
+
+function evidenceType(result: AffordabilityResult): "pdf" | "image" | null {
+  if (result.evidence.pdfPath) return "pdf";
+  if (result.evidence.screenshotPath) return "image";
+  return null;
 }
 
 function isLenderId(value: unknown): value is LenderId {
@@ -447,4 +484,9 @@ function titleFromCaseId(caseId: string): string {
 
 function humanize(value: string): string {
   return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function isPathInside(candidatePath: string, rootPath: string): boolean {
+  const relativePath = path.relative(rootPath, candidatePath);
+  return relativePath !== "" && !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
 }

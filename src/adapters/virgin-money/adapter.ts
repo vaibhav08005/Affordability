@@ -1,4 +1,6 @@
-import type { Page } from "playwright";
+import { chromium, type Page } from "playwright";
+import { mkdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
@@ -10,6 +12,11 @@ import {
   VIRGIN_MONEY_CALCULATOR_URL
 } from "./mapping.js";
 
+interface PageEvidence {
+  title: string;
+  path: string;
+}
+
 export const virginMoneyAdapter: LenderAdapter = {
   lender: "virgin_money",
   async run(input, context) {
@@ -18,25 +25,31 @@ export const virginMoneyAdapter: LenderAdapter = {
     const page = session.page;
     page.setDefaultTimeout(context.timeoutMs);
     page.setDefaultNavigationTimeout(context.timeoutMs);
+    const pageEvidence: PageEvidence[] = [];
 
     try {
       await openVirginMoneyCalculator(page, context);
-      await fillVirginMoneyCalculator(page, input);
+      await fillVirginMoneyCalculator(page, input, context, pageEvidence);
       await waitForResult(page, context);
+      await capturePageEvidence(page, context, pageEvidence, "04-results");
 
       const result = await extractResult(page);
       if (result.maximumBorrowing == null) {
         throw new Error("Result extraction failed: Virgin Money did not return a lending amount on the results page.");
       }
 
-      const screenshotPath = await captureEvidence(page, context, "virgin-money-success");
+      const pdfPath = await createEvidencePdf(context, "virgin-money-filled-pages", pageEvidence);
       return {
         lender: "virgin_money",
         status: "success",
         maximumBorrowing: result.maximumBorrowing,
         monthlyPayment: null,
         messages: result.messages,
-        evidence: { screenshotPath, timestamp: startedAt }
+        evidence: {
+          pdfPath,
+          screenshotPaths: pageEvidence.map((item) => item.path),
+          timestamp: startedAt
+        }
       };
     } catch (error) {
       const screenshotPath = await captureEvidence(page, context, "virgin-money-failed").catch(() => undefined);
@@ -65,12 +78,15 @@ async function openVirginMoneyCalculator(page: Page, context: RunContext): Promi
   await page.locator("#purchase, #remortgage").first().waitFor({ state: "visible", timeout: Math.min(context.timeoutMs, 20000) });
 }
 
-async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await fillLoanDetails(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "01-loan-details");
   await continueToNextPage(page, "personal-details");
   await fillPersonalDetails(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "02-personal-details");
   await continueToNextPage(page, "outgoings");
   await fillOutgoings(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "03-outgoings");
   await continueToNextPage(page, "results");
 }
 
@@ -313,6 +329,114 @@ function otherResidentialMonthlyRepayments(input: LenderReadyInput): number {
 
 function otherPropertyRent(input: LenderReadyInput): number {
   return Math.max(1, input.otherProperties.reduce((sum, property) => sum + (property.monthlyRent ?? 0), 0));
+}
+
+async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  await page.waitForTimeout(300);
+  const path = await captureEvidence(page, context, `virgin-money-${name}`);
+  pageEvidence.push({
+    title: evidenceTitle(name),
+    path
+  });
+}
+
+async function createEvidencePdf(context: RunContext, name: string, pageEvidence: PageEvidence[]): Promise<string> {
+  if (pageEvidence.length === 0) {
+    throw new Error("Unable to create Virgin Money evidence PDF because no page screenshots were captured.");
+  }
+
+  await mkdir(context.screenshotDir, { recursive: true });
+  const pdfPath = join(context.screenshotDir, `${name}-${Date.now()}.pdf`);
+  const html = await evidencePdfHtml(pageEvidence);
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "load" });
+    await page.pdf({
+      path: pdfPath,
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "10mm",
+        right: "8mm",
+        bottom: "10mm",
+        left: "8mm"
+      }
+    });
+  } finally {
+    await browser.close();
+  }
+
+  return pdfPath;
+}
+
+async function evidencePdfHtml(pageEvidence: PageEvidence[]): Promise<string> {
+  const sections = await Promise.all(
+    pageEvidence.map(async (item, index) => {
+      const image = await readFile(item.path);
+      const dataUrl = `data:image/png;base64,${image.toString("base64")}`;
+      return `
+        <section class="page-shot">
+          <h1>${escapeHtml(`${index + 1}. ${item.title}`)}</h1>
+          <img src="${dataUrl}" alt="${escapeHtml(item.title)}" />
+        </section>
+      `;
+    })
+  );
+
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <style>
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            background: #ffffff;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+          .page-shot {
+            break-after: page;
+            page-break-after: always;
+          }
+          .page-shot:last-child {
+            break-after: auto;
+            page-break-after: auto;
+          }
+          h1 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 700;
+          }
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid #d1d5db;
+          }
+        </style>
+      </head>
+      <body>${sections.join("\n")}</body>
+    </html>
+  `;
+}
+
+function evidenceTitle(name: string): string {
+  return name
+    .replace(/^\d+-/, "")
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function cssAttributeValue(value: string): string {
