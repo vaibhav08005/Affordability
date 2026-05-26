@@ -1,0 +1,28 @@
+---
+var_journey: ftb
+var_no_of_applicants: 2
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 380000
+var_deposit: 95000
+var_mortgage_term: 360
+var_property_details_address: { postcode: LU1 2PL }
+var_property_details_tenure: leasehold
+var_appl1_date_of_birth: 631152000
+var_appl1_joint_rel_status: live_in_partner
+var_appl1_nationality: british
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 61000
+var_appl2_date_of_birth: 725846400
+var_appl2_nationality: india
+var_appl2_residency_status: indefinite_leave_to_remain
+var_appl2_employment_details_employment_type: employed
+var_appl2_gross_annual_salary: 47000
+var_appl2_recent_regular_allowance: 175
+var_appl2_recent_regular_allowance_frequency: monthly
+var_appl2_credit_commitments:
+  - type: lease
+    current_balance: 14000
+    monthly_payment: 310
+    include_afford: "yes"

@@ -1,0 +1,23 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: part_and_part
+var_interest_only_amount: 110000
+var_property_value: 560000
+var_deposit: 155000
+var_mortgage_term: 300
+var_repay_vehicle_type: investments
+var_repay_vehicle_mthly_contribution: 450
+var_property_details_address: { postcode: OX1 2JD }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 473385600
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: llp
+var_appl1_business_salary: 42000
+var_appl1_business_curr_yr_share_profit: 61000
+var_appl1_business_prev_yr_share_profit: 55000
+var_appl1_investment_income: 600
+var_appl1_investment_income_frequency: monthly
+var_appl1_retirement_age: 68

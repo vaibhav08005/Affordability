@@ -1,0 +1,127 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 685000
+var_deposit: 145000
+var_mortgage_term: 360
+var_length_of_intro_period: "5"
+var_rate_type: fixed
+var_deposit_source_details:
+  savings: 52000
+  sale_of_property: 75000
+  gifted_deposit: 18000
+var_property_details_address:
+  postcode: SW11 2AA
+  country: England
+var_property_details_tenure: freehold
+var_property_details_mthly_council_tax: 225
+var_property_details_mthly_bldg_ins: 45
+var_property_details_mthly_grnd_rent: 0
+var_property_details_mthly_serv_charges: 0
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 310000
+    monthly_repayment: 880
+    monthly_rent: 1450
+    monthly_council_tax: 0
+    monthly_building_insurance: 35
+    current_balance: 178000
+    remaining_term: 240
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: second_home
+    is_rental_property: "no"
+    mortgage_status: "yes"
+    property_value: 265000
+    monthly_repayment: 640
+    monthly_rent: 0
+    monthly_council_tax: 170
+    monthly_building_insurance: 28
+    current_balance: 92000
+    remaining_term: 144
+    repayment_type: interest_only
+  - occupancy_status: retained_property
+    is_rental_property: "yes"
+    mortgage_status: "no"
+    property_value: 190000
+    monthly_repayment: 0
+    monthly_rent: 1025
+    monthly_council_tax: 0
+    monthly_building_insurance: 22
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+var_appl1_date_of_birth: 504921600
+var_appl1_retirement_age: 68
+var_appl1_joint_rel_status: spouse
+var_appl1_dependents_details:
+  - age: "9"
+    relationship: child
+  - age: "14"
+    relationship: child
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employed_company_details_ownership_percentage: 0
+var_appl1_gross_annual_salary: 86000
+var_appl1_recent_overtime: 450
+var_appl1_recent_overtime_frequency: monthly
+var_appl1_recent_regular_allowance: 375
+var_appl1_recent_regular_allowance_frequency: monthly
+var_appl1_recent_nongtd_bonus: 9000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 7000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_recent_commission: 250
+var_appl1_recent_commission_frequency: monthly
+var_appl1_credit_commitments:
+  - type: credit_card
+    provider: Amex
+    monthly_payment: 160
+    current_balance: 6200
+    include_afford: "yes"
+  - type: personal_loan
+    provider: Nationwide
+    monthly_payment: 310
+    current_balance: 9800
+    include_afford: "yes"
+  - type: overdraft
+    provider: Barclays
+    monthly_payment: 0
+    current_balance: 900
+    include_afford: "yes"
+var_appl1_outgoings_childcare_cost: 520
+var_appl1_outgoings_nursery_school_fee: 240
+var_appl1_outgoings_maintenance_payment: 0
+var_appl2_date_of_birth: 536457600
+var_appl2_retirement_age: 70
+var_appl2_employment_details_employment_type: self_employed
+var_appl2_business_setup_type: limited_company
+var_appl2_employed_company_details_ownership_percentage: 100
+var_appl2_business_start_date: 1420070400
+var_appl2_business_salary: 24000
+var_appl2_business_curr_yr_dividends: 54000
+var_appl2_business_prev_yr_dividends: 48000
+var_appl2_business_curr_yr_net_profit: 92000
+var_appl2_business_prev_yr_net_profit: 82000
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: BMW Finance
+    monthly_payment: 425
+    current_balance: 18500
+    include_afford: "yes"
+  - type: store_card
+    provider: John Lewis
+    monthly_payment: 45
+    current_balance: 1100
+    include_afford: "yes"
+  - type: student_loans
+    provider: SLC
+    monthly_payment: 190
+    current_balance: 21000
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 180
+var_appl2_outgoings_nursery_school_fee: 0

@@ -1,0 +1,113 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 2
+var_mortgage_type: resi
+var_ownership_type: shared_equity
+var_repayment_type: part_and_part
+var_new_repayment_type: part_and_part
+var_property_value: 620000
+var_value_of_share: 496000
+var_htb_loan_amount: 124000
+var_shared_equity_loan_amount: 124000
+var_remo_remaining_balance: 318000
+var_equity_release_amount: 52000
+var_additional_borrowing: 52000
+var_add_borrow_details: repay_shared_equity_loan_and_kitchen
+var_pay_down_amount: 18000
+var_current_lender: Halifax
+var_mthly_repay_amount: 1425
+var_new_interest_only_amount: 130000
+var_interest_only_amount: 130000
+var_repay_vehicle_type: sale_of_property
+var_repay_vehicle_mthly_contribution: 0
+var_mortgage_term: 336
+var_property_details_address:
+  postcode: BN1 6AF
+  country: England
+var_property_details_tenure: freehold
+var_property_details_mthly_council_tax: 215
+var_property_details_mthly_bldg_ins: 38
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 245000
+    monthly_repayment: 710
+    monthly_rent: 1125
+    monthly_council_tax: 0
+    monthly_building_insurance: 24
+    current_balance: 136000
+    remaining_term: 216
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: residential_retained
+    is_rental_property: "no"
+    mortgage_status: "yes"
+    property_value: 225000
+    monthly_repayment: 590
+    monthly_rent: 0
+    monthly_council_tax: 150
+    monthly_building_insurance: 26
+    current_balance: 88000
+    remaining_term: 132
+    repayment_type: principal_over_mortgage_term
+var_appl1_date_of_birth: 536457600
+var_appl1_retirement_age: 69
+var_appl1_joint_rel_status: spouse
+var_appl1_dependents_details:
+  - age: "6"
+    relationship: child
+  - age: "11"
+    relationship: child
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: sole_trader
+var_appl1_business_start_date: 1514764800
+var_appl1_st_curr_yr_profit: 78000
+var_appl1_st_prev_yr_profit: 71000
+var_appl1_land_curr_profit: 4600
+var_appl1_land_prev_profit: 3800
+var_appl1_credit_commitments:
+  - type: credit_card
+    provider: NatWest
+    monthly_payment: 135
+    current_balance: 4300
+    include_afford: "yes"
+  - type: hire_purchase
+    provider: Ford Credit
+    monthly_payment: 345
+    current_balance: 15200
+    include_afford: "yes"
+  - type: loan
+    provider: Ratesetter
+    monthly_payment: 210
+    current_balance: 6200
+    include_afford: "yes"
+var_appl1_outgoings_childcare_cost: 430
+var_appl1_outgoings_nursery_school_fee: 180
+var_appl2_date_of_birth: 568080000
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 69000
+var_appl2_recent_regular_allowance: 175
+var_appl2_recent_regular_allowance_frequency: monthly
+var_appl2_recent_nongtd_bonus: 6000
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 5000
+var_appl2_prev_nongtd_bonus_frequency: annually
+var_appl2_credit_commitments:
+  - type: cards
+    provider: Virgin Money
+    monthly_payment: 115
+    current_balance: 3600
+    include_afford: "yes"
+  - type: overdraft
+    provider: First Direct
+    monthly_payment: 0
+    current_balance: 800
+    include_afford: "yes"
+  - type: childcare_voucher
+    provider: Employer
+    monthly_payment: 80
+    current_balance: 0
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 260

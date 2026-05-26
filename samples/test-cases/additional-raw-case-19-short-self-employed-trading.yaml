@@ -1,0 +1,18 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 335000
+var_deposit: 85000
+var_mortgage_term: 300
+var_property_details_address: { postcode: BN1 1AA }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 599616000
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: sole_trader
+var_appl1_business_start_date: 1735689600
+var_appl1_st_curr_yr_profit: 74000
+var_appl1_st_prev_yr_profit: 0
+var_appl1_retirement_age: 70

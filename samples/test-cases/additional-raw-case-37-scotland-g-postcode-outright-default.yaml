@@ -1,0 +1,17 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: interest_only
+var_property_value: 310000
+var_remo_remaining_balance: 125000
+var_mortgage_term: 180
+var_property_details_address:
+  postcode: G1 1AA
+var_current_lender: Existing Scottish Lender
+var_repay_vehicle_type: main_residence
+var_appl1_date_of_birth: 315532800
+var_appl1_retirement_age: 70
+var_appl1_employment_details_employment_type: retired
+var_appl1_mthly_pension: 3200

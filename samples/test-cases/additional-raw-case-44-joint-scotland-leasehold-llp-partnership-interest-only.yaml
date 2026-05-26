@@ -1,0 +1,104 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: interest_only
+var_new_repayment_type: interest_only
+var_property_value: 760000
+var_deposit: 260000
+var_mortgage_term: 300
+var_interest_only_amount: 500000
+var_repay_vehicle_type: sale_of_property
+var_repay_vehicle_mthly_contribution: 0
+var_deposit_source_details:
+  sale_of_property: 210000
+  savings: 35000
+  investment_redemption: 15000
+var_property_details_address:
+  postcode: EH3 9GL
+  country: Scotland
+var_property_details_tenure: leasehold
+var_property_details_mthly_council_tax: 285
+var_property_details_mthly_bldg_ins: 55
+var_property_details_mthly_grnd_rent: 0
+var_property_details_mthly_serv_charges: 95
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 340000
+    monthly_repayment: 810
+    monthly_rent: 1500
+    monthly_council_tax: 0
+    monthly_building_insurance: 32
+    current_balance: 190000
+    remaining_term: 228
+    repayment_type: interest_only
+    io_balance: 190000
+  - occupancy_status: retained_main_residence
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 450000
+    monthly_repayment: 1150
+    monthly_rent: 1950
+    monthly_council_tax: 0
+    monthly_building_insurance: 38
+    current_balance: 245000
+    remaining_term: 240
+    repayment_type: principal_over_mortgage_term
+var_appl1_date_of_birth: 410227200
+var_appl1_retirement_age: 72
+var_appl1_joint_rel_status: civil_partner
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: llp
+var_appl1_business_salary: 18000
+var_appl1_business_curr_yr_share_profit: 98000
+var_appl1_business_prev_yr_share_profit: 91000
+var_appl1_investment_income: 650
+var_appl1_investment_income_frequency: monthly
+var_appl1_credit_commitments:
+  - type: cards
+    provider: RBS
+    monthly_payment: 140
+    current_balance: 4700
+    include_afford: "yes"
+  - type: loan
+    provider: Clydesdale
+    monthly_payment: 320
+    current_balance: 10400
+    include_afford: "yes"
+  - type: overdraft
+    provider: Bank of Scotland
+    monthly_payment: 0
+    current_balance: 1200
+    include_afford: "yes"
+var_appl1_outgoings_pension_contribution: 750
+var_appl1_outgoings_investments: 425
+var_appl2_date_of_birth: 441763200
+var_appl2_retirement_age: 72
+var_appl2_employment_details_employment_type: self_employed
+var_appl2_business_setup_type: partnership
+var_appl2_business_salary: 15000
+var_appl2_business_curr_yr_share_profit: 87000
+var_appl2_business_prev_yr_share_profit: 79000
+var_appl2_land_curr_profit: 9200
+var_appl2_land_prev_profit: 8500
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: Volvo Finance
+    monthly_payment: 475
+    current_balance: 20800
+    include_afford: "yes"
+  - type: credit_card
+    provider: HSBC
+    monthly_payment: 110
+    current_balance: 3100
+    include_afford: "yes"
+  - type: student_loans
+    provider: SLC
+    monthly_payment: 0
+    current_balance: 0
+    include_afford: "no"
+var_appl2_outgoings_pension_contribution: 500
+var_appl2_outgoings_investments: 300

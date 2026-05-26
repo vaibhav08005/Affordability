@@ -1,0 +1,107 @@
+---
+var_journey: ftb
+var_no_of_applicants: 2
+var_mortgage_type: purchase
+var_ownership_type: shared_ownership
+var_ownership_type_ftb: shared_ownership
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 500000
+var_value_of_share: 300000
+var_deposit: 45000
+var_rent_income: 620
+var_mortgage_term: 420
+var_deposit_source_details:
+  savings: 21000
+  gifted_deposit: 24000
+var_property_details_address:
+  postcode: E14 9GE
+  country: England
+var_property_details_tenure: leasehold
+var_property_details_mthly_council_tax: 190
+var_property_details_mthly_bldg_ins: 32
+var_property_details_mthly_grnd_rent: 10
+var_property_details_mthly_serv_charges: 225
+var_other_properties:
+  - occupancy_status: parents_home_retained
+    is_rental_property: "no"
+    mortgage_status: "no"
+    property_value: 0
+    monthly_repayment: 0
+    monthly_rent: 0
+    monthly_council_tax: 0
+    monthly_building_insurance: 0
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+  - occupancy_status: inherited_property_let
+    is_rental_property: "yes"
+    mortgage_status: "no"
+    property_value: 155000
+    monthly_repayment: 0
+    monthly_rent: 800
+    monthly_council_tax: 0
+    monthly_building_insurance: 18
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+var_appl1_date_of_birth: 725846400
+var_appl1_retirement_age: 70
+var_appl1_joint_rel_status: live_in_partner
+var_appl1_dependents_details:
+  - age: "3"
+    relationship: child
+var_appl1_employment_details_employment_type: contractor
+var_appl1_employment_details_contract_type: on_contract
+var_appl1_contract_details_rate_amount: 575
+var_appl1_contract_details_rate_frequency: daily
+var_appl1_contract_details_start_date: 1672531200
+var_appl1_contract_details_end_date: 1830297600
+var_appl1_recent_commission: 125
+var_appl1_recent_commission_frequency: monthly
+var_appl1_credit_commitments:
+  - type: credit_card
+    provider: Capital One
+    monthly_payment: 70
+    current_balance: 1850
+    include_afford: "yes"
+  - type: personal_loan
+    provider: Zopa
+    monthly_payment: 245
+    current_balance: 7800
+    include_afford: "yes"
+  - type: student_loans
+    provider: SLC
+    monthly_payment: 155
+    current_balance: 26000
+    include_afford: "yes"
+var_appl1_child_benefits_amt: 102
+var_appl1_child_benefits_frequency: monthly
+var_appl1_outgoings_childcare_cost: 640
+var_appl2_date_of_birth: 757382400
+var_appl2_retirement_age: 70
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 48500
+var_appl2_recent_overtime: 220
+var_appl2_recent_overtime_frequency: monthly
+var_appl2_recent_nongtd_bonus: 3500
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 2500
+var_appl2_prev_nongtd_bonus_frequency: annually
+var_appl2_credit_commitments:
+  - type: cards
+    provider: Halifax
+    monthly_payment: 65
+    current_balance: 2100
+    include_afford: "yes"
+  - type: car_finance
+    provider: Toyota Finance
+    monthly_payment: 289
+    current_balance: 12300
+    include_afford: "yes"
+  - type: overdraft
+    provider: Monzo
+    monthly_payment: 0
+    current_balance: 350
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 120

@@ -1,0 +1,32 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 280000
+var_deposit: 45000
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: M1 4BT
+  country: England
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 631152000
+var_appl1_retirement_age: 68
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employment_details_is_ten_percent: 'no'
+var_appl1_income_sterling: 'yes'
+var_appl1_gross_annual_salary: 52000
+var_appl1_recent_overtime: 150
+var_appl1_recent_overtime_frequency: monthly
+var_appl1_recent_nongtd_bonus: 3000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 2000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_credit_commitments:
+- type: cards
+  provider: TSB
+  monthly_payment: 50
+  current_balance: 2200
+  include_afford: 'yes'

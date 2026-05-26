@@ -1,0 +1,28 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: shared_ownership
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 360000
+var_value_of_share: 180000
+var_deposit: 25000
+var_rent_income: 420
+var_mortgage_term: 360
+var_property_details_address:
+  postcode: E14 5AB
+  country: England
+var_property_details_tenure: leasehold
+var_property_details_mthly_serv_charges: 140
+var_property_details_mthly_grnd_rent: 25
+var_appl1_date_of_birth: 725846400
+var_appl1_retirement_age: 70
+var_appl1_dependents_details:
+- age: '2'
+  relationship: child
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 47000
+var_appl1_child_benefits_amt: 104
+var_appl1_child_benefits_frequency: every_4_weeks
+var_appl1_outgoings_childcare_cost: 350

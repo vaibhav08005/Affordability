@@ -1,0 +1,43 @@
+---
+var_journey: ftb
+var_no_of_applicants: 2
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 425000
+var_deposit: 85000
+var_mortgage_term: 360
+var_length_of_intro_period: "5"
+var_rate_type: fixed
+var_property_details_address: { postcode: BS1 4ST }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 631152000
+var_appl1_joint_rel_status: live_in_partner
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employed_company_details_ownership_percentage: 0
+var_appl1_retirement_age: 68
+var_appl1_gross_annual_salary: 72000
+var_appl1_recent_regular_allowance: 250
+var_appl1_recent_regular_allowance_frequency: monthly
+var_appl1_recent_nongtd_bonus: 6000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 4000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_credit_commitments:
+  - type: credit_card
+    current_balance: 3200
+    monthly_payment: 100
+    include_afford: "yes"
+var_appl2_date_of_birth: 694224000
+var_appl2_employment_details_employment_type: contractor
+var_appl2_employment_details_contract_type: umbrella_company
+var_appl2_contract_salary: 68000
+var_appl2_recent_commission: 300
+var_appl2_recent_commission_frequency: monthly
+var_appl2_retirement_age: 70
+var_appl2_credit_commitments:
+  - type: hire_purchase
+    current_balance: 9000
+    monthly_payment: 275
+    include_afford: "yes"

@@ -1,0 +1,59 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 420000
+var_deposit_source_details:
+- source: savings
+  amount: 70000
+- source: sale_of_property
+  amount: 30000
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: SL2 1SZ
+  country: England
+var_property_details_tenure: share_of_freehold
+var_other_properties:
+- is_rental_property: 'yes'
+  occupancy_status: let
+  mortgage_status: 'yes'
+  monthly_repayment: 1450
+  monthly_rent: 1100
+  monthly_council_tax: 80
+  current_balance: 160000
+  remaining_term: 240
+- is_rental_property: 'no'
+  occupancy_status: main_residence
+  mortgage_status: 'yes'
+  monthly_repayment: 850
+  current_balance: 90000
+  remaining_term: 180
+var_appl1_joint_rel_status: spouse
+var_appl1_date_of_birth: 568080000
+var_appl1_retirement_age: 70
+var_appl1_dependents_details:
+- age: '7'
+  relationship: child
+- age: '4'
+  relationship: child
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 78000
+var_appl1_recent_commission: 500
+var_appl1_recent_commission_frequency: monthly
+var_appl1_credit_commitments:
+- type: loans
+  monthly_payment: 240
+  current_balance: 9000
+  include_afford: 'yes'
+var_appl2_date_of_birth: 662688000
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 61000
+var_appl2_recent_nongtd_bonus: 4500
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 3500
+var_appl2_prev_nongtd_bonus_frequency: annually

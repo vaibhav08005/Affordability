@@ -1,0 +1,22 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 480000
+var_deposit: 120000
+var_mortgage_term: 300
+var_property_details_address: { postcode: RG1 1LZ }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 568080000
+var_appl1_employment_details_employment_type: contractor
+var_appl1_employment_details_contract_type: my_company
+var_appl1_contractor_company_percent_share: 100
+var_appl1_business_salary: 24000
+var_appl1_business_curr_yr_dividends: 68000
+var_appl1_business_prev_yr_dividends: 62000
+var_appl1_business_curr_yr_share_profit: 71000
+var_appl1_business_prev_yr_share_profit: 65000
+var_appl1_contract_salary: 24000
+var_appl1_retirement_age: 70

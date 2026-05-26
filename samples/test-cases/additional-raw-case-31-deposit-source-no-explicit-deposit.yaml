@@ -1,0 +1,28 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 325000
+var_deposit_source_details:
+- source: savings
+  amount: 25000
+- source: gift
+  amount: 15000
+var_mortgage_term: 360
+var_property_details_address:
+  postcode: BS1 4ST
+  country: England
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 662688000
+var_appl1_retirement_age: 68
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 61000
+var_appl1_credit_commitments:
+- type: credit_card
+  provider: Nationwide
+  monthly_payment: 75
+  current_balance: 3100
+  include_afford: 'yes'

@@ -1,0 +1,32 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 390000
+var_deposit: 80000
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: CF10 1EP
+  country: Wales
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 631152000
+var_appl1_retirement_age: 68
+var_appl1_joint_rel_status: sibling
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 54000
+var_appl1_dependents_details:
+- age: 16
+  relationship: child
+- age: 72
+  relationship: parent
+var_appl2_date_of_birth: 662688000
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 47000
+var_appl2_dependents_details:
+- age: 18
+  relationship: sibling

@@ -1,0 +1,28 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 360000
+var_deposit: 60000
+var_mortgage_term: 360
+var_property_details_address:
+  postcode: SW1A 1AA
+  country: England
+var_property_details_tenure: leasehold
+var_appl1_date_of_birth: 599616000
+var_appl1_retirement_age: 67
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 70000
+var_appl1_recent_overtime: 180
+var_appl1_recent_overtime_frequency: fortnightly
+var_appl1_recent_commission: 600
+var_appl1_recent_commission_frequency: quarterly
+var_appl1_recent_nongtd_bonus: 12000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 4000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_recent_regular_allowance: 500
+var_appl1_recent_regular_allowance_frequency: half_yearly

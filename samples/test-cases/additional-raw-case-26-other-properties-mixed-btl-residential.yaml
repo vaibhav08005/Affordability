@@ -1,0 +1,44 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 650000
+var_deposit: 175000
+var_mortgage_term: 300
+var_property_details_address: { postcode: CB1 2JW }
+var_property_details_tenure: freehold
+var_other_properties:
+  - is_rental_property: "yes"
+    occupancy_status: rental_property_already_let
+    property_value: 260000
+    monthly_repayment: 1150
+    monthly_rent: 1250
+    monthly_council_tax: 0
+    monthly_building_insurance: 35
+    mortgage_status: "yes"
+    current_balance: 170000
+    remaining_term: 216
+    repayment_type: interest_only
+  - is_rental_property: "no"
+    occupancy_status: second_home
+    property_value: 210000
+    monthly_repayment: 740
+    monthly_rent:
+    mortgage_status: "yes"
+    current_balance: 98000
+    remaining_term: 180
+    repayment_type: principal_over_mortgage_term
+  - is_rental_property: "no"
+    occupancy_status: mortgage_free_residential
+    property_value: 130000
+    monthly_repayment: 0
+    mortgage_status: "no"
+var_appl1_date_of_birth: 441763200
+var_appl1_joint_rel_status: spouse
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 92000
+var_appl2_date_of_birth: 473385600
+var_appl2_employment_details_employment_type: employed
+var_appl2_gross_annual_salary: 48000

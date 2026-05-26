@@ -1,0 +1,25 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 250000
+var_deposit: 0
+var_deposit_source_details:
+  - source: incentive_builder
+    amount: 12500
+  - source: family_gift
+    amount: 37500
+var_mortgage_term: 360
+var_property_details_address: { postcode: ST1 1AA }
+var_property_details_tenure: freehold
+var_property_details_year_built: 2025
+var_appl1_date_of_birth: 757382400
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: temporary
+var_appl1_gross_annual_salary: 43000
+var_appl1_recent_nongtd_bonus: 1200
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 0
+var_appl1_prev_nongtd_bonus_frequency: annually

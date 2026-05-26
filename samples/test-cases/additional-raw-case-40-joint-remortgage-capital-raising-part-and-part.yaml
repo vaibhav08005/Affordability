@@ -1,0 +1,113 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 2
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: part_and_part
+var_new_repayment_type: part_and_part
+var_property_value: 825000
+var_remo_remaining_balance: 355000
+var_equity_release_amount: 115000
+var_additional_borrowing: 115000
+var_add_borrow_amount: 115000
+var_add_borrow_details: debt_consolidation_home_improvements
+var_pay_down_amount: 25000
+var_current_lender: Santander
+var_mthly_repay_amount: 1680
+var_new_interest_only_amount: 160000
+var_interest_only_amount: 160000
+var_repay_vehicle_type: investments
+var_repay_vehicle_mthly_contribution: 450
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: M20 2LT
+  country: England
+var_property_details_tenure: leasehold
+var_property_details_mthly_council_tax: 245
+var_property_details_mthly_bldg_ins: 52
+var_property_details_mthly_grnd_rent: 30
+var_property_details_mthly_serv_charges: 165
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 410000
+    monthly_repayment: 1240
+    monthly_rent: 1875
+    monthly_council_tax: 0
+    monthly_building_insurance: 42
+    current_balance: 248000
+    remaining_term: 252
+    repayment_type: interest_only
+    io_balance: 248000
+  - occupancy_status: holiday_home
+    is_rental_property: "no"
+    mortgage_status: "yes"
+    property_value: 305000
+    monthly_repayment: 720
+    monthly_rent: 0
+    monthly_council_tax: 185
+    monthly_building_insurance: 40
+    current_balance: 128000
+    remaining_term: 180
+    repayment_type: principal_over_mortgage_term
+var_appl1_date_of_birth: 441763200
+var_appl1_retirement_age: 67
+var_appl1_joint_rel_status: married
+var_appl1_dependents_details:
+  - age: "17"
+    relationship: child
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 102000
+var_appl1_recent_overtime: 300
+var_appl1_recent_overtime_frequency: monthly
+var_appl1_recent_nongtd_bonus: 14000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 12000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_credit_commitments:
+  - type: cards
+    provider: Lloyds
+    monthly_payment: 210
+    current_balance: 8200
+    include_afford: "yes"
+  - type: loan
+    provider: Tesco Bank
+    monthly_payment: 395
+    current_balance: 13200
+    include_afford: "yes"
+  - type: bnpl
+    provider: Klarna
+    monthly_payment: 85
+    current_balance: 760
+    include_afford: "yes"
+var_appl1_outgoings_pension_contribution: 650
+var_appl1_outgoings_investments: 300
+var_appl2_date_of_birth: 473385600
+var_appl2_retirement_age: 69
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 58000
+var_appl2_recent_commission: 750
+var_appl2_recent_commission_frequency: monthly
+var_appl2_recent_regular_allowance: 200
+var_appl2_recent_regular_allowance_frequency: monthly
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: VWFS
+    monthly_payment: 365
+    current_balance: 16400
+    include_afford: "yes"
+  - type: overdraft
+    provider: HSBC
+    monthly_payment: 0
+    current_balance: 1400
+    include_afford: "yes"
+  - type: credit_card
+    provider: MBNA
+    monthly_payment: 95
+    current_balance: 2600
+    include_afford: "yes"
+var_appl2_outgoings_pension_contribution: 250
+var_appl2_outgoings_investments: 125

@@ -2,29 +2,25 @@ import express from "express";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { parse as parseYaml } from "yaml";
 import { loadRunContext } from "./config.js";
 import { runAffordabilityAutomation } from "./service.js";
 import type { AffordabilityResult, LenderId, LenderReadyInput, RunStatus } from "./domain/contracts.js";
+import { lenderReadyInputSchema } from "./domain/validation.js";
+import { mapBarclaysRawInput } from "./mappers/barclays/raw-to-lender-ready.js";
+import { mapHalifaxRawInput } from "./mappers/halifax/raw-to-lender-ready.js";
+import { mapHsbcRawInput } from "./mappers/hsbc/raw-to-lender-ready.js";
+import { mapSkiptonRawInput } from "./mappers/skipton/raw-to-lender-ready.js";
+import { mapVirginMoneyRawInput } from "./mappers/virgin-money/raw-to-lender-ready.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
 
 const app = express();
 const rootDir = process.cwd();
-const samplesDir = path.join(rootDir, "samples", "halifax-mapped-cases");
-const rawInputDirs = [
-  path.join(rootDir, "samples", "raw-halifax-cases"),
-  path.join(rootDir, "samples", "raw-additional-cases")
-];
+const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
 type MappedLender = "barclays" | "halifax" | "hsbc" | "skipton" | "virgin_money";
 const mappedLenders: MappedLender[] = ["barclays", "halifax", "hsbc", "skipton", "virgin_money"];
-const lenderSampleFolders: Record<MappedLender, string[]> = {
-  barclays: ["barclays-mapped-cases", "barclays-additional-mapped-cases"],
-  halifax: ["halifax-mapped-cases"],
-  hsbc: ["hsbc-mapped-cases", "hsbc-additional-mapped-cases"],
-  skipton: ["skipton-mapped-cases", "skipton-additional-mapped-cases"],
-  virgin_money: ["virgin-money-mapped-cases", "virgin-money-additional-mapped-cases"]
-};
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
@@ -148,6 +144,11 @@ interface RawCaseInput {
   content: string;
 }
 
+interface RawCaseFile extends RawCaseInput {
+  filePath: string;
+  raw: Record<string, unknown>;
+}
+
 interface CaseSummary {
   id: string;
   title: string;
@@ -237,8 +238,8 @@ async function loadCaseDetails(caseId: string) {
 }
 
 async function loadCaseSamples(): Promise<CaseSample[]> {
-  const files = await findJsonFiles(samplesDir);
-  const samples = await Promise.all(files.map(readCaseSample));
+  const files = await findInputFiles(productionCasesDir);
+  const samples = await Promise.all(files.map(readProductionCaseSample));
 
   return samples
     .filter((sample): sample is CaseSample => sample !== null)
@@ -251,37 +252,28 @@ async function loadHalifaxCaseSample(caseId: string): Promise<CaseSample | null>
 }
 
 async function loadMappedSampleForCase(caseId: string, lender: MappedLender): Promise<CaseSample | null> {
-  for (const folder of lenderSampleFolders[lender]) {
-    const directory = path.join(rootDir, "samples", folder);
-    const files = await findJsonFiles(directory);
-    const filePath = files.find((file) => caseIdFromPath(file) === caseId);
+  const rawCase = await loadRawCaseFileForCase(caseId);
+  if (!rawCase) return null;
 
-    if (filePath) {
-      return readCaseSample(filePath);
-    }
-  }
-
-  return null;
+  return {
+    id: rawCase.caseId,
+    title: titleFromCaseId(rawCase.caseId),
+    lender,
+    input: mapRawInputForLender(rawCase.raw, lender),
+    filePath: rawCase.filePath
+  };
 }
 
 async function loadRawInputForCase(caseId: string): Promise<RawCaseInput | null> {
-  for (const directory of rawInputDirs) {
-    const files = await findInputFiles(directory);
-    const filePath = files.find((file) => caseIdFromPath(file) === caseId);
+  const rawCase = await loadRawCaseFileForCase(caseId);
+  if (!rawCase) return null;
 
-    if (filePath) {
-      const fileName = path.basename(filePath);
-      const extension = path.extname(fileName).toLowerCase();
-      return {
-        caseId,
-        fileName,
-        format: extension === ".json" ? "json" : "yaml",
-        content: await readFile(filePath, "utf8")
-      };
-    }
-  }
-
-  return null;
+  return {
+    caseId: rawCase.caseId,
+    fileName: rawCase.fileName,
+    format: rawCase.format,
+    content: rawCase.content
+  };
 }
 
 async function runMappedLenderForCase(caseId: string, lender: MappedLender): Promise<LenderRunView> {
@@ -319,6 +311,50 @@ async function findInputFiles(directory: string): Promise<string[]> {
   );
 
   return files.flat();
+}
+
+async function loadRawCaseFileForCase(caseId: string): Promise<RawCaseFile | null> {
+  const files = await findInputFiles(productionCasesDir);
+  const filePath = files.find((file) => caseIdFromPath(file) === caseId);
+  return filePath ? readRawCaseFile(filePath) : null;
+}
+
+async function readRawCaseFile(filePath: string): Promise<RawCaseFile | null> {
+  try {
+    const fileName = path.basename(filePath);
+    const extension = path.extname(fileName).toLowerCase();
+    const content = await readFile(filePath, "utf8");
+    const raw = extension === ".json" ? JSON.parse(content) : parseYaml(content);
+
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+      return null;
+    }
+
+    return {
+      caseId: caseIdFromPath(filePath),
+      fileName,
+      format: extension === ".json" ? "json" : "yaml",
+      content,
+      filePath,
+      raw: raw as Record<string, unknown>
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function readProductionCaseSample(filePath: string): Promise<CaseSample | null> {
+  const rawCase = await readRawCaseFile(filePath);
+  if (!rawCase) return null;
+
+  const input = mapRawInputForLender(rawCase.raw, "halifax");
+  return {
+    id: rawCase.caseId,
+    title: titleFromCaseId(rawCase.caseId),
+    lender: input.lender,
+    input,
+    filePath
+  };
 }
 
 async function readCaseSample(filePath: string): Promise<CaseSample | null> {
@@ -363,6 +399,17 @@ async function findJsonFiles(directory: string): Promise<string[]> {
 
 function isLenderReadyInput(value: Partial<LenderReadyInput>): value is LenderReadyInput {
   return typeof value.lender === "string" && typeof value.case === "object" && typeof value.loan === "object";
+}
+
+function mapRawInputForLender(raw: Record<string, unknown>, lender: MappedLender): LenderReadyInput {
+  const result =
+    lender === "barclays" ? mapBarclaysRawInput(raw) :
+    lender === "halifax" ? mapHalifaxRawInput(raw) :
+    lender === "hsbc" ? mapHsbcRawInput(raw) :
+    lender === "skipton" ? mapSkiptonRawInput(raw) :
+    mapVirginMoneyRawInput(raw);
+
+  return lenderReadyInputSchema.parse(result.input);
 }
 
 function groupSamplesByCase(samples: CaseSample[]): Map<string, CaseSample[]> {

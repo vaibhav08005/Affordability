@@ -1,0 +1,113 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 385000
+var_deposit: 62000
+var_mortgage_term: 360
+var_deposit_source_details:
+  savings: 22000
+  gifted_deposit: 15000
+  sale_of_property: 25000
+var_property_details_address:
+  postcode: CF10 1EP
+  country: Wales
+var_property_details_tenure: commonhold
+var_property_details_mthly_council_tax: 175
+var_property_details_mthly_bldg_ins: 29
+var_property_details_mthly_grnd_rent: 0
+var_property_details_mthly_serv_charges: 115
+var_other_properties:
+  - occupancy_status: retained_property
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 205000
+    monthly_repayment: 535
+    monthly_rent: 925
+    monthly_council_tax: 0
+    monthly_building_insurance: 21
+    current_balance: 98000
+    remaining_term: 204
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: family_share
+    is_rental_property: "no"
+    mortgage_status: "no"
+    property_value: 120000
+    monthly_repayment: 0
+    monthly_rent: 0
+    monthly_council_tax: 0
+    monthly_building_insurance: 0
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+var_appl1_date_of_birth: 662688000
+var_appl1_retirement_age: 68
+var_appl1_joint_rel_status: live_in_partner
+var_appl1_dependents_details:
+  - age: "2"
+    relationship: child
+  - age: "5"
+    relationship: child
+  - age: "15"
+    relationship: child
+var_appl1_employment_details_employment_type: not_working
+var_appl1_child_benefits_amt: 250
+var_appl1_child_benefits_frequency: monthly
+var_appl1_child_tax_credits: 360
+var_appl1_child_tax_credits_frequency: monthly
+var_appl1_other_state_benefits: 540
+var_appl1_other_state_benefits_frequency: monthly
+var_appl1_personal_independence_payment: 410
+var_appl1_personal_independence_payment_frequency: monthly
+var_appl1_mthly_maint_amt: 650
+var_appl1_credit_commitments:
+  - type: credit_card
+    provider: Aqua
+    monthly_payment: 65
+    current_balance: 1800
+    include_afford: "yes"
+  - type: catalogue
+    provider: Very
+    monthly_payment: 45
+    current_balance: 900
+    include_afford: "yes"
+  - type: overdraft
+    provider: Barclays
+    monthly_payment: 0
+    current_balance: 300
+    include_afford: "yes"
+var_appl1_outgoings_childcare_cost: 780
+var_appl1_outgoings_nursery_school_fee: 360
+var_appl1_outgoings_maintenance_payment: 0
+var_appl2_date_of_birth: 631152000
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 64000
+var_appl2_recent_overtime: 400
+var_appl2_recent_overtime_frequency: monthly
+var_appl2_recent_regular_allowance: 150
+var_appl2_recent_regular_allowance_frequency: monthly
+var_appl2_recent_nongtd_bonus: 3500
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 3000
+var_appl2_prev_nongtd_bonus_frequency: annually
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: Kia Finance
+    monthly_payment: 315
+    current_balance: 14200
+    include_afford: "yes"
+  - type: personal_loan
+    provider: Lloyds
+    monthly_payment: 185
+    current_balance: 5100
+    include_afford: "yes"
+  - type: cards
+    provider: Tesco
+    monthly_payment: 90
+    current_balance: 2400
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 120

@@ -1,0 +1,30 @@
+---
+var_journey: further_advance
+var_no_of_applicants: 1
+var_mortgage_type: further_advance
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 430000
+var_remo_remaining_balance: 210000
+var_additional_borrowing: 45000
+var_mortgage_term: 240
+var_property_details_address:
+  postcode: LS1 1UR
+  country: England
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 441763200
+var_appl1_retirement_age: 70
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 58000
+var_appl1_credit_commitments:
+- type: buy_now_pay_later
+  provider: Klarna
+  monthly_payment: 90
+  current_balance: 1200
+  include_afford: 'yes'
+- type: store_card
+  provider: Retail Card
+  monthly_payment: 25
+  current_balance: 600
+  include_afford: 'yes'

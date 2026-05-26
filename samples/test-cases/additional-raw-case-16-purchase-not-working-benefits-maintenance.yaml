@@ -1,0 +1,25 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 185000
+var_deposit: 65000
+var_mortgage_term: 240
+var_property_details_address: { postcode: CF10 1EP }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 725846400
+var_appl1_dependents_details:
+  - { age: 4, relationship: child }
+  - { age: 10, relationship: child }
+var_appl1_employment_details_employment_type: not_working
+var_appl1_child_benefits_amt: 160
+var_appl1_child_benefits_frequency: monthly
+var_appl1_child_tax_credits: 210
+var_appl1_child_tax_credits_frequency: monthly
+var_appl1_other_state_benefits: 650
+var_appl1_other_state_benefits_frequency: monthly
+var_appl1_mthly_maint_amt: 500
+var_appl1_outgoings_childcare_cost: 240
+var_appl1_outgoings_nursery_school_fee: 120

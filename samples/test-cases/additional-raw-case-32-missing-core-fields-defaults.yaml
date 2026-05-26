@@ -1,0 +1,15 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 295000
+var_deposit: 55000
+var_mortgage_term: 300
+var_appl1_retirement_age: 70
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 48000
+var_appl1_recent_commission: 250
+var_appl1_recent_commission_frequency: monthly

@@ -1,0 +1,21 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 315000
+var_deposit: 63000
+var_mortgage_term: 360
+var_property_details_address: { postcode: LS1 4DY }
+var_property_details_tenure: leasehold
+var_property_details_mthly_serv_charges: 85
+var_property_details_mthly_grnd_rent: 15
+var_appl1_date_of_birth: 788918400
+var_appl1_employment_details_employment_type: contractor
+var_appl1_employment_details_contract_type: my_employer
+var_appl1_contract_details_rate_amount: 1250
+var_appl1_contract_details_rate_frequency: weekly
+var_appl1_contract_details_start_date: 1640995200
+var_appl1_contract_details_end_date: 1830297600
+var_appl1_retirement_age: 70

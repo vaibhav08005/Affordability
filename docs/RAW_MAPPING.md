@@ -1,0 +1,97 @@
+# Raw Fact-Find Mapping
+
+This document describes the generated raw-to-lender-ready mapping layer.
+
+## Purpose
+
+The automation adapters still run on `LenderReadyInput`. The raw mapping layer converts fact-find style YAML/JSON into that shared contract for the mapped workbook lenders:
+
+```text
+barclays
+halifax
+hsbc
+skipton
+virgin_money
+```
+
+The mapped output is validated with `lenderReadyInputSchema` before being written.
+
+## Files
+
+```text
+src/map-barclays.ts                  Single-file Barclays mapper CLI.
+src/map-halifax.ts                   Single-file Halifax mapper CLI.
+src/map-hsbc.ts                      Single-file HSBC mapper CLI.
+src/map-skipton.ts                   Single-file Skipton mapper CLI.
+src/map-virgin-money.ts              Single-file Virgin Money mapper CLI.
+
+src/mappers/<lender>/raw-to-lender-ready.ts
+                                      Reusable raw mapping logic.
+
+scripts/map-<lender>-raw-cases.mjs   Batch mapper for raw case folders.
+Mapping_xlxs/*.xlsx                  Workbook mapping references.
+```
+
+## Commands
+
+Map the default `input.yaml` into one lender-ready output:
+
+```powershell
+npm.cmd run map:halifax
+npm.cmd run map:barclays
+npm.cmd run map:hsbc
+npm.cmd run map:skipton
+npm.cmd run map:virgin-money
+```
+
+Map the base raw case folder:
+
+```powershell
+npm.cmd run map:halifax:cases
+npm.cmd run map:barclays:cases
+npm.cmd run map:hsbc:cases
+npm.cmd run map:skipton:cases
+npm.cmd run map:virgin-money:cases
+```
+
+Map a custom raw folder after building:
+
+```powershell
+npm.cmd run build
+node scripts\map-halifax-raw-cases.mjs samples\raw-additional-cases samples\halifax-additional-mapped-cases
+```
+
+Use the equivalent script for Barclays, HSBC, Skipton, or Virgin Money.
+
+## Sample Folders
+
+Raw inputs:
+
+```text
+samples/raw-halifax-cases       10 YAML base cases
+samples/raw-additional-cases    20 YAML additional cases
+```
+
+Generated lender-ready outputs:
+
+```text
+samples/halifax-mapped-cases
+samples/barclays-mapped-cases
+samples/hsbc-mapped-cases
+samples/skipton-mapped-cases
+samples/virgin-money-mapped-cases
+
+samples/halifax-additional-mapped-cases
+samples/barclays-additional-mapped-cases
+samples/hsbc-additional-mapped-cases
+samples/skipton-additional-mapped-cases
+samples/virgin-money-additional-mapped-cases
+```
+
+## Mapping Notes
+
+Mapper output may include `issues`. These are warnings about defaults or ambiguous raw fields, not necessarily fatal errors. Treat them as review items before trusting a case for production regression.
+
+The mapped output should be checked in only when it is useful as a regression fixture. If a raw mapping rule changes, regenerate the affected mapped folders and review the diff.
+
+The web interface currently lists cases from `samples/halifax-mapped-cases` and looks up matching mapped files for the other four mapped lenders by normalized filename-derived case ID.

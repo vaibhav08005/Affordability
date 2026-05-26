@@ -1,0 +1,19 @@
+---
+var_journey: ftb
+var_no_of_applicants: 1
+var_mortgage_type: purchase
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 290000
+var_deposit: 45000
+var_mortgage_term: 420
+var_property_details_address: { postcode: NG1 5FS }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 757382400
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employed_permanent_temporary_start_date: 1772323200
+var_appl1_gross_annual_salary: 57000
+var_appl1_recent_nongtd_bonus: 3000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_retirement_age: 70

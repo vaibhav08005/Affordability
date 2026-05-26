@@ -1,0 +1,24 @@
+---
+var_journey: hm
+var_no_of_applicants: 1
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: interest_only
+var_interest_only_amount: 275000
+var_property_value: 500000
+var_deposit: 225000
+var_mortgage_term: 180
+var_repay_vehicle_type: sale_of_property
+var_repay_vehicle_value: 420000
+var_repay_vehicle_mthly_contribution: 0
+var_property_details_address: { postcode: KT1 1UJ }
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 378691200
+var_appl1_employment_details_employment_type: employed
+var_appl1_gross_annual_salary: 98000
+var_appl1_retirement_age: 70
+var_appl1_credit_commitments:
+  - type: credit_card
+    current_balance: 15000
+    monthly_payment: 450
+    include_afford: "yes"

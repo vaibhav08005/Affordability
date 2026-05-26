@@ -8,7 +8,9 @@ The interface provides a small local page for:
 
 - Viewing Halifax mapped cases in rows.
 - Opening a case detail view.
+- Viewing the raw source YAML/JSON for a case when available.
 - Seeing lender affordability results for the selected case.
+- Opening screenshot/PDF evidence artifacts for saved runs.
 - Running affordability for the selected case across the five mapped lenders.
 
 The UI is intentionally minimal and does not use a frontend framework.
@@ -18,6 +20,8 @@ The UI is intentionally minimal and does not use a frontend framework.
 ```text
 public/index.html   Static HTML, CSS, and browser JavaScript for the interface.
 src/server.ts       Serves the static page and exposes interface API routes.
+src/repositories/run-repository.ts
+                    In-memory result storage boundary for interface/API runs.
 ```
 
 The page is served by the same Express process as the API.
@@ -68,6 +72,13 @@ becomes:
 
 ```text
 11 Ftb Joint Employed Contractor Umbrella
+```
+
+The raw input viewer looks for matching source files in:
+
+```text
+samples/raw-halifax-cases
+samples/raw-additional-cases
 ```
 
 ## Supported Interface Lenders
@@ -160,6 +171,32 @@ failed    Lender run failed or mapped input is missing.
 not_run   No run result is saved in the current server session.
 ```
 
+### `GET /api/cases/:caseId/input`
+
+Returns the raw source YAML/JSON text for the selected case when a matching raw input exists.
+
+Response shape:
+
+```json
+{
+  "caseId": "01-ftb-single-employed",
+  "fileName": "halifax-raw-case-01-ftb-single-employed.yaml",
+  "format": "yaml",
+  "content": "..."
+}
+```
+
+### `GET /api/artifact?path=...`
+
+Serves screenshot or PDF evidence from allowed artifact roots only:
+
+```text
+artifacts/
+SCREENSHOT_DIR
+```
+
+The route rejects paths outside those roots.
+
 ### `POST /api/cases/:caseId/run-affordability`
 
 Runs the selected case across all five interface lenders.
@@ -184,6 +221,7 @@ The endpoint responds after all five lenders complete or fail.
 6. The button changes to `Running...` while the endpoint is active.
 7. After completion, the page navigates to the selected case detail view.
 8. The case detail view displays the latest in-memory result for each lender.
+9. User can open raw input and evidence links when available.
 
 ## Result Storage
 
@@ -236,6 +274,7 @@ There is no per-lender live progress streaming yet.
 Results are not persisted after restart.
 The Cases page is intentionally limited to Halifax mapped cases.
 The interface only runs the five mapped workbook lenders, not every adapter in the registry.
+The raw input viewer depends on filename-derived case IDs matching the mapped sample IDs.
 ```
 
 ## Suggested Next Interface Improvements

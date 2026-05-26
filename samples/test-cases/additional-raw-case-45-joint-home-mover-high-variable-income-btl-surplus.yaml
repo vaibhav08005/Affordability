@@ -1,0 +1,134 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 950000
+var_deposit: 250000
+var_mortgage_term: 360
+var_rate_type: tracker
+var_deposit_source_details:
+  sale_of_property: 180000
+  savings: 45000
+  bonus: 25000
+var_property_details_address:
+  postcode: GU1 3QT
+  country: England
+var_property_details_tenure: freehold
+var_property_details_mthly_council_tax: 315
+var_property_details_mthly_bldg_ins: 62
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 390000
+    monthly_repayment: 920
+    monthly_rent: 1750
+    monthly_council_tax: 0
+    monthly_building_insurance: 34
+    current_balance: 205000
+    remaining_term: 264
+    repayment_type: interest_only
+    io_balance: 205000
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 285000
+    monthly_repayment: 680
+    monthly_rent: 1325
+    monthly_council_tax: 0
+    monthly_building_insurance: 27
+    current_balance: 142000
+    remaining_term: 228
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "no"
+    property_value: 215000
+    monthly_repayment: 0
+    monthly_rent: 995
+    monthly_council_tax: 0
+    monthly_building_insurance: 24
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+  - occupancy_status: residential_retained
+    is_rental_property: "no"
+    mortgage_status: "yes"
+    property_value: 330000
+    monthly_repayment: 790
+    monthly_rent: 0
+    monthly_council_tax: 210
+    monthly_building_insurance: 30
+    current_balance: 150000
+    remaining_term: 180
+    repayment_type: principal_over_mortgage_term
+var_appl1_date_of_birth: 473385600
+var_appl1_retirement_age: 68
+var_appl1_joint_rel_status: spouse
+var_appl1_dependents_details:
+  - age: "8"
+    relationship: child
+  - age: "12"
+    relationship: child
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 118000
+var_appl1_recent_overtime: 0
+var_appl1_recent_regular_allowance: 600
+var_appl1_recent_regular_allowance_frequency: monthly
+var_appl1_recent_commission: 1800
+var_appl1_recent_commission_frequency: monthly
+var_appl1_recent_nongtd_bonus: 24000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 21000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_credit_commitments:
+  - type: credit_card
+    provider: Amex
+    monthly_payment: 240
+    current_balance: 9500
+    include_afford: "yes"
+  - type: loan
+    provider: HSBC
+    monthly_payment: 410
+    current_balance: 13600
+    include_afford: "yes"
+  - type: car_finance
+    provider: Porsche Finance
+    monthly_payment: 690
+    current_balance: 33000
+    include_afford: "yes"
+var_appl1_outgoings_childcare_cost: 720
+var_appl1_outgoings_nursery_school_fee: 450
+var_appl2_date_of_birth: 504921600
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 82000
+var_appl2_recent_overtime: 250
+var_appl2_recent_overtime_frequency: monthly
+var_appl2_recent_commission: 650
+var_appl2_recent_commission_frequency: monthly
+var_appl2_recent_nongtd_bonus: 9000
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 8500
+var_appl2_prev_nongtd_bonus_frequency: annually
+var_appl2_credit_commitments:
+  - type: cards
+    provider: NatWest
+    monthly_payment: 150
+    current_balance: 5200
+    include_afford: "yes"
+  - type: overdraft
+    provider: Starling
+    monthly_payment: 0
+    current_balance: 650
+    include_afford: "yes"
+  - type: student_loans
+    provider: SLC
+    monthly_payment: 260
+    current_balance: 32000
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 260

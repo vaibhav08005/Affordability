@@ -1,0 +1,114 @@
+---
+var_journey: further_advance
+var_no_of_applicants: 2
+var_mortgage_type: further_advance
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 540000
+var_remo_remaining_balance: 210000
+var_equity_release_amount: 68000
+var_additional_borrowing: 68000
+var_add_borrow_amount: 68000
+var_add_borrow_details: extension_debt_consolidation_school_fees
+var_current_lender: Nationwide
+var_mthly_repay_amount: 990
+var_mortgage_term: 240
+var_property_details_address:
+  postcode: LS8 1AP
+  country: England
+var_property_details_tenure: freehold
+var_property_details_mthly_council_tax: 205
+var_property_details_mthly_bldg_ins: 36
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 220000
+    monthly_repayment: 555
+    monthly_rent: 925
+    monthly_council_tax: 0
+    monthly_building_insurance: 22
+    current_balance: 102000
+    remaining_term: 156
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 185000
+    monthly_repayment: 470
+    monthly_rent: 825
+    monthly_council_tax: 0
+    monthly_building_insurance: 20
+    current_balance: 86000
+    remaining_term: 180
+    repayment_type: interest_only
+    io_balance: 86000
+  - occupancy_status: second_home
+    is_rental_property: "no"
+    mortgage_status: "no"
+    property_value: 175000
+    monthly_repayment: 0
+    monthly_rent: 0
+    monthly_council_tax: 135
+    monthly_building_insurance: 18
+    current_balance: 0
+    remaining_term: 0
+    repayment_type: none
+var_appl1_date_of_birth: 220924800
+var_appl1_retirement_age: 66
+var_appl1_joint_rel_status: married
+var_appl1_dependents_details:
+  - age: "19"
+    relationship: child_in_higher_education
+var_appl1_employment_details_employment_type: retired
+var_appl1_mthly_pension: 3850
+var_appl1_personal_independence_payment: 240
+var_appl1_personal_independence_payment_frequency: monthly
+var_appl1_credit_commitments:
+  - type: cards
+    provider: Barclaycard
+    monthly_payment: 125
+    current_balance: 4100
+    include_afford: "yes"
+  - type: loan
+    provider: Sainsburys Bank
+    monthly_payment: 265
+    current_balance: 7400
+    include_afford: "yes"
+  - type: overdraft
+    provider: Lloyds
+    monthly_payment: 0
+    current_balance: 500
+    include_afford: "yes"
+var_appl1_outgoings_maintenance_payment: 250
+var_appl2_date_of_birth: 504921600
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 73500
+var_appl2_recent_overtime: 350
+var_appl2_recent_overtime_frequency: monthly
+var_appl2_recent_commission: 450
+var_appl2_recent_commission_frequency: monthly
+var_appl2_recent_nongtd_bonus: 6500
+var_appl2_recent_nongtd_bonus_frequency: annually
+var_appl2_prev_nongtd_bonus: 4000
+var_appl2_prev_nongtd_bonus_frequency: annually
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: Mercedes Finance
+    monthly_payment: 515
+    current_balance: 24500
+    include_afford: "yes"
+  - type: credit_card
+    provider: Tesco
+    monthly_payment: 80
+    current_balance: 1900
+    include_afford: "yes"
+  - type: store_card
+    provider: Next
+    monthly_payment: 35
+    current_balance: 700
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 0
+var_appl2_outgoings_nursery_school_fee: 300

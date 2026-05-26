@@ -1,0 +1,38 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 510000
+var_deposit: 110000
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: CV1 2WT
+  country: England
+var_property_details_tenure: freehold
+var_appl1_date_of_birth: 536457600
+var_appl1_retirement_age: 67
+var_appl1_joint_rel_status: spouse
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 76000
+var_appl2_date_of_birth: 568080000
+var_appl2_retirement_age: 67
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_gross_annual_salary: 52000
+var_other_properties:
+- occupancy_status: rental_property_already_let
+  is_rental_property: 'yes'
+  mortgage_status: 'yes'
+  monthly_rent: 1800
+  monthly_repayment: 950
+  monthly_council_tax: 120
+  current_balance: 155000
+  remaining_term: 216
+- occupancy_status: second_home
+  is_rental_property: 'no'
+  mortgage_status: 'yes'
+  current_balance: 90000
+  remaining_term: 144

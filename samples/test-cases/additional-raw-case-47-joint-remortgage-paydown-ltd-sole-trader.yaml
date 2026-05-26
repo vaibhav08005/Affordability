@@ -1,0 +1,117 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 2
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 705000
+var_remo_remaining_balance: 405000
+var_pay_down_amount: 65000
+var_equity_release_amount: 40000
+var_additional_borrowing: 40000
+var_add_borrow_amount: 40000
+var_add_borrow_details: home_office_and_energy_improvements
+var_current_lender: NatWest
+var_mthly_repay_amount: 1785
+var_mortgage_term: 300
+var_property_details_address:
+  postcode: OX2 7DE
+  country: England
+var_property_details_tenure: freehold
+var_property_details_mthly_council_tax: 260
+var_property_details_mthly_bldg_ins: 48
+var_other_properties:
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 360000
+    monthly_repayment: 835
+    monthly_rent: 1600
+    monthly_council_tax: 0
+    monthly_building_insurance: 31
+    current_balance: 176000
+    remaining_term: 216
+    repayment_type: principal_over_mortgage_term
+  - occupancy_status: let_out
+    is_rental_property: "yes"
+    mortgage_status: "yes"
+    property_value: 290000
+    monthly_repayment: 690
+    monthly_rent: 1275
+    monthly_council_tax: 0
+    monthly_building_insurance: 27
+    current_balance: 144000
+    remaining_term: 240
+    repayment_type: interest_only
+    io_balance: 144000
+  - occupancy_status: second_home
+    is_rental_property: "no"
+    mortgage_status: "yes"
+    property_value: 260000
+    monthly_repayment: 610
+    monthly_rent: 0
+    monthly_council_tax: 165
+    monthly_building_insurance: 26
+    current_balance: 93000
+    remaining_term: 120
+    repayment_type: principal_over_mortgage_term
+var_appl1_date_of_birth: 473385600
+var_appl1_retirement_age: 70
+var_appl1_joint_rel_status: married
+var_appl1_dependents_details:
+  - age: "10"
+    relationship: child
+var_appl1_employment_details_employment_type: self_employed
+var_appl1_business_setup_type: limited_company
+var_appl1_employed_company_details_ownership_percentage: 75
+var_appl1_business_start_date: 1325376000
+var_appl1_business_salary: 30000
+var_appl1_business_curr_yr_dividends: 64000
+var_appl1_business_prev_yr_dividends: 58000
+var_appl1_business_curr_yr_net_profit: 118000
+var_appl1_business_prev_yr_net_profit: 99000
+var_appl1_credit_commitments:
+  - type: cards
+    provider: Mastercard
+    monthly_payment: 175
+    current_balance: 6100
+    include_afford: "yes"
+  - type: business_loan_personal
+    provider: Funding Circle
+    monthly_payment: 520
+    current_balance: 18800
+    include_afford: "yes"
+  - type: overdraft
+    provider: Santander
+    monthly_payment: 0
+    current_balance: 1700
+    include_afford: "yes"
+var_appl1_outgoings_childcare_cost: 280
+var_appl1_outgoings_pension_contribution: 550
+var_appl2_date_of_birth: 504921600
+var_appl2_retirement_age: 70
+var_appl2_employment_details_employment_type: self_employed
+var_appl2_business_setup_type: sole_trader
+var_appl2_business_start_date: 1451606400
+var_appl2_st_curr_yr_profit: 72000
+var_appl2_st_prev_yr_profit: 66000
+var_appl2_land_curr_profit: 5400
+var_appl2_land_prev_profit: 4700
+var_appl2_credit_commitments:
+  - type: car_finance
+    provider: Audi Finance
+    monthly_payment: 445
+    current_balance: 19800
+    include_afford: "yes"
+  - type: credit_card
+    provider: M&S Bank
+    monthly_payment: 105
+    current_balance: 2800
+    include_afford: "yes"
+  - type: loan
+    provider: Nationwide
+    monthly_payment: 230
+    current_balance: 6900
+    include_afford: "yes"
+var_appl2_outgoings_childcare_cost: 210
+var_appl2_outgoings_pension_contribution: 380

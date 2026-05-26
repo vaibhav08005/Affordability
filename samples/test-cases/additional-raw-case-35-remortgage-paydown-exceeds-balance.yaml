@@ -1,0 +1,21 @@
+---
+var_journey: resi_remo
+var_no_of_applicants: 1
+var_mortgage_type: resi
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 240000
+var_remo_remaining_balance: 70000
+var_pay_down_amount: 85000
+var_mortgage_term: 180
+var_property_details_address:
+  postcode: NE1 4LP
+  country: England
+var_property_details_tenure: freehold
+var_current_lender: Existing Bank
+var_mthly_repay_amount: 640
+var_appl1_date_of_birth: 504921600
+var_appl1_retirement_age: 67
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_gross_annual_salary: 44000
