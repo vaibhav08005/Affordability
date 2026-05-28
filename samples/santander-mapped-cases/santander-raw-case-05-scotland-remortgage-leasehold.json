@@ -1,0 +1,55 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "resi_remo",
+    "applicationType": "single",
+    "numberOfApplicants": 1,
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 18,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": true,
+    "tenure": "leasehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 260000,
+    "loanAmount": 140000,
+    "currentBalance": 145000
+  },
+  "household": {
+    "dependants": []
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "410227200",
+      "age": 43,
+      "retirementAge": 67,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 58000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 0,
+    "overdraftBalances": 1500,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": []
+}

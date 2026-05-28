@@ -1,0 +1,149 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 20,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 300000,
+    "loanAmount": 200000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 3,
+        "relationship": "child"
+      },
+      {
+        "age": 27,
+        "relationship": "other_family"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "age": 35,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 70000,
+        "annualOvertime": 780,
+        "annualBonus": 10000,
+        "annualCommission": 1000,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "additional_duty_hours",
+          "annualAmount": 900
+        },
+        {
+          "type": "nursing_bank",
+          "annualAmount": 80
+        },
+        {
+          "type": "shift_allowance",
+          "annualAmount": 1000
+        },
+        {
+          "type": "town_area_or_car_allowance",
+          "annualAmount": 11240
+        },
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 12000
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 400
+        },
+        {
+          "type": "employment_support_allowance",
+          "annualAmount": 1200
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 26000
+        },
+        {
+          "type": "disability_living_allowance",
+          "annualAmount": 520
+        },
+        {
+          "type": "carers_allowance",
+          "annualAmount": 390
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 2000
+        },
+        {
+          "type": "universal_credit",
+          "annualAmount": 100
+        },
+        {
+          "type": "maintenance",
+          "annualAmount": 36000
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "age": 35,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 60000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 0,
+    "creditCardBalances": 10000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 400,
+    "monthlyBuyToLetPayments": 1600,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 200000,
+      "monthlyMortgagePayment": 900,
+      "monthlyRent": 1000,
+      "currentBalance": 50000,
+      "remainingTermYears": 20,
+      "repaymentType": "capital_and_interest"
+    },
+    {
+      "isRental": true,
+      "propertyValue": 200000,
+      "monthlyMortgagePayment": 700,
+      "currentBalance": 70000,
+      "remainingTermYears": 18,
+      "repaymentType": "capital_and_interest"
+    }
+  ]
+}
