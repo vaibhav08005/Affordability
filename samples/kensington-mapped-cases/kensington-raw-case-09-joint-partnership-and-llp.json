@@ -1,0 +1,87 @@
+{
+  "lender": "kensington",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 720000,
+    "loanAmount": 540000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 16,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "441763200",
+      "age": 42,
+      "retirementAge": 72,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "partnership",
+        "netProfitCurrentYear": 84500,
+        "netProfitPreviousYear": 81000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "473385600",
+      "age": 41,
+      "retirementAge": 72,
+      "employment": {
+        "type": "self_employed",
+        "isContractor": false,
+        "businessType": "llp",
+        "netProfitCurrentYear": 72500,
+        "netProfitPreviousYear": 69000,
+        "annualGrossIncome": 0,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 180,
+    "creditCardBalances": 5000,
+    "overdraftBalances": 0,
+    "otherMonthlyOutgoings": 0,
+    "monthlyBuyToLetPayments": 0,
+    "otherMortgageCommitments": [
+      {
+        "outstandingBalance": 125000,
+        "remainingTermYears": 16
+      }
+    ]
+  },
+  "otherProperties": []
+}

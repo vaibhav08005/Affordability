@@ -10,6 +10,7 @@ import { lenderReadyInputSchema } from "./domain/validation.js";
 import { mapBarclaysRawInput } from "./mappers/barclays/raw-to-lender-ready.js";
 import { mapHalifaxRawInput } from "./mappers/halifax/raw-to-lender-ready.js";
 import { mapHsbcRawInput } from "./mappers/hsbc/raw-to-lender-ready.js";
+import { mapKensingtonRawInput } from "./mappers/kensington/raw-to-lender-ready.js";
 import { mapSkiptonRawInput } from "./mappers/skipton/raw-to-lender-ready.js";
 import { mapVirginMoneyRawInput } from "./mappers/virgin-money/raw-to-lender-ready.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
@@ -19,8 +20,8 @@ const rootDir = process.cwd();
 const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
-type MappedLender = "barclays" | "halifax" | "hsbc" | "skipton" | "virgin_money";
-const mappedLenders: MappedLender[] = ["barclays", "halifax", "hsbc", "skipton", "virgin_money"];
+type MappedLender = "barclays" | "halifax" | "hsbc" | "kensington" | "skipton" | "virgin_money";
+const mappedLenders: MappedLender[] = ["barclays", "halifax", "hsbc", "kensington", "skipton", "virgin_money"];
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
@@ -406,6 +407,7 @@ function mapRawInputForLender(raw: Record<string, unknown>, lender: MappedLender
     lender === "barclays" ? mapBarclaysRawInput(raw) :
     lender === "halifax" ? mapHalifaxRawInput(raw) :
     lender === "hsbc" ? mapHsbcRawInput(raw) :
+    lender === "kensington" ? mapKensingtonRawInput(raw) :
     lender === "skipton" ? mapSkiptonRawInput(raw) :
     mapVirginMoneyRawInput(raw);
 
