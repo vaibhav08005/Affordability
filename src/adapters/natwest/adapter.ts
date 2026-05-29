@@ -286,6 +286,8 @@ async function waitForResult(page: Page, context: RunContext): Promise<void> {
       const text = document.body.innerText;
       return (
         /maximum\s+(borrowing|loan|amount)|could\s+(borrow|lend)|may\s+be\s+able\s+to\s+borrow|we\s+could\s+lend|result/i.test(text) ||
+        /on a capital and interest basis/i.test(text) ||
+        /product term under 5 years/i.test(text) ||
         /please\s+(enter|select)|required|must|error/i.test(text)
       );
     },

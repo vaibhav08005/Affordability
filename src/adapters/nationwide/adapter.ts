@@ -324,7 +324,7 @@ async function fillNationwideOtherIncome(page: Page, applicant: Applicant): Prom
 async function fillOutgoingsStep(page: Page, input: LenderReadyInput): Promise<void> {
   await fillFirstAvailableCurrency(page, ["total your client owes on all credit cards", "TotalCreditCardBalances"], input.outgoings.creditCardBalances);
   await fillFirstAvailableCurrency(page, ["how much will be cleared", "TotalCreditCardBalanceToBeCleared"], 0);
-  await chooseFirstAvailableOption(page, ["No"], ["credit cards cleared in full"]);
+  await chooseAllVisibleRadioGroups(page, "credit cards cleared in full", input.outgoings.creditCardBalances > 0 ? "No" : "Yes");
   await fillFirstAvailableCurrency(page, ["Personal loans and hire purchases", "MonthlyPersonalLoanOrHire"], input.outgoings.monthlyLoanRepayments);
   await fillFirstAvailableCurrency(page, ["Secured loan payments", "MonthlySecuredLoanPayments"], 0);
   await fillFirstAvailableCurrency(page, ["Buy now, pay later", "MonthlyDpaPayment"], 0);
@@ -490,6 +490,32 @@ async function checkCheckboxById(page: Page, id: string): Promise<boolean> {
   return true;
 }
 
+async function chooseAllVisibleRadioGroups(page: Page, groupHint: string, option: "Yes" | "No"): Promise<boolean> {
+  const optionPattern = new RegExp(`^${option}$`, "i");
+  let selected = 0;
+
+  for (const role of ["group", "radiogroup"] as const) {
+    const groups = page.getByRole(role, { name: new RegExp(escapeRegExp(groupHint), "i") });
+    const count = await groups.count();
+    for (let index = 0; index < count; index += 1) {
+      const group = groups.nth(index);
+      if (!(await group.isVisible().catch(() => false))) continue;
+      const radios = group.getByRole("radio", { name: optionPattern });
+      const radioCount = await radios.count();
+      for (let radioIndex = 0; radioIndex < radioCount; radioIndex += 1) {
+        const radio = radios.nth(radioIndex);
+        if (!(await radio.isVisible().catch(() => false))) continue;
+        await radio.click({ force: true });
+        selected += 1;
+        break;
+      }
+    }
+  }
+
+  if (selected > 0) return true;
+  return chooseFirstAvailableOption(page, [option], [groupHint]);
+}
+
 async function setClientValuesById(page: Page, applicant: Applicant): Promise<void> {
   const parts = parseDateParts(applicant.dateOfBirth ?? dateOfBirthFromAge(applicant.age));
   const datePrefix = applicant.index === 1 ? "AffCalc-q140" : "AffCalc-q190";
@@ -629,4 +655,8 @@ function otherIncomeAnnualTotal(applicant: Applicant, type: string): number {
 
 function cssAttributeValue(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

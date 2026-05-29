@@ -1,15 +1,17 @@
 {
-  "lender": "santander",
+  "lender": "natwest",
   "case": {
-    "journey": "hm",
+    "journey": "resi_remo",
     "applicationType": "joint",
     "numberOfApplicants": 2,
-    "mortgagePurpose": "purchase",
+    "mortgagePurpose": "remortgage_capital_raising",
     "customerType": "home_mover",
-    "repaymentType": "capital_and_interest",
+    "repaymentType": "part_and_part",
     "termYears": 25,
     "sharedOwnershipOrEquity": false,
-    "hasInterestOnly": false
+    "hasInterestOnly": true,
+    "interestOnlyLoanAmount": 90000,
+    "monthlyRepaymentPlanPremium": 900
   },
   "property": {
     "isInScotland": false,
@@ -17,17 +19,22 @@
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 420000,
-    "loanAmount": 320000
+    "propertyValue": 650000,
+    "loanAmount": 365000,
+    "currentBalance": 310000
   },
   "household": {
     "dependants": [
       {
-        "age": 7,
+        "age": 12,
         "relationship": "child"
       },
       {
-        "age": 4,
+        "age": 9,
+        "relationship": "child"
+      },
+      {
+        "age": 1,
         "relationship": "child"
       }
     ]
@@ -35,66 +42,54 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "568080000",
-      "age": 38,
+      "dateOfBirth": "1986-01-01",
+      "age": 40,
       "retirementAge": 70,
       "employment": {
-        "type": "employed",
+        "type": "self_employed",
         "isContractor": false,
-        "annualGrossIncome": 78000,
+        "businessType": "limited_company",
+        "netProfitCurrentYear": 90000,
+        "netProfitPreviousYear": 79000,
+        "annualGrossIncome": 18000,
         "annualOvertime": 0,
-        "annualBonus": 0,
-        "annualCommission": 6000,
-        "annualPensionIncome": 0,
-        "otherAnnualPensionIncome": 0
-      },
-      "otherIncome": [
-        {
-          "type": "town_area_or_car_allowance",
-          "annualAmount": 6000
-        }
-      ]
-    },
-    {
-      "index": 2,
-      "dateOfBirth": "662688000",
-      "age": 35,
-      "retirementAge": 68,
-      "employment": {
-        "type": "employed",
-        "isContractor": false,
-        "annualGrossIncome": 61000,
-        "annualOvertime": 0,
-        "annualBonus": 4000,
+        "annualBonus": 72000,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
       },
       "otherIncome": [
         {
-          "type": "town_area_or_car_allowance",
-          "annualAmount": 4000
+          "type": "maintenance",
+          "annualAmount": 3000
         }
       ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "1989-01-01",
+      "age": 37,
+      "retirementAge": 70,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 54000,
+        "annualOvertime": 0,
+        "annualBonus": 0,
+        "annualCommission": 0,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": []
     }
   ],
   "outgoings": {
-    "monthlyLoanRepayments": 240,
+    "monthlyLoanRepayments": 0,
     "creditCardBalances": 0,
     "overdraftBalances": 0,
     "otherMonthlyOutgoings": 0,
-    "monthlyBuyToLetPayments": 1450,
+    "monthlyBuyToLetPayments": 0,
     "otherMortgageCommitments": []
   },
-  "otherProperties": [
-    {
-      "isRental": true,
-      "propertyValue": 160000,
-      "monthlyMortgagePayment": 1450,
-      "monthlyRent": 1100,
-      "currentBalance": 160000,
-      "remainingTermYears": 20,
-      "repaymentType": "capital_and_interest"
-    }
-  ]
+  "otherProperties": []
 }

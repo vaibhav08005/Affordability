@@ -1,5 +1,5 @@
 {
-  "lender": "santander",
+  "lender": "nationwide",
   "case": {
     "journey": "hm",
     "applicationType": "joint",
@@ -7,7 +7,7 @@
     "mortgagePurpose": "purchase",
     "customerType": "home_mover",
     "repaymentType": "capital_and_interest",
-    "termYears": 30,
+    "termYears": 25,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
@@ -17,13 +17,17 @@
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 720000,
-    "loanAmount": 540000
+    "propertyValue": 420000,
+    "loanAmount": 320000
   },
   "household": {
     "dependants": [
       {
-        "age": 16,
+        "age": 7,
+        "relationship": "child"
+      },
+      {
+        "age": 4,
         "relationship": "child"
       }
     ]
@@ -31,19 +35,16 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "441763200",
-      "age": 42,
-      "retirementAge": 72,
+      "dateOfBirth": "1988-01-02",
+      "age": 38,
+      "retirementAge": 70,
       "employment": {
-        "type": "self_employed",
+        "type": "employed",
         "isContractor": false,
-        "businessType": "partnership",
-        "netProfitCurrentYear": 100000,
-        "netProfitPreviousYear": 93000,
-        "annualGrossIncome": 12000,
+        "annualGrossIncome": 78000,
         "annualOvertime": 0,
         "annualBonus": 0,
-        "annualCommission": 0,
+        "annualCommission": 6000,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
       },
@@ -51,18 +52,15 @@
     },
     {
       "index": 2,
-      "dateOfBirth": "473385600",
-      "age": 41,
-      "retirementAge": 72,
+      "dateOfBirth": "1991-01-01",
+      "age": 35,
+      "retirementAge": 68,
       "employment": {
-        "type": "self_employed",
+        "type": "employed",
         "isContractor": false,
-        "businessType": "llp",
-        "netProfitCurrentYear": 76000,
-        "netProfitPreviousYear": 69000,
-        "annualGrossIncome": 0,
+        "annualGrossIncome": 61000,
         "annualOvertime": 0,
-        "annualBonus": 0,
+        "annualBonus": 4000,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
@@ -71,20 +69,21 @@
     }
   ],
   "outgoings": {
-    "monthlyLoanRepayments": 180,
-    "creditCardBalances": 5000,
+    "monthlyLoanRepayments": 240,
+    "creditCardBalances": 0,
     "overdraftBalances": 0,
     "otherMonthlyOutgoings": 0,
-    "monthlyBuyToLetPayments": 0,
+    "monthlyBuyToLetPayments": 1450,
     "otherMortgageCommitments": []
   },
   "otherProperties": [
     {
-      "isRental": false,
-      "propertyValue": 125000,
-      "monthlyMortgagePayment": 950,
-      "currentBalance": 125000,
-      "remainingTermYears": 16,
+      "isRental": true,
+      "propertyValue": 0,
+      "monthlyMortgagePayment": 1450,
+      "monthlyRent": 1100,
+      "currentBalance": 160000,
+      "remainingTermYears": 20,
       "repaymentType": "capital_and_interest"
     }
   ]

@@ -137,33 +137,29 @@ async function assertCalculatorAvailable(page: Page): Promise<void> {
 }
 
 async function fillHsbcCalculator(page: Page, input: LenderReadyInput): Promise<void> {
-  await fillPageAndAdvance(page, async () => {
-    await fillCaseDetails(page, input);
-    await fillApplicants(page, input);
-    await fillPropertyAndMortgage(page, input);
-    await fillIncome(page, input);
-    await fillExpenditure(page, input);
-  });
+  await acceptCookies(page);
+  await fillCaseDetails(page, input);
+  await advanceHsbcStep(page);
+
+  await fillApplicants(page, input);
+  await advanceHsbcStep(page);
+
+  await fillPropertyAndMortgage(page, input);
+  await advanceHsbcStep(page);
+
+  await fillIncome(page, input);
+  await advanceHsbcStep(page);
+
+  await fillExpenditure(page, input);
 }
 
-async function fillPageAndAdvance(page: Page, fillVisibleFields: () => Promise<void>): Promise<void> {
-  for (let step = 0; step < 8; step += 1) {
-    await acceptCookies(page);
-    const before = await page.locator("body").innerText().catch(() => "");
-    await fillVisibleFields();
-
-    if (await resultIsVisible(page)) return;
-    await acceptCookies(page);
-    if (await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue", "Next"])) {
-      await page.waitForLoadState("domcontentloaded").catch(() => undefined);
-      await page.waitForTimeout(700);
-    } else {
-      return;
-    }
-
-    const after = await page.locator("body").innerText().catch(() => "");
-    if (normalizePageText(before) === normalizePageText(after) && !(await nextOrCalculateIsVisible(page))) return;
-  }
+async function advanceHsbcStep(page: Page): Promise<void> {
+  if (await resultIsVisible(page)) return;
+  await acceptCookies(page);
+  const advanced = await clickFirstAvailableButton(page, ["Continue", "Next"]);
+  if (!advanced) return;
+  await page.waitForLoadState("domcontentloaded").catch(() => undefined);
+  await page.waitForTimeout(700);
 }
 
 async function fillCaseDetails(page: Page, input: LenderReadyInput): Promise<void> {
@@ -210,12 +206,6 @@ async function fillApplicants(page: Page, input: LenderReadyInput): Promise<void
     await chooseFirstAvailableOption(scope, employmentLabels(applicant), ["Employment status", `Applicant ${applicant.index}`]);
     await chooseFirstAvailableOption(scope, ["No"], ["foreign currency income", "Foreign currency"]);
     await chooseFirstAvailableOption(scope, residentialStatusLabels[input.case.customerType], ["Residential status"]);
-    await fillByIdVariant(page, "dateOfBirth", applicantIndex, ".dob-date-day-field", dob.day);
-    await fillByIdVariant(page, "dateOfBirth", applicantIndex, ".dob-date-month-field", dob.month);
-    await fillByIdVariant(page, "dateOfBirth", applicantIndex, ".dob-date-year-field", dob.year);
-    await selectByIdVariant(page, "dateOfBirth", applicantIndex, ".retirementAge-field", [String(applicant.retirementAge ?? 70)]);
-    await selectByIdVariant(page, "income", applicantIndex, ".employementStatus-field", employmentLabels(applicant));
-    await checkRadioByIdVariant(page, "income", applicantIndex, ".currencyCheck-no-radio-item");
   }
 
   await selectById(page, "dependentDetailsChildren-field", [dependantOption(input, "child")]);
@@ -235,8 +225,6 @@ async function fillPropertyAndMortgage(page: Page, input: LenderReadyInput): Pro
   await chooseYesNo(page, ["Assess on interest only basis", "Interest only basis"], input.case.hasInterestOnly || input.case.repaymentType !== "capital_and_interest");
   await chooseFirstAvailableOption(page, repaymentBasisLabels[input.case.repaymentType], ["Interest only basis"]);
   await page.waitForTimeout(500);
-  await fillTerm(page, input.case.termYears);
-  await page.waitForTimeout(300);
   await fillTerm(page, input.case.termYears);
 }
 

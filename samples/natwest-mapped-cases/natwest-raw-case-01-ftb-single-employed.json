@@ -1,5 +1,5 @@
 {
-  "lender": "skipton",
+  "lender": "natwest",
   "case": {
     "journey": "ftb",
     "applicationType": "single",
@@ -7,7 +7,7 @@
     "mortgagePurpose": "purchase",
     "customerType": "first_time_buyer",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
+    "termYears": 25,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
@@ -17,8 +17,8 @@
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 280000,
+    "loanAmount": 235000
   },
   "household": {
     "dependants": []
@@ -26,15 +26,15 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
-      "retirementAge": 70,
+      "dateOfBirth": "1990-01-01",
+      "age": 36,
+      "retirementAge": 68,
       "employment": {
         "type": "employed",
         "isContractor": false,
-        "annualGrossIncome": 57000,
-        "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualGrossIncome": 52000,
+        "annualOvertime": 1800,
+        "annualBonus": 2500,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
@@ -44,7 +44,7 @@
   ],
   "outgoings": {
     "monthlyLoanRepayments": 0,
-    "creditCardBalances": 0,
+    "creditCardBalances": 2200,
     "overdraftBalances": 0,
     "otherMonthlyOutgoings": 0,
     "monthlyBuyToLetPayments": 0,

@@ -201,6 +201,10 @@ async function waitForResult(page: Page, context: RunContext, hasApiResult: bool
 async function extractResult(page: Page, apiMaximumBorrowing: number | null): Promise<{ maximumBorrowing: number | null; monthlyPayment: null; messages: string[] }> {
   const text = await page.locator("body").innerText();
   const fallbackText = await page.locator("body").textContent().catch(() => "");
+  const validation = validationMessages(text);
+  if (validation && !/maximum we may lend/i.test(text)) {
+    return { maximumBorrowing: null, monthlyPayment: null, messages: validation.split(" | ") };
+  }
   const extractionText = /RESIDENTIAL RESULTS/i.test(text) ? text : fallbackText ?? text;
   const resultIndex = extractionText.toUpperCase().lastIndexOf("RESIDENTIAL RESULTS");
   const hasVisibleResults = await page.getByText(/RESIDENTIAL RESULTS/i).last().isVisible().catch(() => false);
@@ -248,7 +252,7 @@ function validationMessages(messages: string): string {
   return messages
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => /invalid entries|must be a whole number|required|please check|please enter|please select/i.test(line))
+    .filter((line) => /invalid entries|valid date|must be a whole number|required|please check|please enter|please select/i.test(line))
     .slice(0, 8)
     .join(" | ");
 }
@@ -429,6 +433,13 @@ function otherIncomeCategory(applicant: Applicant): string {
 function toUkDate(value: string): string {
   const iso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+  const epochSeconds = Number(value);
+  if (/^\d{9,10}$/.test(value) && Number.isFinite(epochSeconds) && epochSeconds > 0) {
+    const date = new Date(epochSeconds * 1000);
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    return `${day}/${month}/${date.getUTCFullYear()}`;
+  }
   return value;
 }
 

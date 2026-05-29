@@ -1,24 +1,24 @@
 {
-  "lender": "skipton",
+  "lender": "hsbc",
   "case": {
-    "journey": "ftb",
+    "journey": "hm",
     "applicationType": "single",
     "numberOfApplicants": 1,
     "mortgagePurpose": "purchase",
-    "customerType": "first_time_buyer",
+    "customerType": "home_mover",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
+    "termYears": 25,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
   "property": {
     "isInScotland": false,
-    "tenure": "freehold",
+    "tenure": "leasehold",
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 340000,
+    "loanAmount": 280000
   },
   "household": {
     "dependants": []
@@ -26,24 +26,36 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
-      "retirementAge": 70,
+      "dateOfBirth": "347155200",
+      "age": 45,
+      "retirementAge": 75,
       "employment": {
-        "type": "employed",
+        "type": "self_employed",
         "isContractor": false,
-        "annualGrossIncome": 57000,
+        "businessType": "sole_trader",
+        "netProfitCurrentYear": 60500,
+        "netProfitPreviousYear": 57000,
+        "annualGrossIncome": 0,
         "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualBonus": 0,
         "annualCommission": 0,
-        "annualPensionIncome": 0,
+        "annualPensionIncome": 4200,
         "otherAnnualPensionIncome": 0
       },
-      "otherIncome": []
+      "otherIncome": [
+        {
+          "type": "income_support",
+          "annualAmount": 1440
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 6000
+        }
+      ]
     }
   ],
   "outgoings": {
-    "monthlyLoanRepayments": 0,
+    "monthlyLoanRepayments": 210,
     "creditCardBalances": 0,
     "overdraftBalances": 0,
     "otherMonthlyOutgoings": 0,

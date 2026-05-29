@@ -276,7 +276,7 @@ function mapEmployment(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Ap
   if (!hasSufficientEmploymentHistory) {
     issues.push({
       field: `${prefix}_employed_permanent_temporary_start_date`,
-      message: "Skipton workbook says employed income should be set to 0 where current employment is under 6 months."
+      message: "Current employment appears to be under 6 months; income has been preserved in lender-ready output and should be assessed by the lender calculator."
     });
   }
 
@@ -290,10 +290,10 @@ function mapEmployment(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Ap
   const employment: Applicant["employment"] = {
     type,
     isContractor,
-    annualGrossIncome: hasSufficientEmploymentHistory ? mapAnnualGrossIncome(raw, prefix, isContractor) : 0,
-    annualOvertime: hasSufficientEmploymentHistory ? annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]) : 0,
-    annualBonus: hasSufficientEmploymentHistory ? mapVariableIncomeLowerOfRecentAndAverage(raw, prefix, "recent_nongtd_bonus", "prev_nongtd_bonus") : 0,
-    annualCommission: hasSufficientEmploymentHistory ? annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]) : 0,
+    annualGrossIncome: mapAnnualGrossIncome(raw, prefix, isContractor),
+    annualOvertime: annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
+    annualBonus: mapVariableIncomeLowerOfRecentAndAverage(raw, prefix, "recent_nongtd_bonus", "prev_nongtd_bonus"),
+    annualCommission: annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
     annualPensionIncome: rawNumber(raw[`${prefix}_mthly_pension`], 0) * 12,
     otherAnnualPensionIncome: 0
   };

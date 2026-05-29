@@ -1,5 +1,5 @@
 {
-  "lender": "skipton",
+  "lender": "nationwide",
   "case": {
     "journey": "ftb",
     "applicationType": "single",
@@ -7,46 +7,58 @@
     "mortgagePurpose": "purchase",
     "customerType": "first_time_buyer",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
-    "sharedOwnershipOrEquity": false,
+    "termYears": 30,
+    "sharedOwnershipOrEquity": true,
+    "sharedOwnershipScheme": "shared_ownership",
+    "monthlySharedOwnershipRent": 420,
     "hasInterestOnly": false
   },
   "property": {
     "isInScotland": false,
-    "tenure": "freehold",
+    "tenure": "leasehold",
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 180000,
+    "loanAmount": 155000
   },
   "household": {
-    "dependants": []
+    "dependants": [
+      {
+        "age": 2,
+        "relationship": "child"
+      }
+    ]
   },
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
+      "dateOfBirth": "1993-01-01",
+      "age": 33,
       "retirementAge": 70,
       "employment": {
         "type": "employed",
         "isContractor": false,
-        "annualGrossIncome": 57000,
+        "annualGrossIncome": 47000,
         "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualBonus": 0,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
       },
-      "otherIncome": []
+      "otherIncome": [
+        {
+          "type": "child_benefit",
+          "annualAmount": 1352
+        }
+      ]
     }
   ],
   "outgoings": {
     "monthlyLoanRepayments": 0,
     "creditCardBalances": 0,
     "overdraftBalances": 0,
-    "otherMonthlyOutgoings": 0,
+    "otherMonthlyOutgoings": 515,
     "monthlyBuyToLetPayments": 0,
     "otherMortgageCommitments": []
   },

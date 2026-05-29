@@ -1,13 +1,13 @@
 {
-  "lender": "skipton",
+  "lender": "nationwide",
   "case": {
-    "journey": "ftb",
+    "journey": "further_advance",
     "applicationType": "single",
     "numberOfApplicants": 1,
-    "mortgagePurpose": "purchase",
-    "customerType": "first_time_buyer",
+    "mortgagePurpose": "further_advance",
+    "customerType": "home_mover",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
+    "termYears": 15,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
@@ -17,8 +17,9 @@
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 390000,
+    "loanAmount": 45000,
+    "currentBalance": 210000
   },
   "household": {
     "dependants": []
@@ -26,15 +27,15 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
+      "dateOfBirth": "1992-01-01",
+      "age": 34,
       "retirementAge": 70,
       "employment": {
         "type": "employed",
-        "isContractor": false,
-        "annualGrossIncome": 57000,
+        "isContractor": true,
+        "annualGrossIncome": 126500,
         "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualBonus": 0,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
@@ -43,7 +44,7 @@
     }
   ],
   "outgoings": {
-    "monthlyLoanRepayments": 0,
+    "monthlyLoanRepayments": 320,
     "creditCardBalances": 0,
     "overdraftBalances": 0,
     "otherMonthlyOutgoings": 0,

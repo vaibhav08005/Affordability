@@ -214,6 +214,12 @@ async function fillOtherProperties(page: Page, input: LenderReadyInput): Promise
     await page.waitForTimeout(300);
     await fillCurrencyAfterHeading(page, cardHeading, "Estimated property value", card.propertyValue);
     await fillCurrencyAfterHeading(page, cardHeading, "Mortgage balance", card.mortgageBalance);
+    await chooseOptionAfterHeadingQuestion(
+      page,
+      cardHeading,
+      "on completion will the lender be Santander",
+      card.onCompletionLenderSantander ? "Yes" : "No"
+    );
     await selectAfterHeading(page, cardHeading, "Type of mortgage", otherPropertyRepaymentLabels[card.repaymentType]);
     if (card.repaymentType === "part_and_part") {
       await fillCurrencyAfterHeading(page, cardHeading, "Repayment balance", Math.max(0, card.mortgageBalance - card.interestOnlyBalance));
@@ -384,6 +390,7 @@ interface SantanderOtherPropertyCard {
   interestOnlyBalance: number;
   isRental: boolean;
   repaymentType: RepaymentType;
+  onCompletionLenderSantander: boolean;
   source: "otherProperties";
 }
 
@@ -398,6 +405,7 @@ function santanderOtherPropertyCards(input: LenderReadyInput): SantanderOtherPro
     interestOnlyBalance: Math.round(property.interestOnlyBalance ?? 0),
     isRental: property.isRental,
     repaymentType: property.repaymentType ?? "capital_and_interest",
+    onCompletionLenderSantander: /santander/i.test(property.currentLender ?? ""),
     source: "otherProperties"
   }));
 }
@@ -591,7 +599,45 @@ async function chooseOptionAfterHeadingQuestion(page: Page, heading: string, que
     return true;
   }
 
-  return false;
+  return page.evaluate(
+    ({ headingText, questionText, optionText }) => {
+      const root = document.querySelector("#AffordabilityCalculator");
+      if (!root) return false;
+
+      const normalizedQuestion = questionText.toLowerCase();
+      const headingNode = Array.from(root.querySelectorAll("*")).find((element) =>
+        element.textContent?.replace(/\s+/g, " ").trim() === headingText
+      );
+      if (!headingNode) return false;
+
+      const prompt = Array.from(root.querySelectorAll("*")).find((element) => {
+        const text = element.textContent?.replace(/\s+/g, " ").trim().toLowerCase() ?? "";
+        return Boolean(headingNode.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) &&
+          text.includes(normalizedQuestion);
+      });
+      if (!prompt) return false;
+
+      const promptBox = prompt.getBoundingClientRect();
+      const controls = Array.from(root.querySelectorAll("button, [role='button'], label, span, div")) as HTMLElement[];
+      const candidate = controls.find((element) => {
+        const box = element.getBoundingClientRect();
+        return element.textContent?.trim() === optionText &&
+          Boolean(prompt.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) &&
+          box.top >= promptBox.top &&
+          box.top <= promptBox.top + 140 &&
+          box.width > 0 &&
+          box.height > 0;
+      });
+
+      if (!candidate) return false;
+      candidate.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, view: window }));
+      candidate.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      candidate.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+      candidate.click();
+      return true;
+    },
+    { headingText: heading, questionText: question, optionText: option }
+  ).catch(() => false);
 }
 
 async function chooseBorrowersSameAsCurrentMortgage(page: Page): Promise<void> {

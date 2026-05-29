@@ -1,5 +1,5 @@
 {
-  "lender": "santander",
+  "lender": "natwest",
   "case": {
     "journey": "hm",
     "applicationType": "joint",
@@ -31,7 +31,7 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "441763200",
+      "dateOfBirth": "1984-01-01",
       "age": 42,
       "retirementAge": 72,
       "employment": {
@@ -51,7 +51,7 @@
     },
     {
       "index": 2,
-      "dateOfBirth": "473385600",
+      "dateOfBirth": "1985-01-01",
       "age": 41,
       "retirementAge": 72,
       "employment": {
@@ -81,7 +81,7 @@
   "otherProperties": [
     {
       "isRental": false,
-      "propertyValue": 125000,
+      "propertyValue": 0,
       "monthlyMortgagePayment": 950,
       "currentBalance": 125000,
       "remainingTermYears": 16,

@@ -131,6 +131,7 @@ export interface OtherProperty {
   monthlyMortgagePayment: number;
   monthlyRent?: number;
   currentBalance?: number;
+  currentLender?: string;
   interestOnlyBalance?: number;
   remainingTermYears?: number;
   repaymentType?: RepaymentType;

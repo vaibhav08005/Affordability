@@ -1,24 +1,25 @@
 {
-  "lender": "skipton",
+  "lender": "natwest",
   "case": {
-    "journey": "ftb",
+    "journey": "resi_remo",
     "applicationType": "single",
     "numberOfApplicants": 1,
-    "mortgagePurpose": "purchase",
-    "customerType": "first_time_buyer",
+    "mortgagePurpose": "remortgage_no_additional_borrowing",
+    "customerType": "home_mover",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
+    "termYears": 18,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
   "property": {
-    "isInScotland": false,
-    "tenure": "freehold",
+    "isInScotland": true,
+    "tenure": "leasehold",
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 260000,
+    "loanAmount": 140000,
+    "currentBalance": 145000
   },
   "household": {
     "dependants": []
@@ -26,15 +27,15 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
-      "retirementAge": 70,
+      "dateOfBirth": "1983-01-01",
+      "age": 43,
+      "retirementAge": 67,
       "employment": {
         "type": "employed",
         "isContractor": false,
-        "annualGrossIncome": 57000,
+        "annualGrossIncome": 58000,
         "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualBonus": 0,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0
@@ -45,7 +46,7 @@
   "outgoings": {
     "monthlyLoanRepayments": 0,
     "creditCardBalances": 0,
-    "overdraftBalances": 0,
+    "overdraftBalances": 1500,
     "otherMonthlyOutgoings": 0,
     "monthlyBuyToLetPayments": 0,
     "otherMortgageCommitments": []

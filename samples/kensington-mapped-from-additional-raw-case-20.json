@@ -1,13 +1,13 @@
 {
-  "lender": "skipton",
+  "lender": "kensington",
   "case": {
-    "journey": "ftb",
+    "journey": "hm",
     "applicationType": "single",
     "numberOfApplicants": 1,
     "mortgagePurpose": "purchase",
-    "customerType": "first_time_buyer",
+    "customerType": "home_mover",
     "repaymentType": "capital_and_interest",
-    "termYears": 35,
+    "termYears": 25,
     "sharedOwnershipOrEquity": false,
     "hasInterestOnly": false
   },
@@ -17,8 +17,8 @@
     "epcRating": "unknown"
   },
   "loan": {
-    "propertyValue": 290000,
-    "loanAmount": 245000
+    "propertyValue": 480000,
+    "loanAmount": 360000
   },
   "household": {
     "dependants": []
@@ -26,15 +26,15 @@
   "applicants": [
     {
       "index": 1,
-      "dateOfBirth": "757382400",
-      "age": 32,
+      "dateOfBirth": "568080000",
+      "age": 38,
       "retirementAge": 70,
       "employment": {
-        "type": "employed",
-        "isContractor": false,
-        "annualGrossIncome": 57000,
+        "type": "other",
+        "isContractor": true,
+        "annualGrossIncome": 24000,
         "annualOvertime": 0,
-        "annualBonus": 3000,
+        "annualBonus": 0,
         "annualCommission": 0,
         "annualPensionIncome": 0,
         "otherAnnualPensionIncome": 0

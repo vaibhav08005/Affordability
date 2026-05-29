@@ -116,6 +116,7 @@ export const lenderReadyInputSchema = z.object({
     monthlyMortgagePayment: money,
     monthlyRent: money.optional(),
     currentBalance: money.optional(),
+    currentLender: z.string().optional(),
     interestOnlyBalance: money.optional(),
     remainingTermYears: positiveInteger.optional(),
     repaymentType: z.enum(["capital_and_interest", "interest_only", "part_and_part"]).optional()

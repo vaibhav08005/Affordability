@@ -7,7 +7,7 @@ export function loadRunContext(): RunContext {
     executionMode,
     browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     headless: process.env.HEADLESS !== "false",
-    timeoutMs: Number(process.env.AUTOMATION_TIMEOUT_MS ?? 60000),
+    timeoutMs: Number(process.env.AUTOMATION_TIMEOUT_MS ?? 30000),
     screenshotDir: process.env.SCREENSHOT_DIR ?? "./artifacts/screenshots"
   };
 }

@@ -11,6 +11,9 @@ import { mapBarclaysRawInput } from "./mappers/barclays/raw-to-lender-ready.js";
 import { mapHalifaxRawInput } from "./mappers/halifax/raw-to-lender-ready.js";
 import { mapHsbcRawInput } from "./mappers/hsbc/raw-to-lender-ready.js";
 import { mapKensingtonRawInput } from "./mappers/kensington/raw-to-lender-ready.js";
+import { mapNatWestRawInput } from "./mappers/natwest/raw-to-lender-ready.js";
+import { mapNationwideRawInput } from "./mappers/nationwide/raw-to-lender-ready.js";
+import { mapSantanderRawInput } from "./mappers/santander/raw-to-lender-ready.js";
 import { mapSkiptonRawInput } from "./mappers/skipton/raw-to-lender-ready.js";
 import { mapVirginMoneyRawInput } from "./mappers/virgin-money/raw-to-lender-ready.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
@@ -20,8 +23,28 @@ const rootDir = process.cwd();
 const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
-type MappedLender = "barclays" | "halifax" | "hsbc" | "kensington" | "skipton" | "virgin_money";
-const mappedLenders: MappedLender[] = ["barclays", "halifax", "hsbc", "kensington", "skipton", "virgin_money"];
+type MappedLender =
+  | "barclays"
+  | "halifax"
+  | "hsbc"
+  | "kensington"
+  | "natwest"
+  | "nationwide"
+  | "santander"
+  | "skipton"
+  | "virgin_money";
+const mappedLenders: MappedLender[] = [
+  "barclays",
+  "halifax",
+  "hsbc",
+  "kensington",
+  "natwest",
+  "nationwide",
+  "santander",
+  "skipton",
+  "virgin_money"
+];
+const defaultLenderRunBatchSize = 3;
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
@@ -95,9 +118,7 @@ app.post("/api/cases/:caseId/run-affordability", async (request, response) => {
       return;
     }
 
-    const results = await Promise.all(
-      mappedLenders.map((lender) => runMappedLenderForCase(request.params.caseId, lender))
-    );
+    const results = await runMappedLendersForCaseInBatches(request.params.caseId);
 
     response.json({
       caseId: request.params.caseId,
@@ -298,6 +319,25 @@ async function runMappedLenderForCase(caseId: string, lender: MappedLender): Pro
   }
 }
 
+async function runMappedLendersForCaseInBatches(caseId: string): Promise<LenderRunView[]> {
+  const results: LenderRunView[] = [];
+  const batchSize = lenderRunBatchSize();
+
+  for (let index = 0; index < mappedLenders.length; index += batchSize) {
+    const batch = mappedLenders.slice(index, index + batchSize);
+    const batchResults = await Promise.all(batch.map((lender) => runMappedLenderForCase(caseId, lender)));
+    results.push(...batchResults);
+  }
+
+  return results;
+}
+
+function lenderRunBatchSize(): number {
+  const configured = Number(process.env.LENDER_RUN_BATCH_SIZE ?? defaultLenderRunBatchSize);
+  if (!Number.isFinite(configured) || configured < 1) return defaultLenderRunBatchSize;
+  return Math.floor(configured);
+}
+
 async function findInputFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = await Promise.all(
@@ -408,6 +448,9 @@ function mapRawInputForLender(raw: Record<string, unknown>, lender: MappedLender
     lender === "halifax" ? mapHalifaxRawInput(raw) :
     lender === "hsbc" ? mapHsbcRawInput(raw) :
     lender === "kensington" ? mapKensingtonRawInput(raw) :
+    lender === "natwest" ? mapNatWestRawInput(raw) :
+    lender === "nationwide" ? mapNationwideRawInput(raw) :
+    lender === "santander" ? mapSantanderRawInput(raw) :
     lender === "skipton" ? mapSkiptonRawInput(raw) :
     mapVirginMoneyRawInput(raw);
 
@@ -516,7 +559,7 @@ function caseIdFromInput(input: LenderReadyInput): string {
 function caseIdFromPath(filePath: string): string {
   const basename = path.basename(filePath).replace(/\.(ya?ml|json)$/i, "").toLowerCase();
   return basename
-    .replace(/^(barclays|halifax|hsbc|skipton|virgin-money)-raw-case-/, "")
+    .replace(/^(barclays|halifax|hsbc|kensington|natwest|nationwide|santander|skipton|virgin-money)-raw-case-/, "")
     .replace(/^additional-raw-case-/, "")
     .replace(/^case-/, "")
     .replace(/[^a-z0-9]+/g, "-")
