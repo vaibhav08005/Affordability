@@ -6,6 +6,7 @@ export interface RunContext {
   headless: boolean;
   timeoutMs: number;
   screenshotDir: string;
+  failureDir: string;
 }
 
 export interface LenderAdapter {

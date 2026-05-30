@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderId, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
+import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   applicationTypeLabels,
   customerTypeApplicationLabels,
@@ -52,7 +53,9 @@ export const hsbcAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "hsbc-failed").catch(() => undefined);
+      const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
       return {
         lender: "hsbc" as LenderId,
         status: "failed",
@@ -61,10 +64,11 @@ export const hsbcAdapter: LenderAdapter = {
         messages: [],
         evidence: {
           screenshotPath,
+          failureBundlePath,
           timestamp: startedAt
         },
         error: {
-          category: categorizeError(error),
+          category,
           message: error instanceof Error ? error.message : String(error)
         }
       };

@@ -15,6 +15,7 @@ import {
   selectFirstAvailableOption,
   selectVisibleById
 } from "../shared/browser.js";
+import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   applicationTypeValues,
   contractTypeValues,
@@ -59,7 +60,9 @@ export const nationwideAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "nationwide-failed").catch(() => undefined);
+      const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
       return {
         lender: "nationwide",
         status: "failed",
@@ -68,10 +71,11 @@ export const nationwideAdapter: LenderAdapter = {
         messages: [],
         evidence: {
           screenshotPath,
+          failureBundlePath,
           timestamp: startedAt
         },
         error: {
-          category: categorizeError(error),
+          category,
           message: error instanceof Error ? error.message : String(error)
         }
       };

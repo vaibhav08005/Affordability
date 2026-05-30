@@ -3,6 +3,7 @@ import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
+import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels, selfEmploymentTypeLabels } from "./mapping.js";
 
 interface PageEvidence {
@@ -49,7 +50,9 @@ export const barclaysAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "barclays-failed").catch(() => undefined);
+      const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
       return {
         lender: "barclays",
         status: "failed",
@@ -58,10 +61,11 @@ export const barclaysAdapter: LenderAdapter = {
         messages: [],
         evidence: {
           screenshotPath,
+          failureBundlePath,
           timestamp: startedAt
         },
         error: {
-          category: categorizeError(error),
+          category,
           message: error instanceof Error ? error.message : String(error)
         }
       };

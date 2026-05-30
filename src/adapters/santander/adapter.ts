@@ -15,6 +15,7 @@ import {
   selectFirstAvailableOption,
   selectVisibleById
 } from "../shared/browser.js";
+import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   mortgageTypeLabels,
   remortgageReasonLabels,
@@ -56,7 +57,9 @@ export const santanderAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "santander-failed").catch(() => undefined);
+      const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
       return {
         lender: "santander",
         status: "failed",
@@ -65,10 +68,11 @@ export const santanderAdapter: LenderAdapter = {
         messages: [],
         evidence: {
           screenshotPath,
+          failureBundlePath,
           timestamp: startedAt
         },
         error: {
-          category: categorizeError(error),
+          category,
           message: error instanceof Error ? error.message : String(error)
         }
       };

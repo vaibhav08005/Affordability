@@ -8,6 +8,7 @@ export function loadRunContext(): RunContext {
     browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     headless: process.env.HEADLESS !== "false",
     timeoutMs: Number(process.env.AUTOMATION_TIMEOUT_MS ?? 30000),
-    screenshotDir: process.env.SCREENSHOT_DIR ?? "./artifacts/screenshots"
+    screenshotDir: process.env.SCREENSHOT_DIR ?? "./artifacts/screenshots",
+    failureDir: process.env.FAILURE_ARTIFACT_DIR ?? "./artifacts/failures"
   };
 }

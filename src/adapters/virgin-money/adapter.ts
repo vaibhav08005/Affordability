@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
+import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   employmentStatusValues,
   loanTypeIds,
@@ -52,16 +53,18 @@ export const virginMoneyAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "virgin-money-failed").catch(() => undefined);
+      const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
       return {
         lender: "virgin_money",
         status: "failed",
         maximumBorrowing: null,
         monthlyPayment: null,
         messages: [],
-        evidence: { screenshotPath, timestamp: startedAt },
+        evidence: { screenshotPath, failureBundlePath, timestamp: startedAt },
         error: {
-          category: categorizeError(error),
+          category,
           message: error instanceof Error ? error.message : String(error)
         }
       };
