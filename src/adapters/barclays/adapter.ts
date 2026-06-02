@@ -660,12 +660,11 @@ async function createEvidencePdf(context: RunContext, name: string, pageEvidence
 
 async function evidencePdfHtml(pageEvidence: PageEvidence[]): Promise<string> {
   const sections = await Promise.all(
-    pageEvidence.map(async (item, index) => {
+    pageEvidence.map(async (item) => {
       const image = await readFile(item.path);
       const dataUrl = `data:image/png;base64,${image.toString("base64")}`;
       return `
         <section class="page-shot">
-          <h1>${escapeHtml(`${index + 1}. ${item.title}`)}</h1>
           <img src="${dataUrl}" alt="${escapeHtml(item.title)}" />
         </section>
       `;
@@ -686,17 +685,7 @@ async function evidencePdfHtml(pageEvidence: PageEvidence[]): Promise<string> {
             font-family: Arial, Helvetica, sans-serif;
           }
           .page-shot {
-            break-after: page;
-            page-break-after: always;
-          }
-          .page-shot:last-child {
-            break-after: auto;
-            page-break-after: auto;
-          }
-          h1 {
-            margin: 0 0 10px;
-            font-size: 14px;
-            font-weight: 700;
+            margin: 0 0 8px;
           }
           img {
             display: block;

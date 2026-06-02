@@ -16,6 +16,7 @@ import {
   selectVisibleById
 } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { capturePageEvidence, createEvidencePdf, type PageEvidence } from "../shared/pdf-evidence.js";
 import {
   mortgageTypeLabels,
   remortgageReasonLabels,
@@ -33,18 +34,20 @@ export const santanderAdapter: LenderAdapter = {
     const page = session.page;
     page.setDefaultTimeout(context.timeoutMs);
     page.setDefaultNavigationTimeout(context.timeoutMs);
+    const pageEvidence: PageEvidence[] = [];
 
     try {
       await openSantanderCalculator(page, context);
-      await fillSantanderCalculator(page, input);
+      await fillSantanderCalculator(page, input, context, pageEvidence);
       await waitForResult(page, context);
+      await capturePageEvidence(page, context, pageEvidence, "santander", "05-results");
 
       const result = await extractResult(page);
       if (result.maximumBorrowing == null) {
         throw new Error("Result extraction failed: Santander did not return a maximum borrowing amount.");
       }
 
-      const screenshotPath = await captureEvidence(page, context, "santander-success");
+      const pdfPath = await createEvidencePdf(context, "santander-filled-pages", pageEvidence);
       return {
         lender: "santander",
         status: "success",
@@ -52,7 +55,8 @@ export const santanderAdapter: LenderAdapter = {
         monthlyPayment: result.monthlyPayment,
         messages: result.messages,
         evidence: {
-          screenshotPath,
+          pdfPath,
+          screenshotPaths: pageEvidence.map((item) => item.path),
           timestamp: startedAt
         }
       };
@@ -90,16 +94,19 @@ async function openSantanderCalculator(page: Page, context: RunContext): Promise
   await clickFirstAvailableButton(page, ["Accept all cookies", "Reject all", "No, continue"]).catch(() => undefined);
 }
 
-async function fillSantanderCalculator(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillSantanderCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await fillMortgageDetails(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "santander", "01-mortgage-details");
   await advance(page);
   await page.getByText(/^Other properties$/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillOtherProperties(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "santander", "02-other-properties");
   await advance(page);
   if (!(await isSantanderSection(page, "Annual gross income"))) {
     if (await isSantanderSection(page, "Commitments and expenditure")) {
       await setSantanderIncomeStore(page, input);
       await fillOutgoings(page, input);
+      await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
       if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
         await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
       }
@@ -108,11 +115,13 @@ async function fillSantanderCalculator(page: Page, input: LenderReadyInput): Pro
     throw new Error(`Santander did not advance from Other properties to Income. ${await santanderFailureContext(page)}`);
   }
   await fillIncome(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "santander", "03-income");
   await advance(page);
   if (!(await isSantanderSection(page, "Commitments and expenditure"))) {
     throw new Error(`Santander did not advance from Income to Commitments and expenditure. ${await santanderFailureContext(page)}`);
   }
   await fillOutgoings(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
   if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
     await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
   }

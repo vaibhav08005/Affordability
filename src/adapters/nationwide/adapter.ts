@@ -16,6 +16,7 @@ import {
   selectVisibleById
 } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { capturePageEvidence, createEvidencePdf, type PageEvidence } from "../shared/pdf-evidence.js";
 import {
   applicationTypeValues,
   contractTypeValues,
@@ -36,18 +37,20 @@ export const nationwideAdapter: LenderAdapter = {
     const page = session.page;
     page.setDefaultTimeout(context.timeoutMs);
     page.setDefaultNavigationTimeout(context.timeoutMs);
+    const pageEvidence: PageEvidence[] = [];
 
     try {
       await openNationwideCalculator(page, context);
-      await fillNationwideCalculator(page, input);
+      await fillNationwideCalculator(page, input, context, pageEvidence);
       await waitForResult(page, context);
+      await capturePageEvidence(page, context, pageEvidence, "nationwide", "05-results");
 
       const result = await extractResult(page);
       if (result.maximumBorrowing == null) {
         throw new Error("Result extraction failed: Nationwide did not return a maximum borrowing amount.");
       }
 
-      const screenshotPath = await captureEvidence(page, context, "nationwide-success");
+      const pdfPath = await createEvidencePdf(context, "nationwide-filled-pages", pageEvidence);
       return {
         lender: "nationwide",
         status: "success",
@@ -55,7 +58,8 @@ export const nationwideAdapter: LenderAdapter = {
         monthlyPayment: result.monthlyPayment,
         messages: result.messages,
         evidence: {
-          screenshotPath,
+          pdfPath,
+          screenshotPaths: pageEvidence.map((item) => item.path),
           timestamp: startedAt
         }
       };
@@ -107,17 +111,21 @@ async function openNationwideCalculator(page: Page, context: RunContext): Promis
   await page.waitForTimeout(1000);
 }
 
-async function fillNationwideCalculator(page: Page, input: LenderReadyInput): Promise<void> {
+async function fillNationwideCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
   await fillMortgageStep(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "nationwide", "01-mortgage-details");
   await advance(page);
   await page.getByText(/About your client/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillClientsStep(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "nationwide", "02-client-details");
   await advance(page);
   await page.locator("#AffCalc-q240-EmploymentCategory").waitFor({ state: "visible", timeout: 15000 }).catch(() => undefined);
   await fillIncomeStep(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "nationwide", "03-income");
   await advance(page);
   await page.getByText(/Outgoings/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillOutgoingsStep(page, input);
+  await capturePageEvidence(page, context, pageEvidence, "nationwide", "04-outgoings");
   await page.waitForTimeout(2000);
   await clickFirstAvailableButton(page, ["Calculate", "Get results", "See results", "Next"]);
 }
