@@ -236,12 +236,27 @@ async function chooseApplicantCount(page: Page, count: 1 | 2): Promise<void> {
 
 async function fillApplicantAges(page: Page, applicants: Applicant[]): Promise<void> {
   if (applicants.length === 1) {
-    await fillFirstAvailableText(page, ["Applicant age", "Applicant current age"], String(applicants[0]?.age));
+    await fillFirstAvailableInput(
+      page,
+      ["#age-one", "[data-testid='halifax_textfield_age_one'] input", "[testid='age_one']"],
+      ["Applicant age", "Applicant current age"],
+      String(applicants[0]?.age)
+    );
     return;
   }
 
-  await fillFirstAvailableText(page, ["Applicant 1 age", "Applicant 1 current age"], String(applicants[0]?.age));
-  await fillFirstAvailableText(page, ["Applicant 2 age", "Applicant 2 current age"], String(applicants[1]?.age));
+  await fillFirstAvailableInput(
+    page,
+    ["#age-one", "[data-testid='halifax_textfield_age_one'] input", "[testid='age_one']"],
+    ["Applicant 1 age", "Applicant 1 current age"],
+    String(applicants[0]?.age)
+  );
+  await fillFirstAvailableInput(
+    page,
+    ["#age-two", "[data-testid='halifax_textfield_age_two'] input", "[testid='age_two']"],
+    ["Applicant 2 age", "Applicant 2 current age"],
+    String(applicants[1]?.age)
+  );
 }
 
 async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<void> {
@@ -457,6 +472,18 @@ async function fillFirstAvailableText(page: Page, labels: string[], value: strin
   }
 
   throw new Error(`Unable to find any text field: ${labels.join(", ")}.`);
+}
+
+async function fillFirstAvailableInput(page: Page, selectors: string[], labels: string[], value: string): Promise<void> {
+  for (const selector of selectors) {
+    const field = page.locator(selector);
+    if (await field.count() === 1) {
+      await field.fill(value);
+      return;
+    }
+  }
+
+  await fillFirstAvailableText(page, labels, value);
 }
 
 async function fillCurrencyNearText(scope: Page | Locator, text: string, value: number): Promise<void> {
