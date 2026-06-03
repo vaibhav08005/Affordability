@@ -147,6 +147,10 @@ export interface AutomationEvidence {
   screenshotPaths?: string[];
   pdfPath?: string;
   failureBundlePath?: string;
+  screenshotUri?: string;
+  screenshotUris?: string[];
+  pdfUri?: string;
+  failureBundleUri?: string;
   timestamp: string;
 }
 

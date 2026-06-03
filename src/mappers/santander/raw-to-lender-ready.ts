@@ -390,9 +390,6 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
   addIncome(entries, "shift_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
   addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
-  addIncome(entries, "town_area_or_car_allowance", mapAnnualBonus(raw, prefix));
-  addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]));
-  addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]));
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   addIncome(entries, "child_benefit", annualGrossIncome > 60000 ? 0 : annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
   addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
@@ -552,7 +549,7 @@ function propertyPostcode(raw: RawRecord): string {
 function isScottishPostcode(postcode: string): boolean {
   const compact = postcode.replace(/\s+/g, "").toUpperCase();
   if (!compact) return false;
-  if (compact.startsWith("G")) return true;
+  if (/^G\d/.test(compact)) return true;
   return SCOTLAND_POSTCODE_PREFIXES.some((prefix) => compact.startsWith(prefix));
 }
 

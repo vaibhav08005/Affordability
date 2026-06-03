@@ -134,11 +134,13 @@
       }
 
       .status.failed::before,
-      .status.not_run::before {
+      .status.timed_out::before {
         background: #c2410c;
       }
 
-      .status.not_run::before {
+      .status.not_run::before,
+      .status.queued::before,
+      .status.running::before {
         background: #facc15;
       }
 
@@ -239,22 +241,45 @@
         currency: "GBP",
         maximumFractionDigits: 0
       });
+      const activeRunsKey = "affordabilityActiveRuns";
+      let pollTimer = null;
 
       window.addEventListener("hashchange", render);
       render();
 
       async function render() {
-        const caseId = decodeURIComponent(location.hash.replace(/^#case=/, ""));
-        if (caseId) {
-          await renderCase(caseId);
+        if (pollTimer) {
+          clearTimeout(pollTimer);
+          pollTimer = null;
+        }
+
+        const params = parseHash();
+        if (params.run) {
+          await renderRun(params.run);
+        } else if (params.case) {
+          await renderCase(params.case);
         } else {
           await renderCases();
         }
       }
 
+      function parseHash() {
+        const hash = location.hash.replace(/^#/, "");
+        if (!hash) return {};
+        if (hash.startsWith("case=")) {
+          return { case: decodeURIComponent(hash.slice("case=".length)) };
+        }
+        if (hash.startsWith("run=")) {
+          return { run: decodeURIComponent(hash.slice("run=".length)) };
+        }
+
+        return {};
+      }
+
       async function renderCases() {
         app.innerHTML = "<h1>Cases</h1><div class='empty'>Loading cases...</div>";
         const { cases } = await fetchJson("/api/cases");
+        const activeRuns = await loadActiveRuns();
 
         if (!cases.length) {
           app.innerHTML = "<h1>Cases</h1><div class='empty'>No cases found.</div>";
@@ -286,7 +311,7 @@
                       <td>${money.format(item.propertyValue)}</td>
                       <td>${item.lendersRun}</td>
                       <td><button class="input-link" data-input-id="${escapeHtml(item.id)}">View raw</button></td>
-                      <td><button class="run-button" data-run-id="${escapeHtml(item.id)}">Run affordability</button></td>
+                      <td>${formatCaseAction(item, activeRuns[item.id])}</td>
                     </tr>
                   `
                 )
@@ -308,6 +333,13 @@
           });
         });
 
+        app.querySelectorAll("[data-open-run-id]").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            location.hash = `run=${encodeURIComponent(button.dataset.openRunId)}`;
+          });
+        });
+
         app.querySelectorAll(".input-link").forEach((button) => {
           button.addEventListener("click", async (event) => {
             event.stopPropagation();
@@ -322,10 +354,15 @@
         button.textContent = "Running...";
 
         try {
-          await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/run-affordability`, {
+          const run = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/run-affordability`, {
             method: "POST"
           });
-          location.hash = `case=${encodeURIComponent(caseId)}`;
+          if (run.runId) {
+            saveActiveRun(caseId, run.runId);
+            location.hash = `run=${encodeURIComponent(run.runId)}`;
+          } else {
+            location.hash = `case=${encodeURIComponent(caseId)}`;
+          }
         } catch (error) {
           button.textContent = "Run failed";
           button.disabled = false;
@@ -333,10 +370,43 @@
         }
       }
 
+      async function renderRun(runId) {
+        app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading run...</div>";
+        const run = await fetchJson(`/api/runs/${encodeURIComponent(runId)}`);
+        const details = await fetchJson(`/api/cases/${encodeURIComponent(run.caseId)}`);
+
+        saveActiveRun(run.caseId, run.runId);
+        renderCaseTable(details, run.results, run);
+
+        if (!isTerminalRun(run.status)) {
+          pollTimer = setTimeout(() => {
+            if (location.hash === `#run=${encodeURIComponent(runId)}`) {
+              void renderRun(runId);
+            }
+          }, 3000);
+        } else {
+          clearActiveRun(run.caseId, run.runId);
+        }
+      }
+
       async function renderCase(caseId) {
         app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading case...</div>";
         const details = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}`);
+        renderCaseTable(details, details.lenders, details.latestRun ?? null);
 
+        if (details.latestRun && !isTerminalRun(details.latestRun.status)) {
+          saveActiveRun(caseId, details.latestRun.runId);
+          pollTimer = setTimeout(() => {
+            if (location.hash === `#case=${encodeURIComponent(caseId)}`) {
+              void renderCase(caseId);
+            }
+          }, 3000);
+        } else if (details.latestRun) {
+          clearActiveRun(caseId, details.latestRun.runId);
+        }
+      }
+
+      function renderCaseTable(details, lenders, run = null) {
         app.innerHTML = `
           <button class="back">Back to cases</button>
           <h1>${escapeHtml(details.title)}</h1>
@@ -345,6 +415,7 @@
             ${escapeHtml(details.summary.applicationType)} /
             ${escapeHtml(details.summary.repaymentType)} /
             ${details.summary.termYears} years
+            ${run ? `<br>${escapeHtml(formatRunProgress(run))}` : ""}
           </div>
           <table class="table">
             <thead>
@@ -358,7 +429,7 @@
               </tr>
             </thead>
             <tbody>
-              ${details.lenders
+              ${lenders
                 .map(
                   (run) => `
                     <tr>
@@ -382,7 +453,7 @@
 
         app.querySelectorAll("[data-output-lender]").forEach((button) => {
           button.addEventListener("click", () => {
-            const run = details.lenders.find((candidate) => candidate.lender === button.dataset.outputLender);
+            const run = lenders.find((candidate) => candidate.lender === button.dataset.outputLender);
             if (run?.output) {
               showJson(`Mapped output: ${formatLender(run.lender)}`, run.output);
             }
@@ -397,6 +468,50 @@
         }
 
         return response.json();
+      }
+
+      async function loadActiveRuns() {
+        const stored = readActiveRuns();
+        const entries = await Promise.all(
+          Object.entries(stored).map(async ([caseId, runId]) => {
+            try {
+              const run = await fetchJson(`/api/runs/${encodeURIComponent(runId)}`);
+              if (isTerminalRun(run.status)) {
+                clearActiveRun(caseId, runId);
+                return null;
+              }
+              return [caseId, runId];
+            } catch {
+              clearActiveRun(caseId, runId);
+              return null;
+            }
+          })
+        );
+
+        return Object.fromEntries(entries.filter(Boolean));
+      }
+
+      function readActiveRuns() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(activeRunsKey) ?? "{}");
+          return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveActiveRun(caseId, runId) {
+        localStorage.setItem(activeRunsKey, JSON.stringify({
+          ...readActiveRuns(),
+          [caseId]: runId
+        }));
+      }
+
+      function clearActiveRun(caseId, runId) {
+        const stored = readActiveRuns();
+        if (stored[caseId] !== runId) return;
+        delete stored[caseId];
+        localStorage.setItem(activeRunsKey, JSON.stringify(stored));
       }
 
       async function showInput(caseId) {
@@ -449,11 +564,22 @@
       function formatStatus(value) {
         if (value === "success") return "Success";
         if (value === "failed") return "Failed";
+        if (value === "queued") return "Queued";
+        if (value === "running") return "Running";
+        if (value === "timed_out") return "Timed out";
         return "Not run";
       }
 
+      function formatCaseAction(item, activeRunId) {
+        if (activeRunId) {
+          return `<button class="run-button" data-open-run-id="${escapeHtml(activeRunId)}">View active run</button>`;
+        }
+
+        return `<button class="run-button" data-run-id="${escapeHtml(item.id)}">Run affordability</button>`;
+      }
+
       function formatAffordability(run) {
-        if (run.status === "not_run") return "-";
+        if (["not_run", "queued", "running", "timed_out"].includes(run.status)) return "-";
         if (run.affordabilityAmount == null) return "Failed";
         return money.format(run.affordabilityAmount);
       }
@@ -461,6 +587,14 @@
       function formatMessage(run) {
         if (run.status === "success") return "Congratulations, affordability result returned successfully.";
         return run.message;
+      }
+
+      function formatRunProgress(run) {
+        return `Run ${run.status}: ${run.completedCount}/${run.totalLenders} lenders completed`;
+      }
+
+      function isTerminalRun(status) {
+        return ["completed", "completed_with_failures", "failed", "timed_out"].includes(status);
       }
 
       function formatEvidence(run) {

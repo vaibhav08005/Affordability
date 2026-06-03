@@ -194,33 +194,24 @@ async function fillSantanderCurrentBalance(page: Page, input: LenderReadyInput):
 async function fillOtherProperties(page: Page, input: LenderReadyInput): Promise<void> {
   const propertyCards = santanderOtherPropertyCards(input);
   const hasOtherProperties = propertyCards.length > 0;
-  await chooseOptionAfterQuestion(
-    page,
-    "Will your client own any other properties on completion of this mortgage?",
-    hasOtherProperties ? "Yes" : "No"
-  );
-  await chooseOptionAfterQuestion(
-    page,
-    "Are the applicants looking to borrow more than 90% LTV?",
-    loanToValue(input) > 0.9 ? "Yes" : "No"
-  );
+  await chooseButtonByLabelFor(page, "OtherPropertiesYN", hasOtherProperties ? "Yes" : "No");
   await page.waitForTimeout(300);
   if (!hasOtherProperties) return;
-  await chooseOptionAfterQuestion(
-    page,
-    "Do you want to provide these details now?",
-    "Yes"
-  );
+  await chooseButtonByLabelFor(page, "OtherPropertiesOver90", loanToValue(input) > 0.9 ? "Yes" : "No");
+  await page.waitForTimeout(300);
+  await chooseButtonByLabelFor(page, "OtherPropertiesProvideDetailsYN", "Yes");
   await page.waitForTimeout(300);
 
   await selectFirstAvailableOption(page, ["How many mortgaged properties", "mortgaged properties"], [
     String(Math.min(propertyCards.length, 5))
   ]);
   await selectFirstAvailableOption(page, ["How many mortgage free properties", "mortgage free"], ["0"]);
+  await setSantanderOtherPropertiesStore(page, propertyCards, input);
   await page.waitForTimeout(500);
 
   for (const card of propertyCards.slice(0, 5)) {
     const cardHeading = `Mortgaged property ${card.index + 1}`;
+    const requiredMonthlyPropertyCost = card.isRental ? 0 : 1;
     await selectAfterHeading(page, cardHeading, "Property use", [
       card.isRental ? otherPropertyUseLabels.alreadyLet : otherPropertyUseLabels.holidayHomeOrSecondHome
     ]);
@@ -243,21 +234,106 @@ async function fillOtherProperties(page: Page, input: LenderReadyInput): Promise
     await fillCurrencyAfterHeading(page, cardHeading, "Monthly mortgage payment", card.monthlyMortgagePayment);
     await fillCurrencyAfterHeading(page, cardHeading, "Monthly gross rent", card.monthlyRent);
     await chooseOptionAfterHeadingQuestion(page, cardHeading, "Will the rent be received in a foreign currency?", "No");
+    await setTextInputById(page, `MortgagedsPropertyUtilities${card.index}`, String(requiredMonthlyPropertyCost));
+    await setTextInputById(page, `MortgagedsPropertyCouncil${card.index}`, String(requiredMonthlyPropertyCost));
+    await setTextInputById(page, `MortgagedsPropertyMaintenance${card.index}`, "0");
+    await setTextInputById(page, `MortgagedsPropertyGRSC${card.index}`, "0");
+    await setTextInputById(page, `MortgagedsPropertyOtherCosts${card.index}`, "0");
+    await fillCurrencyAfterHeading(page, cardHeading, "Monthly utilities", requiredMonthlyPropertyCost);
+    await fillCurrencyAfterHeading(page, cardHeading, "Monthly council tax", requiredMonthlyPropertyCost);
+    await fillCurrencyAfterHeading(page, cardHeading, "Monthly property maintenance", 0);
+    await fillCurrencyAfterHeading(page, cardHeading, "Monthly ground rent", 0);
+    await fillCurrencyAfterHeading(page, cardHeading, "Other monthly costs", 0);
     await chooseOptionAfterHeadingQuestion(
       page,
       cardHeading,
       "Are all owners willing to switch the whole loan to interest only if they experience financial difficulties?",
       "No"
     );
-    await chooseFirstAvailableOption(page, [card.isRental ? "Yes" : "No"], ["rented at full market value", "let the property"]);
+    await chooseOptionAfterHeadingQuestion(page, cardHeading, "rented at the full market value", card.isRental ? "Yes" : "No");
+    await fillSantanderOtherPropertyCosts(page, card.index, {
+      utilities: requiredMonthlyPropertyCost,
+      council: requiredMonthlyPropertyCost,
+      maintenance: 0,
+      groundRentAndServiceCharges: 0,
+      otherCosts: 0
+    }, { requireVisible: !card.isRental });
   }
 }
 
 async function fillIncome(page: Page, input: LenderReadyInput): Promise<void> {
+  await setSantanderIncomeStore(page, input);
   for (const applicant of input.applicants) {
     await fillApplicantIncome(page, applicant);
   }
-  await setSantanderIncomeStore(page, input);
+}
+
+async function setSantanderOtherPropertiesStore(page: Page, propertyCards: SantanderOtherPropertyCard[], input: LenderReadyInput): Promise<void> {
+  const cards = propertyCards.slice(0, 5).map((card) => {
+    const interestOnlyAmt = card.repaymentType === "capital_and_interest"
+      ? 0
+      : Math.round(card.interestOnlyBalance || card.mortgageBalance);
+    const capitalAndInterestAmt = card.repaymentType === "interest_only"
+      ? 0
+      : Math.max(0, Math.round(card.mortgageBalance - interestOnlyAmt));
+
+    return {
+      mortgaged: true,
+      use: card.isRental ? "It's already let" : "Holiday home/second home (for own use)",
+      propertyValue: Math.round(card.propertyValue),
+      balance: Math.round(card.mortgageBalance),
+      santander: card.onCompletionLenderSantander ? "Yes" : "No",
+      repaymentMethod: otherPropertyRepaymentLabels[card.repaymentType][0],
+      capitalAndInterestAmt,
+      interestOnlyAmt,
+      totalMonths: Math.max(1, Math.round(card.remainingTermYears * 12)),
+      monthlyPmt: Math.round(card.monthlyMortgagePayment),
+      rent: Math.round(card.monthlyRent),
+      foreignCurrency: "No",
+      willingSwitch: "No",
+      utilities: card.isRental ? 0 : 1,
+      council: card.isRental ? 0 : 1,
+      maintenance: 0,
+      grsc: 0,
+      otherCosts: 0,
+      finalIncome: 0,
+      finalCosts: 0,
+      valid: true
+    };
+  });
+
+  await page.evaluate(
+    ({ otherPropertyCards, over90 }) => {
+      const app = document.querySelector("#AffordabilityCalculator") as (Element & { __vue_app__?: unknown }) | null;
+      const context = (app?.__vue_app__ as { _context?: { provides?: Record<PropertyKey, unknown> } } | undefined)?._context;
+      const pinia = Reflect.ownKeys(context?.provides ?? {})
+        .map((key) => context?.provides?.[key])
+        .find((candidate): candidate is { _s?: Map<string, Record<string, unknown> & { $patch?: (values: Record<string, unknown>) => void }> } =>
+          !!candidate &&
+          typeof candidate === "object" &&
+          "_s" in candidate
+        );
+      const store = pinia?._s?.get("otherProperties");
+      if (!store) return;
+
+      const values = {
+        otherPropertiesYN: otherPropertyCards.length > 0 ? "Yes" : "No",
+        otherPropertiesOver90: over90 ? "Yes" : "No",
+        otherPropertiesProvideDetailsYN: otherPropertyCards.length > 0 ? "Yes" : "",
+        mortgagedCount: otherPropertyCards.length,
+        mortgageFreeCount: 0,
+        mortgaged: otherPropertyCards,
+        mortgageFree: []
+      };
+
+      if (typeof store.$patch === "function") {
+        store.$patch(values);
+      } else {
+        Object.assign(store, values);
+      }
+    },
+    { otherPropertyCards: cards, over90: loanToValue(input) > 0.9 }
+  ).catch(() => undefined);
 }
 
 async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<void> {
@@ -267,7 +343,142 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
   await fillFirstAvailableCurrency(page, [`${prefix} gross basic income`, "Gross basic income", "Gross annual income"], basicIncome);
   await fillSelfEmploymentIncome(page, applicant);
   await fillFirstAvailableCurrency(page, [`${prefix} pension income`, "Pension income"], applicant.employment.annualPensionIncome ?? 0);
+  await fillVariableEmploymentIncome(page, applicant);
   await fillFirstAvailableCurrency(page, [`${prefix} other income`, "Other income"], totalOtherIncome(applicant));
+}
+
+async function fillVariableEmploymentIncome(page: Page, applicant: Applicant): Promise<void> {
+  const applicantId = `Applicant${applicant.index}`;
+  const bonusOrCommission = Math.round((applicant.employment.annualBonus ?? 0) + (applicant.employment.annualCommission ?? 0));
+  const overtime = Math.round(applicant.employment.annualOvertime ?? 0);
+
+  await chooseButtonByLabelFor(page, `${applicantId}BonusYN`, bonusOrCommission > 0 ? "Yes" : "No");
+  if (bonusOrCommission > 0) {
+    await chooseButtonByLabelFor(page, `${applicantId}BonusMonthlyYN`, "No");
+    await selectVisibleById(page, `${applicantId}BonusFreq`, "Annually");
+    await page.waitForTimeout(150);
+    await setTextInputById(page, `${applicantId}AnnualBonus1`, String(bonusOrCommission));
+  }
+
+  await chooseButtonByLabelFor(page, `${applicantId}OvertimeYN`, overtime > 0 ? "Yes" : "No");
+  if (overtime > 0) {
+    await chooseButtonByLabelFor(page, `${applicantId}OvertimeMonthlyYN`, "No");
+    await page.waitForTimeout(150);
+    await setTextInputById(page, `${applicantId}AnnualOvertime`, String(overtime));
+  }
+}
+
+async function setTextInputById(page: Page, id: string, value: string): Promise<boolean> {
+  const filled = await page.evaluate(
+    ({ controlId, textValue }) => {
+      const input = document.getElementById(controlId) as HTMLInputElement | null;
+      if (!input) return false;
+
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+      setter?.call(input, textValue);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      input.dispatchEvent(new Event("blur", { bubbles: true }));
+      return true;
+    },
+    { controlId: id, textValue: value }
+  ).catch(() => false);
+
+  if (!filled) {
+    return fillVisibleById(page, id, value);
+  }
+
+  return true;
+}
+
+async function fillSantanderOtherPropertyCosts(
+  page: Page,
+  index: number,
+  values: {
+    utilities: number;
+    council: number;
+    maintenance: number;
+    groundRentAndServiceCharges: number;
+    otherCosts: number;
+  },
+  options: { requireVisible: boolean }
+): Promise<void> {
+  const fields = [
+    { id: `MortgagedsPropertyUtilities${index}`, value: values.utilities },
+    { id: `MortgagedsPropertyCouncil${index}`, value: values.council },
+    { id: `MortgagedsPropertyMaintenance${index}`, value: values.maintenance },
+    { id: `MortgagedsPropertyGRSC${index}`, value: values.groundRentAndServiceCharges },
+    { id: `MortgagedsPropertyOtherCosts${index}`, value: values.otherCosts }
+  ];
+
+  for (const field of fields) {
+    await fillExactSantanderCurrencyById(page, field.id, field.value, options);
+  }
+}
+
+async function fillExactSantanderCurrencyById(
+  page: Page,
+  id: string,
+  value: number,
+  options: { requireVisible: boolean }
+): Promise<void> {
+  const locator = page.locator(`#${id}`);
+  await locator.first().waitFor({ state: options.requireVisible ? "visible" : "attached", timeout: 5000 }).catch(() => undefined);
+
+  const textValue = String(Math.round(value));
+  const visible = await locator.first().isVisible().catch(() => false);
+  if (visible) {
+    await fillVisibleById(page, id, textValue).catch(() => undefined);
+  }
+
+  await setTextInputById(page, id, textValue);
+  await page.waitForTimeout(50);
+
+  const actualValue = await locator.first().inputValue().catch(() => "");
+  if (normalizeCurrencyInputValue(actualValue) !== textValue) {
+    await setTextInputById(page, id, textValue);
+  }
+}
+
+function normalizeCurrencyInputValue(value: string): string {
+  return value.replace(/[,\s]/g, "");
+}
+
+async function chooseButtonByLabelFor(page: Page, labelFor: string, option: "Yes" | "No"): Promise<boolean> {
+  const label = page.locator(`#AffordabilityCalculator label[for="${labelFor}"]`);
+  await label.waitFor({ state: "visible", timeout: 5000 }).catch(() => undefined);
+
+  const button = label.locator(
+    `xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " form-group ")][1]//button[normalize-space(.)="${xpathLiteralText(option)}" or @value="${xpathLiteralText(option)}"]`
+  );
+  if (await button.count() > 0 && await button.first().isVisible().catch(() => false)) {
+    await button.first().click({ force: true });
+    await page.waitForTimeout(150);
+    return true;
+  }
+
+  const clicked = await page.evaluate(
+    ({ controlId, optionText }) => {
+      const root = document.querySelector("#AffordabilityCalculator");
+      const label = root?.querySelector(`label[for="${controlId}"]`);
+      if (!root || !label) return false;
+
+      const container = label.closest(".form-group") ?? label.parentElement;
+      const buttons = Array.from(container?.querySelectorAll("button, [role='button']") ?? []) as HTMLElement[];
+      const button = buttons.find((candidate) => candidate.textContent?.trim() === optionText || candidate.getAttribute("value") === optionText);
+      if (!button) return false;
+
+      button.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, view: window }));
+      button.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      button.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+      button.click();
+      return true;
+    },
+    { controlId: labelFor, optionText: option }
+  ).catch(() => false);
+
+  if (clicked) await page.waitForTimeout(150);
+  return clicked;
 }
 
 async function fillSelfEmploymentIncome(page: Page, applicant: Applicant): Promise<void> {
@@ -313,10 +524,12 @@ async function fillOutgoings(page: Page, input: LenderReadyInput): Promise<void>
     input.outgoings.creditCardBalances + input.outgoings.overdraftBalances
   );
   const otherMonthlyCommitted = input.outgoings.otherMonthlyOutgoings + input.outgoings.monthlyBuyToLetPayments;
-  await chooseFirstAvailableOption(page, [otherMonthlyCommitted > 0 ? "Yes" : "No"], [
-    "Do you want to enter any other monthly committed expenditure",
-    "other monthly committed expenditure"
-  ]);
+  if (!(await chooseButtonByLabelFor(page, "OtherCommittedExpenditureYN", otherMonthlyCommitted > 0 ? "Yes" : "No"))) {
+    await chooseFirstAvailableOption(page, [otherMonthlyCommitted > 0 ? "Yes" : "No"], [
+      "Do you want to enter any other monthly committed expenditure",
+      "other monthly committed expenditure"
+    ]);
+  }
   if (otherMonthlyCommitted > 0) {
     await fillFirstAvailableCurrency(
       page,
@@ -562,6 +775,9 @@ async function chooseOptionAfterQuestion(page: Page, question: string, option: s
 }
 
 async function chooseOptionAfterQuestionIndex(page: Page, question: string, itemIndex: number, option: string): Promise<boolean> {
+  const scopedClick = await chooseButtonInQuestionGroup(page, question, itemIndex, option);
+  if (scopedClick) return true;
+
   await page
     .locator(`xpath=.//*[text()[contains(normalize-space(.), "${xpathLiteralText(question)}")]]`)
     .first()
@@ -587,6 +803,77 @@ async function chooseOptionAfterQuestionIndex(page: Page, question: string, item
   }
 
   return false;
+}
+
+async function chooseButtonInQuestionGroup(page: Page, question: string, itemIndex: number, option: string): Promise<boolean> {
+  await page
+    .locator("#AffordabilityCalculator")
+    .getByText(new RegExp(escapeRegExp(question), "i"))
+    .first()
+    .waitFor({ state: "visible", timeout: 5000 })
+    .catch(() => undefined);
+
+  const promptCandidates = page
+    .locator("#AffordabilityCalculator label, #AffordabilityCalculator p")
+    .filter({ hasText: new RegExp(escapeRegExp(question), "i") });
+  let visiblePromptIndex = 0;
+  const promptCount = await promptCandidates.count().catch(() => 0);
+  for (let index = 0; index < promptCount; index += 1) {
+    const prompt = promptCandidates.nth(index);
+    if (!(await prompt.isVisible().catch(() => false))) continue;
+    if (visiblePromptIndex !== itemIndex) {
+      visiblePromptIndex += 1;
+      continue;
+    }
+
+    const button = prompt.locator(
+      `xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " form-group ")][1]//button[normalize-space(.)="${xpathLiteralText(option)}" or @value="${xpathLiteralText(option)}"]`
+    );
+    if (await button.count() > 0 && await button.first().isVisible().catch(() => false)) {
+      await button.first().click({ force: true });
+      await page.waitForTimeout(150);
+      return true;
+    }
+    break;
+  }
+
+  const clicked = await page.evaluate(
+    ({ questionText, itemOffset, optionText }) => {
+      const root = document.querySelector("#AffordabilityCalculator");
+      if (!root) return false;
+
+      const normalizeText = (value: string) => value.replace(/\s+/g, " ").trim().toLowerCase();
+      const wantedQuestion = normalizeText(questionText);
+      const prompts = Array.from(root.querySelectorAll("label, p, h1, h2, h3, h4, div"))
+        .filter((element) => {
+          const text = normalizeText(element.textContent ?? "");
+          if (!text.includes(wantedQuestion)) return false;
+          const box = element.getBoundingClientRect();
+          return box.width > 0 && box.height > 0;
+        })
+        .sort((left, right) => (left.textContent?.length ?? 0) - (right.textContent?.length ?? 0));
+
+      const prompt = prompts[itemOffset] as HTMLElement | undefined;
+      if (!prompt) return false;
+
+      const container = prompt.closest(".form-group") ?? prompt.parentElement;
+      const buttons = Array.from(container?.querySelectorAll("button, [role='button']") ?? []) as HTMLElement[];
+      const button = buttons.find((candidate) =>
+        candidate.textContent?.trim() === optionText || candidate.getAttribute("value") === optionText
+      );
+      if (!button) return false;
+
+      button.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, view: window }));
+      button.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      button.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+      button.click();
+      return true;
+    },
+    { questionText: question, itemOffset: itemIndex, optionText: option }
+  ).catch(() => false);
+
+  if (clicked) await page.waitForTimeout(150);
+  return clicked;
 }
 
 async function nthVisibleLocator(locator: ReturnType<Page["locator"]>, visibleIndex: number): Promise<ReturnType<Page["locator"]> | null> {
@@ -891,9 +1178,9 @@ async function setSantanderIncomeStore(page: Page, input: LenderReadyInput): Pro
     const soleTraderPrevious = Math.round(applicant.employment.netProfitPreviousYear ?? soleTraderLatest);
     const privatePension = Math.round(applicant.employment.annualPensionIncome ?? 0);
     const statePension = Math.round(applicant.employment.otherAnnualPensionIncome ?? 0);
-    const annualBonus1 = 0;
-    const annualOvertime = 0;
-    const annualCommission = 0;
+    const annualBonus1 = Math.round(applicant.employment.annualBonus ?? 0);
+    const annualOvertime = Math.round(applicant.employment.annualOvertime ?? 0);
+    const annualCommission = Math.round(applicant.employment.annualCommission ?? 0);
     const otherIncome = Math.round(totalOtherIncome(applicant));
     const isSoleTrader = applicant.employment.type === "self_employed" && ["sole_trader", "partnership", "llp"].includes(applicant.employment.businessType ?? "sole_trader");
     const isDirector = applicant.employment.type === "self_employed" && applicant.employment.businessType === "limited_company";
@@ -975,7 +1262,7 @@ async function setSantanderIncomeStore(page: Page, input: LenderReadyInput): Pro
         statePension: applicant.statePension,
         bonusYN: applicant.annualBonus1 + applicant.annualCommission > 0 ? "Yes" : "No",
         bonusMonthlyYN: "No",
-        bonusFreq: applicant.annualBonus1 + applicant.annualCommission > 0 ? "Other" : "",
+        bonusFreq: applicant.annualBonus1 + applicant.annualCommission > 0 ? "Annually" : "",
         annualBonus1: applicant.annualBonus1,
         annualBonus2: 0,
         annualBonus3: applicant.annualBonus1 + applicant.annualCommission,
@@ -1027,6 +1314,9 @@ function totalApplicantsGrossIncome(input: LenderReadyInput): number {
     const employment = applicant.employment;
     return sum +
       (employment.annualGrossIncome ?? 0) +
+      (employment.annualBonus ?? 0) +
+      (employment.annualOvertime ?? 0) +
+      (employment.annualCommission ?? 0) +
       (employment.annualPensionIncome ?? 0) +
       (employment.otherAnnualPensionIncome ?? 0) +
       (employment.netProfitCurrentYear ?? 0) +

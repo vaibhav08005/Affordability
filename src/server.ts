@@ -16,13 +16,18 @@ import { mapNationwideRawInput } from "./mappers/nationwide/raw-to-lender-ready.
 import { mapSantanderRawInput } from "./mappers/santander/raw-to-lender-ready.js";
 import { mapSkiptonRawInput } from "./mappers/skipton/raw-to-lender-ready.js";
 import { mapVirginMoneyRawInput } from "./mappers/virgin-money/raw-to-lender-ready.js";
+import { CloudTasksLenderTaskDispatcher, InlineLenderTaskDispatcher, cloudTasksConfigured, type LenderTaskPayload } from "./infrastructure/cloud-tasks-dispatcher.js";
+import { createArtifactReadStream, parseStorageUri, uploadResultArtifacts } from "./infrastructure/cloud-storage-artifacts.js";
+import { FirestoreRunStateRepository } from "./repositories/firestore-run-state-repository.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
+import { InMemoryRunStateRepository, type LenderRunRecord, type RunStateRepository } from "./repositories/run-state.js";
 
 const app = express();
 const rootDir = process.cwd();
 const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
+const runStateRepository = createRunStateRepository();
 type MappedLender =
   | "barclays"
   | "halifax"
@@ -45,11 +50,43 @@ const mappedLenders: MappedLender[] = [
   "virgin_money"
 ];
 const defaultLenderRunBatchSize = 3;
+const resultRetentionMs = 24 * 60 * 60 * 1000;
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
 
 app.get("/api/artifact", (request, response) => {
+  const storageUri = typeof request.query.uri === "string" ? request.query.uri : "";
+  if (storageUri) {
+    const storageParts = parseStorageUri(storageUri);
+    if (!storageParts || storageParts.bucketName !== process.env.EVIDENCE_BUCKET) {
+      response.status(400).json({ error: "Invalid artifact URI." });
+      return;
+    }
+
+    const stream = createArtifactReadStream(storageUri);
+    if (!stream) {
+      response.status(400).json({ error: "Invalid artifact URI." });
+      return;
+    }
+
+    if (storageUri.toLowerCase().endsWith(".pdf")) {
+      response.type("application/pdf");
+    } else if (storageUri.toLowerCase().endsWith(".png")) {
+      response.type("image/png");
+    }
+
+    stream.on("error", () => {
+      if (!response.headersSent) {
+        response.status(404).json({ error: "Artifact not found." });
+      } else {
+        response.end();
+      }
+    });
+    stream.pipe(response);
+    return;
+  }
+
   const requestedPath = typeof request.query.path === "string" ? request.query.path : "";
   const resolvedPath = path.resolve(rootDir, requestedPath);
   const allowedArtifactRoots = [
@@ -118,11 +155,47 @@ app.post("/api/cases/:caseId/run-affordability", async (request, response) => {
       return;
     }
 
+    if (lenderWorkerFanoutEnabled()) {
+      const run = await runStateRepository.createCaseRun(request.params.caseId, mappedLenders);
+      const dispatcher = createLenderTaskDispatcher();
+      await Promise.all(mappedLenders.map((lender) => dispatcher.enqueueLenderTask({
+        runId: run.runId,
+        caseId: request.params.caseId,
+        lender
+      })));
+
+      response.status(202).json({
+        caseId: request.params.caseId,
+        runId: run.runId,
+        status: run.status,
+        totalLenders: run.totalLenders,
+        results: await lenderRunViewsForRun(run.runId)
+      });
+      return;
+    }
+
     const results = await runMappedLendersForCaseInBatches(request.params.caseId);
 
     response.json({
       caseId: request.params.caseId,
       results
+    });
+  } catch (error) {
+    response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.get("/api/runs/:runId", async (request, response) => {
+  try {
+    const run = await runStateRepository.getCaseRun(request.params.runId);
+    if (!run) {
+      response.status(404).json({ error: "Run not found." });
+      return;
+    }
+
+    response.json({
+      ...run,
+      results: await lenderRunViewsForRun(request.params.runId)
     });
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
@@ -143,6 +216,21 @@ app.post("/runs", async (request, response) => {
       runId,
       result
     });
+  }
+});
+
+app.post("/worker/lender-task", async (request, response) => {
+  try {
+    if (!workerRequestAuthorized(request.headers["x-worker-secret"])) {
+      response.status(401).json({ error: "Unauthorized worker request." });
+      return;
+    }
+
+    const payload = parseLenderTaskPayload(request.body);
+    await runOneLenderTask(payload);
+    response.json({ status: "ok", ...payload });
+  } catch (error) {
+    response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 });
 
@@ -183,13 +271,29 @@ interface CaseSummary {
 
 interface LenderRunView {
   lender: LenderId;
-  status: RunStatus | "not_run";
+  status: RunStatus | "not_run" | "queued" | "running" | "timed_out";
   affordabilityAmount: number | null;
   monthlyPayment: number | null;
   message: string;
   output: LenderReadyInput | null;
   evidenceUrl: string | null;
   evidenceType: "pdf" | "image" | null;
+}
+
+function createRunStateRepository(): RunStateRepository {
+  return process.env.RUN_STATE_BACKEND === "firestore" || cloudTasksConfigured()
+    ? new FirestoreRunStateRepository()
+    : new InMemoryRunStateRepository();
+}
+
+function createLenderTaskDispatcher() {
+  return cloudTasksConfigured()
+    ? new CloudTasksLenderTaskDispatcher()
+    : new InlineLenderTaskDispatcher(runOneLenderTask);
+}
+
+function lenderWorkerFanoutEnabled(): boolean {
+  return process.env.LENDER_WORKER_FANOUT === "true" || cloudTasksConfigured();
 }
 
 async function loadCaseSummaries(): Promise<CaseSummary[]> {
@@ -221,6 +325,24 @@ async function loadCaseDetails(caseId: string) {
   }
 
   const first = matchingSamples[0];
+  const latestRun = await runStateRepository.findLatestCaseRunForCase(caseId, retentionSinceIso());
+  if (latestRun) {
+    return {
+      ...caseDetailsFromSample(first),
+      latestRun: {
+        runId: latestRun.runId,
+        status: latestRun.status,
+        totalLenders: latestRun.totalLenders,
+        completedCount: latestRun.completedCount,
+        successCount: latestRun.successCount,
+        failureCount: latestRun.failureCount,
+        updatedAt: latestRun.updatedAt,
+        expiresAt: latestRun.expiresAt
+      },
+      lenders: await lenderRunViewsForRun(latestRun.runId)
+    };
+  }
+
   const lenders = await Promise.all(
     mappedLenders.map<Promise<LenderRunView>>(async (lender) => {
       const sample = await loadMappedSampleForCase(caseId, lender);
@@ -245,6 +367,13 @@ async function loadCaseDetails(caseId: string) {
   );
 
   return {
+    ...caseDetailsFromSample(first),
+    lenders
+  };
+}
+
+function caseDetailsFromSample(first: CaseSample) {
+  return {
     id: first.id,
     title: first.title,
     summary: {
@@ -254,8 +383,7 @@ async function loadCaseDetails(caseId: string) {
       loanAmount: first.input.loan.loanAmount,
       propertyValue: first.input.loan.propertyValue,
       termYears: first.input.case.termYears
-    },
-    lenders
+    }
   };
 }
 
@@ -317,6 +445,51 @@ async function runMappedLenderForCase(caseId: string, lender: MappedLender): Pro
     await rememberCaseRunResult(caseId, result);
     return toLenderRunView(result);
   }
+}
+
+async function runOneLenderTask(payload: LenderTaskPayload): Promise<void> {
+  const started = Date.now();
+  await runStateRepository.markLenderRunning(payload.runId, payload.caseId, payload.lender);
+  const sample = await loadMappedSampleForCase(payload.caseId, payload.lender as MappedLender);
+  if (!sample) {
+    const result = failedResult(payload.lender, "No mapped input found for this lender and case.");
+    await runStateRepository.saveLenderRunResult(payload.runId, payload.caseId, result, Date.now() - started);
+    await rememberCaseRunResult(payload.caseId, result);
+    return;
+  }
+
+  try {
+    const result = await runAffordabilityAutomation(sample.input, loadRunContext());
+    const uploadedResult = await uploadResultArtifacts(result, payload.runId, payload.caseId);
+    await rememberRunResult(sample.input, uploadedResult);
+    await rememberCaseRunResult(payload.caseId, uploadedResult);
+    await runStateRepository.saveLenderRunResult(payload.runId, payload.caseId, uploadedResult, Date.now() - started);
+  } catch (error) {
+    const result = failedResult(payload.lender, error instanceof Error ? error.message : String(error));
+    await rememberRunResult(sample.input, result);
+    await rememberCaseRunResult(payload.caseId, result);
+    await runStateRepository.saveLenderRunFailure(payload.runId, payload.caseId, payload.lender, result.error?.message ?? "Worker failed.", Date.now() - started);
+  }
+}
+
+async function lenderRunViewsForRun(runId: string): Promise<LenderRunView[]> {
+  const lenderRuns = await runStateRepository.listLenderRuns(runId);
+  return Promise.all(lenderRuns.map(lenderRunToView));
+}
+
+async function lenderRunToView(record: LenderRunRecord): Promise<LenderRunView> {
+  const sample = await loadMappedSampleForCase(record.caseId, record.lender as MappedLender);
+  const result = record.result;
+  return {
+    lender: record.lender,
+    status: result?.status ?? record.status,
+    affordabilityAmount: result?.maximumBorrowing ?? null,
+    monthlyPayment: result?.monthlyPayment ?? null,
+    message: result?.error?.message ?? result?.messages[0] ?? record.error ?? statusMessage(record.status),
+    output: result && sample ? sample.input : null,
+    evidenceUrl: result ? evidenceUrl(result) : null,
+    evidenceType: result ? evidenceType(result) : null
+  };
 }
 
 async function runMappedLendersForCaseInBatches(caseId: string): Promise<LenderRunView[]> {
@@ -507,6 +680,33 @@ function failedResult(lender: LenderId, message: string): AffordabilityResult {
   };
 }
 
+function parseLenderTaskPayload(value: unknown): LenderTaskPayload {
+  const body = value as Partial<LenderTaskPayload>;
+  if (!body || typeof body.runId !== "string" || typeof body.caseId !== "string" || !isLenderId(body.lender)) {
+    throw new Error("Invalid lender task payload.");
+  }
+
+  return {
+    runId: body.runId,
+    caseId: body.caseId,
+    lender: body.lender
+  };
+}
+
+function workerRequestAuthorized(secretHeader: string | string[] | undefined): boolean {
+  const expected = process.env.WORKER_SHARED_SECRET;
+  if (!expected) return true;
+  const actual = Array.isArray(secretHeader) ? secretHeader[0] : secretHeader;
+  return actual === expected;
+}
+
+function statusMessage(status: string): string {
+  if (status === "queued") return "Queued for lender worker.";
+  if (status === "running") return "Lender worker is running.";
+  if (status === "timed_out") return "Lender worker timed out.";
+  return "";
+}
+
 function toLenderRunView(result: AffordabilityResult): LenderRunView {
   return {
     lender: result.lender,
@@ -521,14 +721,22 @@ function toLenderRunView(result: AffordabilityResult): LenderRunView {
 }
 
 function evidenceUrl(result: AffordabilityResult): string | null {
+  const artifactUri = result.evidence.pdfUri ?? result.evidence.screenshotUri;
+  if (artifactUri) return `/api/artifact?uri=${encodeURIComponent(artifactUri)}`;
+
   const artifactPath = result.evidence.pdfPath ?? result.evidence.screenshotPath;
-  return artifactPath ? `/api/artifact?path=${encodeURIComponent(artifactPath)}` : null;
+  if (artifactPath) return `/api/artifact?path=${encodeURIComponent(artifactPath)}`;
+  return null;
 }
 
 function evidenceType(result: AffordabilityResult): "pdf" | "image" | null {
-  if (result.evidence.pdfPath) return "pdf";
-  if (result.evidence.screenshotPath) return "image";
+  if (result.evidence.pdfPath || result.evidence.pdfUri) return "pdf";
+  if (result.evidence.screenshotPath || result.evidence.screenshotUri) return "image";
   return null;
+}
+
+function retentionSinceIso(): string {
+  return new Date(Date.now() - resultRetentionMs).toISOString();
 }
 
 function isLenderId(value: unknown): value is LenderId {

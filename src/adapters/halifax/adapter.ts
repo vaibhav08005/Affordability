@@ -236,12 +236,12 @@ async function chooseApplicantCount(page: Page, count: 1 | 2): Promise<void> {
 
 async function fillApplicantAges(page: Page, applicants: Applicant[]): Promise<void> {
   if (applicants.length === 1) {
-    await page.getByLabel("Applicant age").fill(String(applicants[0]?.age));
+    await fillFirstAvailableText(page, ["Applicant age", "Applicant current age"], String(applicants[0]?.age));
     return;
   }
 
-  await page.getByLabel("Applicant 1 age").fill(String(applicants[0]?.age));
-  await page.getByLabel("Applicant 2 age").fill(String(applicants[1]?.age));
+  await fillFirstAvailableText(page, ["Applicant 1 age", "Applicant 1 current age"], String(applicants[0]?.age));
+  await fillFirstAvailableText(page, ["Applicant 2 age", "Applicant 2 current age"], String(applicants[1]?.age));
 }
 
 async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<void> {
