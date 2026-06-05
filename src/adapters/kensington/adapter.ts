@@ -263,9 +263,26 @@ function validationMessages(messages: string): string {
 async function clickButtonAfterQuestion(page: Page, question: string, label: string): Promise<void> {
   const clicked = await page.evaluate(({ question, label }) => {
     const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
+    const exactButton = [...document.querySelectorAll("button")]
+      .find((button) => clean(button.textContent) === label && !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length));
+    if (exactButton) {
+      exactButton.click();
+      return true;
+    }
+
     const marker = [...document.querySelectorAll("label,h1,h2,h3,h4,p,div,button")]
       .filter((node) => clean(node.textContent).includes(question))
       .sort((a, b) => clean(a.textContent).length - clean(b.textContent).length)[0];
+    const container = marker?.closest("fieldset, section, div");
+    const scopedButton = container
+      ? [...container.querySelectorAll("button")]
+        .find((button) => clean(button.textContent) === label && !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length))
+      : undefined;
+    if (scopedButton) {
+      scopedButton.click();
+      return true;
+    }
+
     const markerTop = marker?.getBoundingClientRect().top ?? -Infinity;
     const buttons = [...document.querySelectorAll("button")]
       .filter((button) => clean(button.textContent) === label)

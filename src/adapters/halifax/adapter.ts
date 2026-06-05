@@ -180,7 +180,11 @@ async function fillHalifaxCalculator(page: Page, input: LenderReadyInput): Promi
     }
   }
 
-  await chooseYesNo(page, "Is any of the loan interest-only?", input.case.hasInterestOnly);
+  await chooseYesNoFirstAvailable(
+    page,
+    ["Is any of the loan interest-only?", "Is any of the further advance interest-only?"],
+    input.case.hasInterestOnly
+  );
   if (input.case.hasInterestOnly) {
     await fillCurrency(page, "Interest-only loan amount", input.case.interestOnlyLoanAmount ?? 0);
     await fillCurrency(page, "Monthly premium for repayment plans", input.case.monthlyRepaymentPlanPremium ?? 0);
@@ -359,6 +363,15 @@ async function chooseYesNo(page: Page, groupName: string, value: boolean): Promi
   await chooseRadioInGroup(page, groupName, value ? "Yes" : "No");
 }
 
+async function chooseYesNoFirstAvailable(page: Page, groupNames: string[], value: boolean): Promise<void> {
+  const optionName = value ? "Yes" : "No";
+  for (const groupName of groupNames) {
+    if (await chooseRadioInGroupByName(page, groupName, optionName)) return;
+  }
+
+  throw new Error(`Unable to choose option "${optionName}" in groups "${groupNames.join(", ")}".`);
+}
+
 async function chooseYesNoIfPresent(page: Page, groupName: string, value: boolean): Promise<void> {
   await chooseRadioInGroupIfPresent(page, groupName, value ? "Yes" : "No");
 }
@@ -370,32 +383,38 @@ async function chooseRadioInGroupIfPresent(pageOrLocator: Page | Locator, groupN
 }
 
 async function chooseRadioInGroup(pageOrLocator: Page | Locator, groupName: string, optionName: string): Promise<void> {
-  const group = pageOrLocator.getByRole("group", { name: groupName });
+  if (await chooseRadioInGroupByName(pageOrLocator, groupName, optionName)) return;
+
+  throw new Error(`Unable to choose option "${optionName}" in group "${groupName}".`);
+}
+
+async function chooseRadioInGroupByName(pageOrLocator: Page | Locator, groupName: string, optionName: string): Promise<boolean> {
+  const group = pageOrLocator.getByRole("group", { name: new RegExp(escapeRegExp(groupName).replace(/\\ /g, "\\s+"), "i") });
   const namedRadio = group.getByRole("radio", { name: optionName });
 
   if (await namedRadio.count() === 1) {
     try {
       await namedRadio.check({ timeout: 5000 });
-      return;
+      return true;
     } catch {
       await namedRadio.click({ timeout: 5000, force: true });
-      return;
+      return true;
     }
   }
 
   const visibleOption = group.getByText(optionName, { exact: true });
   if (await visibleOption.count() === 1) {
     await visibleOption.click({ timeout: 10000 });
-    return;
+    return true;
   }
 
   const globalOption = pageOrLocator.getByText(optionName, { exact: true });
   if (await globalOption.count() === 1) {
     await globalOption.click({ timeout: 10000 });
-    return;
+    return true;
   }
 
-  throw new Error(`Unable to choose option "${optionName}" in group "${groupName}".`);
+  return false;
 }
 
 async function chooseCustomListOption(pageOrLocator: Page | Locator, groupName: string, optionText: string): Promise<void> {
@@ -469,6 +488,12 @@ async function fillFirstAvailableText(page: Page, labels: string[], value: strin
       await field.fill(value);
       return;
     }
+
+    const flexibleField = page.getByLabel(new RegExp(escapeRegExp(label).replace(/\\ /g, "\\s+"), "i"));
+    if (await flexibleField.count() === 1) {
+      await flexibleField.fill(value);
+      return;
+    }
   }
 
   throw new Error(`Unable to find any text field: ${labels.join(", ")}.`);
@@ -484,6 +509,10 @@ async function fillFirstAvailableInput(page: Page, selectors: string[], labels: 
   }
 
   await fillFirstAvailableText(page, labels, value);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 async function fillCurrencyNearText(scope: Page | Locator, text: string, value: number): Promise<void> {
