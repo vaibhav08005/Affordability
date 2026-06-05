@@ -308,8 +308,13 @@ function inferEmploymentType(
 
 function mapAnnualGrossIncome(raw: RawRecord, prefix: string, isContractor: boolean): number {
   if (isContractor) {
-    const dayRate = rawNumber(raw[`${prefix}_contract_details_rate_amount`], 0);
-    if (dayRate > 0) return dayRate * 5 * 46;
+    const contractRate = rawNumber(raw[`${prefix}_contract_details_rate_amount`], 0);
+    const rateFrequency = normalized(raw[`${prefix}_contract_details_rate_frequency`]);
+    if (contractRate > 0) {
+      if (rateFrequency.includes("hour")) return contractRate * 8 * 5 * 46;
+      if (rateFrequency.includes("week")) return contractRate * 46;
+      return contractRate * 5 * 46;
+    }
     const contractSalary = rawNumber(raw[`${prefix}_contract_salary`], 0);
     if (contractSalary > 0) return contractSalary;
   }

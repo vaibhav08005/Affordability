@@ -249,10 +249,15 @@ function mapAnnualGrossIncome(raw: RawRecord, prefix: string, isContractor: bool
   const allowances = annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]) +
     annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]);
   if (isContractor) {
-    const dayRate = rawNumber(raw[`${prefix}_contract_details_rate_amount`], 0);
-    if (dayRate > 0) return Math.round(dayRate * 0.87 * 230);
+    const contractRate = rawNumber(raw[`${prefix}_contract_details_rate_amount`], 0);
+    const rateFrequency = normalized(raw[`${prefix}_contract_details_rate_frequency`]);
+    if (contractRate > 0) {
+      if (rateFrequency.includes("hour")) return contractRate * 8 * 5 * 48;
+      if (rateFrequency.includes("week")) return contractRate * 48;
+      return contractRate * 5 * 48;
+    }
     const contractSalary = rawNumber(raw[`${prefix}_contract_salary`], 0);
-    if (contractSalary > 0) return contractSalary + allowances + mapVariableIncome(raw, prefix);
+    if (contractSalary > 0) return contractSalary;
   }
   if (type === "self_employed") {
     return rawNumber(raw[`${prefix}_business_salary`] ?? raw[`${prefix}_dir_partnr_curr_yr_salary`], 0);
