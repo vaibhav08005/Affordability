@@ -1,17 +1,18 @@
 # Web Interface
 
-This document covers only the simple browser interface added for viewing Halifax mapped cases and running affordability across the mapped lenders. Backend adapter behavior and lender field mapping remain documented separately in the existing backend and field-map docs.
+This document covers the browser interface for viewing production raw cases, mapping them to lenders, and running affordability across all mapped lenders. Backend adapter behavior and lender field mapping remain documented separately in the existing backend and field-map docs.
 
 ## Purpose
 
 The interface provides a small local page for:
 
-- Viewing Halifax mapped cases in rows.
+- Viewing production raw cases in rows.
 - Opening a case detail view.
 - Viewing the raw source YAML/JSON for a case when available.
 - Seeing lender affordability results for the selected case.
 - Opening screenshot/PDF evidence artifacts for saved runs.
-- Running affordability for the selected case across the five mapped lenders.
+- Running affordability for the selected case across all nine mapped lenders.
+- Polling asynchronous run progress when worker fanout is enabled.
 
 The UI is intentionally minimal and does not use a frontend framework.
 
@@ -21,7 +22,11 @@ The UI is intentionally minimal and does not use a frontend framework.
 public/index.html   Static HTML, CSS, and browser JavaScript for the interface.
 src/server.ts       Serves the static page and exposes interface API routes.
 src/repositories/run-repository.ts
-                    In-memory result storage boundary for interface/API runs.
+                    In-memory recent result storage for direct /runs and inline runs.
+src/repositories/run-state.ts
+                    Case-run and per-lender run-state repository contract.
+src/repositories/firestore-run-state-repository.ts
+                    Firestore-backed run-state implementation for production fanout.
 ```
 
 The page is served by the same Express process as the API.
@@ -50,45 +55,38 @@ npm.cmd run api
 
 ## Case Data Source
 
-The Cases page reads cases only from:
+The Cases page reads production raw cases from:
 
 ```text
-samples/halifax-mapped-cases
-```
-
-The UI ignores generic duplicate filenames like:
-
-```text
-case-01.json
+samples/test-cases
 ```
 
 Case display names are derived from filenames. For example:
 
 ```text
-halifax-raw-case-11-ftb-joint-employed-contractor-umbrella.json
+additional-raw-case-45-joint-home-mover-high-variable-income-btl-surplus.yaml
 ```
 
 becomes:
 
 ```text
-11 Ftb Joint Employed Contractor Umbrella
+45 Joint Home Mover High Variable Income Btl Surplus
 ```
 
-The raw input viewer looks for matching source files in:
-
-```text
-samples/raw-halifax-cases
-samples/raw-additional-cases
-```
+The raw input viewer returns the same source YAML/JSON text from `samples/test-cases`.
 
 ## Supported Interface Lenders
 
-The Run affordability button uses only the five lenders that currently have mapping workbooks and mapped sample flow support:
+The Run affordability button uses all nine mapped lenders:
 
 ```text
 barclays
 halifax
 hsbc
+kensington
+natwest
+nationwide
+santander
 skipton
 virgin_money
 ```
@@ -99,37 +97,19 @@ These correspond to files in:
 Mapping_xlxs/Barclays.xlsx
 Mapping_xlxs/Halifax mapping.xlsx
 Mapping_xlxs/HSBC.xlsx
+Mapping_xlxs/kensington.xlsx
+Mapping_xlxs/natwest.xlsx
+Mapping_xlxs/nationwide.xlsx
+Mapping_xlxs/santander.xlsx
 Mapping_xlxs/skipton.xlsx
 Mapping_xlxs/virgin_money.xlsx
 ```
 
 ## Lender Input Lookup
 
-The page lists cases from `samples/halifax-mapped-cases`, but the run endpoint looks for matching mapped input files in lender-specific folders.
+The run endpoint no longer reads pre-generated mapped JSON files. For each selected case, the server reads the raw YAML/JSON from `samples/test-cases`, applies the in-memory mapper for each lender, validates the mapped `LenderReadyInput`, and passes that input to the adapter.
 
-Lookup folders:
-
-```text
-barclays      samples/barclays-mapped-cases, samples/barclays-additional-mapped-cases
-halifax       samples/halifax-mapped-cases
-hsbc          samples/hsbc-mapped-cases, samples/hsbc-additional-mapped-cases
-skipton       samples/skipton-mapped-cases, samples/skipton-additional-mapped-cases
-virgin_money  samples/virgin-money-mapped-cases, samples/virgin-money-additional-mapped-cases
-```
-
-The matching key is the normalized case id derived from the filename, after removing prefixes such as:
-
-```text
-halifax-raw-case-
-barclays-raw-case-
-additional-raw-case-
-```
-
-If a mapped input is missing for a lender, that lender row is marked failed with:
-
-```text
-No mapped input found for this lender and case.
-```
+The matching key is the normalized case id derived from the raw filename, after removing prefixes such as `halifax-raw-case-`, `<lender>-raw-case-`, `additional-raw-case-`, and `case-`.
 
 ## Interface Routes
 
@@ -153,7 +133,7 @@ Response shape:
       "applicationType": "Single",
       "loanAmount": 235000,
       "propertyValue": 280000,
-      "lendersRun": 5
+      "lendersRun": 9
     }
   ]
 }
@@ -161,13 +141,16 @@ Response shape:
 
 ### `GET /api/cases/:caseId`
 
-Returns one case detail view with all five interface lenders.
+Returns one case detail view with all nine interface lenders. If there is a recent run for the case, the response can include `latestRun`.
 
 Each lender row can be:
 
 ```text
 success   Affordability amount was extracted.
 failed    Lender run failed or mapped input is missing.
+queued    Lender task has been queued.
+running   Lender task is currently running.
+timed_out Lender task timed out.
 not_run   No run result is saved in the current server session.
 ```
 
@@ -188,7 +171,7 @@ Response shape:
 
 ### `GET /api/artifact?path=...`
 
-Serves screenshot or PDF evidence from allowed artifact roots only:
+Serves screenshot or PDF evidence from allowed local artifact roots:
 
 ```text
 artifacts/
@@ -197,19 +180,37 @@ SCREENSHOT_DIR
 
 The route rejects paths outside those roots.
 
+### `GET /api/artifact?uri=gs://...`
+
+Streams screenshot/PDF evidence from Cloud Storage. The URI must be in the configured `EVIDENCE_BUCKET`.
+
 ### `POST /api/cases/:caseId/run-affordability`
 
-Runs the selected case across all five interface lenders.
+Runs the selected case across all nine interface lenders.
 
-The five lender runs are started in parallel:
+Local inline mode runs lenders in batches:
 
 ```ts
-Promise.all(mappedLenders.map((lender) => runMappedLenderForCase(caseId, lender)))
+runMappedLendersForCaseInBatches(caseId)
 ```
 
-In managed browser mode, each adapter creates its own browser session. This means the five lender automations can run at the same time instead of one after another.
+The inline batch size is controlled by:
 
-The endpoint responds after all five lenders complete or fail.
+```text
+LENDER_RUN_BATCH_SIZE
+```
+
+Default batch size is 3.
+
+When `LENDER_WORKER_FANOUT=true` or Cloud Tasks is configured, the endpoint creates a run record, enqueues one lender task per lender, and returns `202` with a `runId`.
+
+### `GET /api/runs/:runId`
+
+Returns aggregate run state and current lender result rows for an asynchronous run. The UI polls this route every few seconds until the run reaches a terminal state.
+
+### `POST /worker/lender-task`
+
+Private worker endpoint used by Cloud Tasks. Each request runs exactly one lender for one case and writes the lender result back to the run-state repository.
 
 ## UI Flow
 
@@ -218,28 +219,42 @@ The endpoint responds after all five lenders complete or fail.
 3. User clicks a case row to view lender result rows.
 4. User clicks `Run affordability` from the Cases page.
 5. The page calls `POST /api/cases/:caseId/run-affordability`.
-6. The button changes to `Running...` while the endpoint is active.
-7. After completion, the page navigates to the selected case detail view.
-8. The case detail view displays the latest in-memory result for each lender.
+6. If the response includes a `runId`, the page navigates to `#run=<runId>` and polls `GET /api/runs/:runId`.
+7. If no `runId` is returned, the page navigates to the selected case detail view after inline completion.
+8. The case detail view displays the latest in-memory or repository-backed result for each lender.
 9. User can open raw input and evidence links when available.
 
 ## Result Storage
 
-Run results are accessed through a repository interface:
+Inline/direct run results are accessed through:
 
 ```text
 src/repositories/run-repository.ts
 ```
 
-The current implementation is `InMemoryRunRepository`, which keeps results in memory. This gives the server a clean storage boundary now and allows a Firestore implementation to be added later without rewriting the interface routes.
+Case-run progress and worker fanout results are accessed through:
 
-This means:
+```text
+src/repositories/run-state.ts
+src/repositories/firestore-run-state-repository.ts
+```
 
-- Results are visible while the server process is running.
-- Results disappear when the server restarts.
-- There is no database or persisted run history yet.
+Local default:
 
-Future Firestore implementation should keep the same repository contract:
+```text
+InMemoryRunRepository
+InMemoryRunStateRepository
+```
+
+Production/fanout:
+
+```text
+FirestoreRunStateRepository
+CloudTasksLenderTaskDispatcher
+Cloud Storage evidence upload when EVIDENCE_BUCKET is set
+```
+
+Run state is retained for 24 hours by timestamp convention in the app layer. Firestore TTL policy should be configured separately if automatic deletion is required.
 
 ```text
 getLenderResult(caseId, lender)
@@ -253,7 +268,7 @@ The interface uses the same automation timeout as the backend adapters.
 Default:
 
 ```text
-AUTOMATION_TIMEOUT_MS=60000
+AUTOMATION_TIMEOUT_MS=30000
 ```
 
 This is a per-action/default Playwright timeout, not a total time limit for a complete lender run.
@@ -269,20 +284,19 @@ npm.cmd run api
 
 ```text
 The interface has no authentication.
-The run endpoint is synchronous and waits for all five lenders before responding.
-There is no per-lender live progress streaming yet.
-Results are not persisted after restart.
-The Cases page is intentionally limited to Halifax mapped cases.
-The interface only runs the five mapped workbook lenders, not every adapter in the registry.
-The raw input viewer depends on filename-derived case IDs matching the mapped sample IDs.
+Inline local mode is synchronous by batch; fanout mode is asynchronous and polled.
+There is no push/live streaming yet; polling is used.
+Local default results are not persisted after restart.
+Production durability requires RUN_STATE_BACKEND=firestore and EVIDENCE_BUCKET.
+The Cases page is intentionally limited to samples/test-cases.
+The raw input viewer depends on filename-derived case IDs matching the production raw cases.
 ```
 
 ## Suggested Next Interface Improvements
 
 ```text
-Add live per-lender progress updates.
+Add push-based per-lender progress updates.
 Add selected-lender checkboxes.
-Persist results to JSON or a database.
 Add a run history page.
 Add retry for a single failed lender.
 Add clear status labels for running, timeout, missing input, and lender validation failure.

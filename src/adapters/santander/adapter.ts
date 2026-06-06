@@ -545,8 +545,8 @@ async function fillOutgoings(page: Page, input: LenderReadyInput): Promise<void>
 }
 
 async function advance(page: Page): Promise<void> {
-  if (!(await clickLastCalculatorButton(page, ["Continue", "Next"])) && !(await clickLastAvailableButton(page, ["Continue", "Next"]))) {
-    await clickFirstAvailableButton(page, ["Continue", "Next"]);
+  if (!(await clickLastCalculatorButton(page, ["Continue", "Next"])) && !(await clickFirstCalculatorButton(page, ["Continue", "Next"]))) {
+    throw new Error("Santander calculator Continue/Next button was not available.");
   }
   await page.waitForTimeout(1500);
 }
@@ -567,10 +567,10 @@ async function clickLastCalculatorButton(page: Page, labels: string[]): Promise<
   return false;
 }
 
-async function clickLastAvailableButton(page: Page, labels: string[]): Promise<boolean> {
+async function clickFirstCalculatorButton(page: Page, labels: string[]): Promise<boolean> {
   for (const label of labels) {
-    const candidates = page.getByRole("button", { name: new RegExp(`^${label}$`, "i") });
-    for (let index = (await candidates.count()) - 1; index >= 0; index -= 1) {
+    const candidates = page.locator("#AffordabilityCalculator button").filter({ hasText: new RegExp(`^\\s*${label}\\s*$`, "i") });
+    for (let index = 0; index < await candidates.count(); index += 1) {
       const candidate = candidates.nth(index);
       if (await candidate.isVisible().catch(() => false) && await candidate.isEnabled().catch(() => false)) {
         await candidate.scrollIntoViewIfNeeded().catch(() => undefined);

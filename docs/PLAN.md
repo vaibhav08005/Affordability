@@ -63,7 +63,9 @@ Add an HTTP API.
 Endpoints:
 
 - `POST /runs`: start an affordability run.
-- `GET /runs/:id`: retrieve status/result.
+- `POST /api/cases/:caseId/run-affordability`: start a mapped multi-lender case run from `samples/test-cases`.
+- `GET /api/runs/:runId`: retrieve aggregate status/results for async fanout runs.
+- `POST /worker/lender-task`: process one queued lender task.
 - `GET /health`: service health.
 
 Security requirements:

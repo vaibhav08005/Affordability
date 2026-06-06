@@ -1,6 +1,6 @@
 # Project Handoff
 
-This project automates UK mortgage intermediary affordability calculators with Playwright. It accepts lender-ready JSON input, and for selected workbook lenders it can also map raw fact-find style YAML/JSON into lender-ready JSON before automation. The service chooses the matching lender adapter, fills the lender calculator, extracts the result, and returns structured JSON with screenshot/PDF evidence.
+This project automates UK mortgage intermediary affordability calculators with Playwright. It accepts lender-ready JSON input, and it can map raw fact-find style YAML/JSON into lender-ready JSON for all registered lenders before automation. The service chooses the matching lender adapter, fills the lender calculator, extracts the result, and returns structured JSON with screenshot/PDF/failure-bundle evidence. The web/API process can run lenders inline in batches or fan out lender work through Cloud Tasks workers with Firestore state and Cloud Storage evidence.
 
 Use this document first when opening a fresh conversation. It captures the current project shape, the supported lenders, the validation status, and the implementation lessons from the adapter expansion work.
 
@@ -26,12 +26,12 @@ Current verification status:
 
 ```text
 npm.cmd run check passes.
-All 312 sample JSON files currently validate against src/domain/validation.ts.
+All 360 sample JSON files currently validate against src/domain/validation.ts.
 npm.cmd test currently runs 0 tests because there are no compiled *.test.js files.
 npm.cmd run samples still scans only top-level samples/*.json, so it is not a complete regression run.
 ```
 
-`npm.cmd run samples` currently does not exercise the real lender sample matrix. Most sample files live under lender subfolders such as `samples\nationwide\*.json` and mapped-case folders such as `samples\halifax-mapped-cases\*.json`; run individual samples directly or extend the runner to recurse into subfolders with lender filters.
+`npm.cmd run samples` currently does not exercise the real lender sample matrix. Most sample files live under lender subfolders, mapped-case folders, and production raw cases in `samples\test-cases`; run individual samples directly or extend the runner to recurse into subfolders with lender filters.
 
 ## Main Files
 
@@ -41,6 +41,13 @@ src/service.ts                     Validates input, finds adapter, runs automati
 src/server.ts                      Express API wrapper.
 src/config.ts                      Runtime config, timeouts, browser mode, screenshot directory.
 src/repositories/run-repository.ts In-memory run result repository boundary for web/API results.
+src/repositories/run-state.ts      Case run and per-lender run-state repository contract.
+src/repositories/firestore-run-state-repository.ts
+                                    Firestore-backed run-state repository.
+src/infrastructure/cloud-tasks-dispatcher.ts
+                                    Cloud Tasks and inline lender-task dispatchers.
+src/infrastructure/cloud-storage-artifacts.ts
+                                    Cloud Storage upload/read helpers for evidence.
 
 src/domain/contracts.ts            Core input/output TypeScript contracts.
 src/domain/validation.ts           Zod validation for lender-ready JSON.
@@ -61,14 +68,18 @@ public/index.html                  Static browser interface served by src/server
 samples/<lender>/*.json            Hand-authored scenario samples for each lender.
 samples/raw-halifax-cases/*.yaml   Base raw fact-find case set.
 samples/raw-additional-cases/*.yaml Additional raw fact-find case set.
+samples/test-cases/*.yaml          Production web/API raw case set.
 samples/*-mapped-cases/*.json      Generated lender-ready outputs from raw cases.
 artifacts/screenshots/*.png        Failure/success screenshots captured by runs.
+artifacts/failures/*               Local failure bundles with screenshots and failure.json.
 Mapping_xlxs/*.xlsx                Workbook mapping references for mapped lenders.
 docs/*_FIELD_MAP.md                Existing lender field-map notes.
 docs/*_RAW_MAPPING.md              Raw fact-find mapping notes where available.
 docs/RAW_MAPPING.md                Cross-lender raw mapping workflow.
 docs/SANTANDER_COMPLETION_ANALYSIS.md Santander stabilization plan and known issue analysis.
 Dockerfile                         Playwright runtime image for server deployment.
+docs/WORKER_FANOUT_CLOUD_STORAGE_RUNBOOK.md
+                                    Current Cloud Run worker fanout and evidence runbook.
 ```
 
 Supported lenders are currently declared in `src/domain/contracts.ts` and registered in `src/adapters/registry.ts`:
@@ -100,9 +111,13 @@ hsbc                                  10
 hsbc-mapped-cases                     10
 hsbc-additional-mapped-cases          20
 kensington                            20
+kensington-mapped-cases               10
 nationwide                            10
+nationwide-mapped-cases               10
 natwest                               12
+natwest-mapped-cases                  10
 santander                             21
+santander-mapped-cases                11
 skipton                               20
 skipton-mapped-cases                  10
 skipton-additional-mapped-cases       20
@@ -111,21 +126,26 @@ virgin-money-mapped-cases             10
 virgin-money-additional-mapped-cases  20
 raw-halifax-cases                     10 YAML
 raw-additional-cases                  20 YAML
+test-cases                            48 YAML
 ```
 
 ## Input Contract
 
-The automation CLI expects `LenderReadyInput` from `src/domain/contracts.ts`. The raw fact-find mapping layer now exists for five mapped workbook lenders:
+The automation CLI expects `LenderReadyInput` from `src/domain/contracts.ts`. The raw fact-find mapping layer now exists for all nine registered lenders:
 
 ```text
 barclays
 halifax
 hsbc
+kensington
+natwest
+nationwide
+santander
 skipton
 virgin_money
 ```
 
-These mappers accept raw YAML/JSON and return validated lender-ready JSON. The other registered adapters still expect lender-ready input directly.
+These mappers accept raw YAML/JSON and return validated lender-ready JSON. The direct adapter CLI still accepts lender-ready JSON directly.
 
 Important branches in the input:
 
@@ -142,6 +162,8 @@ case.monthlySharedEquityInterestPayment Optional shared equity monthly interest
 case.equityLoanBalance / equityLoanInterestRatePercent Optional equity loan details
 evidence.screenshotPaths[] Optional multi-screenshot evidence
 evidence.pdfPath           Optional PDF evidence path
+evidence.failureBundlePath Optional local failure bundle path
+evidence.screenshotUri / pdfUri / failureBundleUri Optional Cloud Storage evidence URIs
 ```
 
 ## Raw Mapping Workflow
@@ -152,6 +174,10 @@ Single-input mapper commands read `input.yaml` by default and write one lender-r
 npm.cmd run map:halifax
 npm.cmd run map:barclays
 npm.cmd run map:hsbc
+npm.cmd run map:kensington
+npm.cmd run map:natwest
+npm.cmd run map:nationwide
+npm.cmd run map:santander
 npm.cmd run map:skipton
 npm.cmd run map:virgin-money
 ```
@@ -162,6 +188,10 @@ Batch mapper commands build first, then read raw case files and write mapped out
 npm.cmd run map:halifax:cases
 npm.cmd run map:barclays:cases
 npm.cmd run map:hsbc:cases
+npm.cmd run map:kensington:cases
+npm.cmd run map:natwest:cases
+npm.cmd run map:nationwide:cases
+npm.cmd run map:santander:cases
 npm.cmd run map:skipton:cases
 npm.cmd run map:virgin-money:cases
 ```
@@ -172,6 +202,10 @@ Default batch input/output behavior:
 map:halifax:cases       samples/raw-halifax-cases -> samples/halifax-mapped-cases
 map:barclays:cases      samples/raw-halifax-cases -> samples/barclays-mapped-cases
 map:hsbc:cases          samples/raw-halifax-cases -> samples/hsbc-mapped-cases
+map:kensington:cases    samples/raw-halifax-cases -> samples/kensington-mapped-cases
+map:natwest:cases       samples/raw-halifax-cases -> samples/natwest-mapped-cases
+map:nationwide:cases    samples/raw-halifax-cases -> samples/nationwide-mapped-cases
+map:santander:cases     samples/raw-halifax-cases -> samples/santander-mapped-cases
 map:skipton:cases       samples/raw-halifax-cases -> samples/skipton-mapped-cases
 map:virgin-money:cases  samples/raw-halifax-cases -> samples/virgin-money-mapped-cases
 ```
@@ -184,6 +218,8 @@ node scripts\map-halifax-raw-cases.mjs samples\raw-additional-cases samples\hali
 ```
 
 Mapper outputs are parsed through `lenderReadyInputSchema` before being written. If a mapper emits `issues`, treat those as mapping warnings that need field-map review.
+
+The web/API layer does not read generated mapped JSON files for case runs anymore. It reads raw production cases from `samples/test-cases`, maps each selected case to the requested lender in memory, and then runs the adapter.
 
 ## Adapter Pattern
 
@@ -303,7 +339,8 @@ Recommended next work:
 5. Mark adapter confidence levels in docs: production-ish, experimental, needs field-map pass.
 6. Tighten domain validation for branch-specific requirements such as interest-only amounts, remortgage current balance, and applicant count/application type consistency.
 7. Revisit Santander store mutation and replace it with visible-field automation where practical.
-8. Add raw-mapping docs for HSBC, Skipton, and Virgin Money to match the existing Halifax/Barclays raw mapping notes.
+8. Add per-lender raw-mapping docs for HSBC, Kensington, NatWest, Nationwide, Santander, Skipton, and Virgin Money to match the existing Halifax/Barclays raw mapping notes.
+9. Add automated coverage for Cloud Tasks/Firestore state transitions and Cloud Storage evidence URL handling.
 ```
 
 ## New Lender Workflow
@@ -438,6 +475,20 @@ Open:
 http://localhost:3000
 ```
 
+Start a web/API case run and poll it:
+
+```powershell
+$base = "http://localhost:3000"
+$run = Invoke-RestMethod -Method Post "$base/api/cases/01-ftb-single-employed/run-affordability"
+Invoke-RestMethod "$base/api/runs/$($run.runId)"
+```
+
+List recent local failure bundles:
+
+```powershell
+npm.cmd run failures:list
+```
+
 Start attached browser mode when a lender rejects fresh automation:
 
 ```powershell
@@ -458,11 +509,14 @@ node dist\cli.js .\samples\halifax\test-case-1.json
 ```text
 dist/ is generated output from TypeScript build.
 artifacts/screenshots/ and tmp/ are runtime artifacts.
+artifacts/failures/ contains local failure bundles.
 node_modules/ is local dependency output.
 scripts/run-samples.mjs does not recurse into lender sample folders yet.
 npm.cmd test currently runs zero tests.
 Some older field-map docs were written during early lender slices; verify against source before relying on them.
 Santander has a complex adapter with Vue/Pinia internal state writes; treat it as higher maintenance risk.
-The web/API process now serves the static UI and case routes, but results are still in memory only.
-The API has no auth, no queue, no durable persistence, no retention policy, and no GET /runs/:id yet.
+The web/API process now serves the static UI, case routes, run polling, and worker route.
+Local runs use in-memory state unless RUN_STATE_BACKEND=firestore or Cloud Tasks config selects Firestore.
+Production fanout uses Cloud Tasks, Firestore, and Cloud Storage when configured; see WORKER_FANOUT_CLOUD_STORAGE_RUNBOOK.md.
+The API has no public-user auth yet. Worker requests may be protected with WORKER_SHARED_SECRET and/or Cloud Run IAM/OIDC.
 ```

@@ -60,20 +60,30 @@ Sources:
 - Cloud Run concurrency: https://docs.cloud.google.com/run/docs/about-concurrency
 - Cloud Run timeouts: https://docs.cloud.google.com/run/docs/configuring/request-timeout
 
-## Current Project Gap
+## Current Implementation Status
 
-The current `POST /runs` endpoint runs one lender synchronously. That is not the right production model for 50 lenders.
+The project now has two execution modes:
 
-Current behavior:
+- Local/demo mode can run the registered mapped lenders inline from the Express API.
+- Production fanout mode creates a run state record, enqueues one Cloud Tasks task per registered lender, runs each lender through `POST /worker/lender-task`, and stores run state in Firestore when `RUN_STATE_BACKEND=firestore`.
+
+Current implemented flow:
 
 ```text
-POST /runs
-  -> validate input
-  -> choose one lender adapter
-  -> launch browser
-  -> fill calculator
-  -> extract result
-  -> return response
+POST /api/cases/:caseId/run-affordability
+  -> load raw case from samples/test-cases
+  -> map raw case to all registered lender inputs
+  -> create run record
+  -> either run inline batches or enqueue lender tasks
+  -> return aggregate results or 202 with runId
+
+POST /worker/lender-task
+  -> run exactly one lender
+  -> upload evidence when EVIDENCE_BUCKET is configured
+  -> write one lender result
+
+GET /api/runs/:runId
+  -> return aggregate run state and lender results
 ```
 
 Required production behavior:
@@ -94,7 +104,7 @@ GET /cases/:caseId
   -> return aggregate state and all lender results
 ```
 
-The project also currently writes screenshots to local disk. In Cloud Run this must move to Cloud Storage because container filesystems are ephemeral and not a durable evidence store.
+Local runs still write screenshots and failure bundles to disk. When `EVIDENCE_BUCKET` is configured, the Cloud Storage artifact store uploads screenshots, PDFs, and failure bundles and records `gs://` evidence URIs for API retrieval.
 
 ## Target Runtime Design
 

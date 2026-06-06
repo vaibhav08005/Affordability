@@ -21,8 +21,9 @@ Environment:
 ```text
 HEADLESS=true
 BROWSER_EXECUTION_MODE=managed
-AUTOMATION_TIMEOUT_MS=60000
+AUTOMATION_TIMEOUT_MS=30000
 SCREENSHOT_DIR=/tmp/screenshots
+FAILURE_ARTIFACT_DIR=/tmp/failures
 ```
 
 ## Deploy From Cloud Shell
@@ -46,7 +47,7 @@ gcloud run deploy mortgage-affordability-demo \
   --timeout 900 \
   --concurrency 1 \
   --max-instances 3 \
-  --set-env-vars HEADLESS=true,BROWSER_EXECUTION_MODE=managed,AUTOMATION_TIMEOUT_MS=60000,SCREENSHOT_DIR=/tmp/screenshots
+  --set-env-vars HEADLESS=true,BROWSER_EXECUTION_MODE=managed,AUTOMATION_TIMEOUT_MS=30000,SCREENSHOT_DIR=/tmp/screenshots,FAILURE_ARTIFACT_DIR=/tmp/failures
 ```
 
 Replace `PROJECT_ID` with the Google Cloud project ID.
@@ -80,7 +81,7 @@ gcloud run services proxy mortgage-affordability-demo --region europe-west2 --po
 
 Then open the Cloud Shell web preview for port `8080`.
 
-## Five-Lender Demo Run
+## Nine-Lender Demo Run
 
 Choose a case ID from `GET /api/cases`, then run:
 
@@ -93,4 +94,4 @@ curl -X POST \
   "$SERVICE_URL/api/cases/$CASE_ID/run-affordability"
 ```
 
-The demo is acceptable when all five mapped lenders return either `success` or a structured `failed` result and the Cloud Run service does not crash.
+The demo is acceptable when all nine mapped lenders return either `success` or a structured `failed` result and the Cloud Run service does not crash.

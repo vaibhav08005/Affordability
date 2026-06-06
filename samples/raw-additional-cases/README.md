@@ -2,7 +2,7 @@
 
 These are raw fact-find style YAML cases intended to extend coverage beyond `samples/raw-halifax-cases`.
 
-They are deliberately lender-neutral raw inputs so the existing Halifax, Barclays, Skipton, Virgin Money, and HSBC mapping scripts can be pointed at this folder.
+They are deliberately lender-neutral raw inputs so any `scripts/map-<lender>-raw-cases.mjs` batch mapper can be pointed at this folder.
 
 ## Coverage
 

@@ -1,28 +1,72 @@
-# Halifax Raw Mapping Cases
+# Production Raw Test Cases
 
-These files are raw fact-find style YAML samples for testing the Halifax mapping layer.
+This folder contains the raw fact-find style YAML cases used by the web/API interface.
 
-Run all cases:
+The server reads these files from `samples/test-cases`, derives a normalized `caseId` from each filename, and maps the selected raw case to each lender in memory before running affordability.
 
-```powershell
-npm.cmd run map:halifax:cases
+## Current Use
+
+```text
+GET  /api/cases
+GET  /api/cases/:caseId
+GET  /api/cases/:caseId/input
+POST /api/cases/:caseId/run-affordability
 ```
 
-The command writes lender-ready JSON files to:
+The run endpoint maps each raw case to all nine mapped lenders:
 
-`samples/halifax-mapped-cases`
+```text
+barclays
+halifax
+hsbc
+kensington
+natwest
+nationwide
+santander
+skipton
+virgin_money
+```
 
 ## Coverage
 
-| Case | Scenario |
-| --- | --- |
-| `halifax-raw-case-01-ftb-single-employed.yaml` | First-time buyer, single applicant, employed income, credit card balance. |
-| `halifax-raw-case-02-home-mover-joint-btl-shortfall.yaml` | Home mover, joint applicants, deposit sources, BTL shortfall, residential mortgage commitment. |
-| `halifax-raw-case-03-shared-ownership-purchase.yaml` | Shared ownership purchase, leasehold, rent under scheme, child benefit and childcare. |
-| `halifax-raw-case-04-shared-equity-interest-only.yaml` | Shared equity / Help to Buy style purchase, interest-only, repayment vehicle contribution. |
-| `halifax-raw-case-05-scotland-remortgage-leasehold.yaml` | Scottish postcode, leasehold, remortgage without extra borrowing, overdraft. |
-| `halifax-raw-case-06-remortgage-capital-raising-ltd-company.yaml` | Remortgage capital raising, part-and-part, limited company director income, three dependants. |
-| `halifax-raw-case-07-further-advance-contractor-day-rate.yaml` | Further advance, contractor day-rate income, loan commitment. |
-| `halifax-raw-case-08-sole-trader-pension-other-income.yaml` | Sole trader, pension income, benefit income, commonhold tenure. |
-| `halifax-raw-case-09-joint-partnership-and-llp.yaml` | Joint self-employed applicants, partnership and LLP income, residential mortgage commitment. |
-| `halifax-raw-case-10-retired-pensioner-interest-only.yaml` | Retired applicant, pension income, Scottish postcode, interest-only remortgage. |
+The folder includes:
+
+```text
+10 base halifax-raw-case-* scenarios
+38 additional-raw-case-* scenarios
+48 YAML cases total
+```
+
+The additional cases extend coverage for:
+
+```text
+contractor and umbrella income
+short employment and short trading history
+limited company, LLP, partnership, and sole-trader income
+pension, benefits, maintenance, and investment income
+shared ownership and shared equity
+remortgage paydown, capital raising, and further advance
+interest-only and part-and-part repayment vehicles
+BTL surplus/shortfall and other residential commitments
+Wales, Scotland, Northern Ireland, commonhold, and leasehold cases
+missing/defaulted fields and edge-case deposit handling
+large dependant counts and non-spouse joint applicants
+```
+
+## Mapping Commands
+
+The checked-in mapped sample folders can be regenerated from raw folders with lender-specific scripts. For example:
+
+```powershell
+npm.cmd run build
+node scripts\map-halifax-raw-cases.mjs samples\test-cases samples\halifax-mapped-cases
+node scripts\map-santander-raw-cases.mjs samples\test-cases samples\santander-mapped-cases
+```
+
+Use the equivalent `scripts\map-<lender>-raw-cases.mjs` script for the other mapped lenders.
+
+## Notes
+
+Keep filenames stable when possible. The UI, run state, and raw input lookup use filename-derived case IDs.
+
+If a raw field is intentionally omitted to test default behavior, document that in the YAML comments or in `TEST_CASE_GAP_ANALYSIS.md`.
