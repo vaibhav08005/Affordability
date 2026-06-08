@@ -115,19 +115,22 @@ async function fillNationwideCalculator(page: Page, input: LenderReadyInput, con
   await fillMortgageStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "01-mortgage-details");
   await advance(page);
+  await assertNoNationwideValidation(page, "Mortgage");
   await page.getByText(/About your client/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillClientsStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "02-client-details");
   await advance(page);
+  await assertNoNationwideValidation(page, "Client");
   await page.locator("#AffCalc-q240-EmploymentCategory").waitFor({ state: "visible", timeout: 15000 }).catch(() => undefined);
   await fillIncomeStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "03-income");
   await advance(page);
+  await assertNoNationwideValidation(page, "Income");
   await page.getByText(/Outgoings/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillOutgoingsStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "04-outgoings");
-  await page.waitForTimeout(2000);
   await clickFirstAvailableButton(page, ["Calculate", "Get results", "See results", "Next"]);
+  await assertNoNationwideValidation(page, "Outgoings");
 }
 
 async function fillMortgageStep(page: Page, input: LenderReadyInput): Promise<void> {
@@ -334,25 +337,41 @@ async function fillNationwideOtherIncome(page: Page, applicant: Applicant): Prom
 }
 
 async function fillOutgoingsStep(page: Page, input: LenderReadyInput): Promise<void> {
-  await fillFirstAvailableCurrency(page, ["total your client owes on all credit cards", "TotalCreditCardBalances"], input.outgoings.creditCardBalances);
-  await fillFirstAvailableCurrency(page, ["how much will be cleared", "TotalCreditCardBalanceToBeCleared"], 0);
-  await chooseAllVisibleRadioGroups(page, "credit cards cleared in full", input.outgoings.creditCardBalances > 0 ? "No" : "Yes");
-  await fillFirstAvailableCurrency(page, ["Personal loans and hire purchases", "MonthlyPersonalLoanOrHire"], input.outgoings.monthlyLoanRepayments);
-  await fillFirstAvailableCurrency(page, ["Secured loan payments", "MonthlySecuredLoanPayments"], 0);
-  await fillFirstAvailableCurrency(page, ["Buy now, pay later", "MonthlyDpaPayment"], 0);
-  await fillFirstAvailableCurrency(page, ["Student loan payments", "MonthlyStudentLoan"], 0);
-  await fillFirstAvailableCurrency(page, ["Travel?", "MonthlyTravelCosts"], 0);
-  await fillFirstAvailableCurrency(page, ["Other regular monthly costs", "MonthlyOtherExpenditure"], input.outgoings.otherMonthlyOutgoings);
-  await fillFirstAvailableCurrency(page, ["Childcare?", "MonthlyChildCare"], 0);
-  await fillFirstAvailableCurrency(page, ["School fees?", "MonthlySchoolFees"], 0);
-  await fillFirstAvailableCurrency(page, ["Maintenance?", "MonthlyDependentMaintenance"], 0);
-  await fillFirstAvailableCurrency(page, ["additional costs for financial dependants", "MonthlyCostOfFinancialDependents"], 0);
-  await fillFirstAvailableCurrency(page, ["Council tax?", "CouncilTax"], 0);
-  await fillFirstAvailableCurrency(page, ["Buildings insurance?", "BuildingInsurance"], 1);
-  await fillFirstAvailableCurrency(page, ["Service/Estate charges?", "ServiceCharge"], 0);
-  await fillFirstAvailableCurrency(page, ["Ground rent?", "GroundRent"], 0);
-  await fillFirstAvailableCurrency(page, ["Rent for shared ownership properties?", "SharedOwnershipRental"], input.case.monthlySharedOwnershipRent ?? 0);
+  await fillOutgoingsApplicant(page, "1320", input.outgoings.creditCardBalances, input.outgoings.monthlyLoanRepayments, input.outgoings.otherMonthlyOutgoings);
+  if (input.case.numberOfApplicants > 1) {
+    await fillOutgoingsApplicant(page, "1430", 0, 0, 0);
+  }
+  await setInputValueById(page, "AffCalc-q1620-CouncilTax", "0");
+  await setInputValueById(page, "AffCalc-q1630-BuildingInsurance", "1");
+  await setInputValueById(page, "AffCalc-q1640-ServiceCharge", "0");
+  await setInputValueById(page, "AffCalc-q1650-GroundRent", "0");
+  await setInputValueById(page, "AffCalc-q1660-SharedOwnershipRental", String(Math.round(input.case.monthlySharedOwnershipRent ?? 0)));
   await fillExistingMortgages(page, input);
+}
+
+async function fillOutgoingsApplicant(
+  page: Page,
+  firstQuestionNumber: "1320" | "1430",
+  creditCardBalances: number,
+  monthlyLoanRepayments: number,
+  otherMonthlyOutgoings: number
+): Promise<void> {
+  const offset = firstQuestionNumber === "1320" ? 0 : 110;
+  await setInputValueById(page, `AffCalc-q${1320 + offset}-TotalCreditCardBalances`, String(Math.round(creditCardBalances)));
+  await setInputValueById(page, `AffCalc-q${1325 + offset}-TotalCreditCardBalanceToBeCleared`, "0");
+  await checkRadioById(page, `AffCalc-q${1328 + offset}-CreditCardBalanceClearedMonthly-${creditCardBalances > 0 ? "1" : "0"}`);
+  await setInputValueById(page, `AffCalc-q${1330 + offset}-MonthlyPersonalLoanOrHire`, String(Math.round(monthlyLoanRepayments)));
+  await setInputValueById(page, `AffCalc-q${1335 + offset}-MonthlyPersonalLoanOrHireToBeCleared`, "0");
+  await setInputValueById(page, `AffCalc-q${1340 + offset}-MonthlySecuredLoanPayments`, "0");
+  await setInputValueById(page, `AffCalc-q${1350 + offset}-MonthlyDpaPayment`, "0");
+  await setInputValueById(page, `AffCalc-q${1355 + offset}-MonthlyDpaPaymentToBeCleared`, "0");
+  await setInputValueById(page, `AffCalc-q${1360 + offset}-MonthlyStudentLoan`, "0");
+  await setInputValueById(page, `AffCalc-q${1370 + offset}-MonthlyTravelCosts`, "0");
+  await setInputValueById(page, `AffCalc-q${1380 + offset}-MonthlyOtherExpenditure`, String(Math.round(otherMonthlyOutgoings)));
+  await setInputValueById(page, `AffCalc-q${1390 + offset}-MonthlyChildCare`, "0");
+  await setInputValueById(page, `AffCalc-q${1400 + offset}-MonthlySchoolFees`, "0");
+  await setInputValueById(page, `AffCalc-q${1410 + offset}-MonthlyDependentMaintenance`, "0");
+  await setInputValueById(page, `AffCalc-q${1420 + offset}-MonthlyCostOfFinancialDependents`, "0");
 }
 
 async function fillExistingMortgages(page: Page, input: LenderReadyInput): Promise<void> {
@@ -410,6 +429,20 @@ async function fillOtherMortgageFields(page: Page, property: OtherProperty): Pro
 async function advance(page: Page): Promise<void> {
   await clickFirstAvailableButton(page, ["Next", "Continue"]);
   await page.waitForTimeout(1000);
+}
+
+async function assertNoNationwideValidation(page: Page, stepName: string): Promise<void> {
+  const bodyText = await page.locator("body").innerText().catch(() => "");
+  if (!/there are problems with your submission|error:/i.test(bodyText)) return;
+
+  const messages = bodyText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => !/this website is for the use of professional mortgage intermediaries/i.test(line))
+    .filter((line) => /there are problems with your submission|error:|tell us|choose|must|required|invalid/i.test(line))
+    .slice(0, 8);
+
+  throw new Error(`Nationwide ${stepName} step validation failed: ${messages.join(" | ") || "validation error"}`);
 }
 
 async function waitForResult(page: Page, context: RunContext): Promise<void> {
