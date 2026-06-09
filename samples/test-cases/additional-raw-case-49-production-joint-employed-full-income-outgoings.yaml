@@ -1,0 +1,202 @@
+---
+var_journey: hm
+var_no_of_applicants: 2
+var_mortgage_type: moving_home
+var_ownership_type: standard
+var_repayment_type: principal_over_mortgage_term
+var_property_value: 685000
+var_deposit: 145000
+var_mortgage_term: 360
+var_property_details_address:
+  postcode: EC2Y 5AS
+  country: England
+var_property_details_tenure: freehold
+var_property_details_year_built: 2018
+var_property_details_mthly_council_tax: 265
+var_property_details_mthly_bldg_ins: 42
+var_appl1_date_of_birth: 536457600
+var_appl1_retirement_age: 68
+var_appl1_joint_rel_status: spouse
+var_appl1_employment_details_employment_type: employed
+var_appl1_employment_details_employed_type: permanent
+var_appl1_employment_details_is_ten_percent: 'no'
+var_appl1_income_sterling: 'yes'
+var_appl1_gross_annual_salary: 118000
+var_appl1_recent_overtime: 175
+var_appl1_recent_overtime_frequency: weekly
+var_appl1_recent_commission: 950
+var_appl1_recent_commission_frequency: fortnightly
+var_appl1_recent_nongtd_bonus: 22000
+var_appl1_recent_nongtd_bonus_frequency: annually
+var_appl1_prev_nongtd_bonus: 16000
+var_appl1_prev_nongtd_bonus_frequency: annually
+var_appl1_recent_additional_hours: 420
+var_appl1_recent_additional_hours_frequency: every_4_weeks
+var_appl1_recent_nursing_bank: 650
+var_appl1_recent_nursing_bank_frequency: quarterly
+var_appl1_recent_regular_allowance: 900
+var_appl1_recent_regular_allowance_frequency: half_yearly
+var_appl1_recent_other_allowance: 750
+var_appl1_recent_other_allowance_frequency: semi_annually
+var_appl1_land_curr_profit: 475
+var_appl1_child_benefits_amt: 102
+var_appl1_child_benefits_frequency: monthly
+var_appl1_child_tax_credits: 180
+var_appl1_child_tax_credits_frequency: yearly
+var_appl1_employment_and_support_allowance: 90
+var_appl1_employment_and_support_allowance_frequency: weekly
+var_appl1_personal_independence_payment: 410
+var_appl1_personal_independence_payment_frequency: monthly
+var_appl1_disability_living_allowance: 125
+var_appl1_disability_living_allowance_frequency: fortnightly
+var_appl1_carers_allowance: 310
+var_appl1_carers_allowance_frequency: every_4_weeks
+var_appl1_income_support: 240
+var_appl1_income_support_frequency: quarterly
+var_appl1_other_state_benefits: 540
+var_appl1_other_state_benefits_frequency: monthly
+var_appl1_mthly_maint_amt: 650
+var_appl1_dependents_details:
+- age: 4
+  relationship: child
+- age: 9
+  relationship: child
+var_appl1_credit_commitments:
+- type: credit_card
+  provider: Amex
+  monthly_payment: 185
+  current_balance: 6200
+  include_afford: 'yes'
+- type: overdraft
+  provider: Barclays
+  monthly_payment: 0
+  current_balance: 750
+  include_afford: 'yes'
+- type: loans
+  provider: HSBC
+  monthly_payment: 410
+  current_balance: 18800
+  include_afford: 'yes'
+- type: student_loan
+  provider: SLC
+  monthly_payment: 225
+  current_balance: 26000
+  include_afford: 'yes'
+- type: hire_purchase
+  provider: BMW Finance
+  monthly_payment: 390
+  current_balance: 14200
+  include_afford: 'yes'
+- type: buy_now_pay_later
+  provider: Klarna
+  monthly_payment: 95
+  current_balance: 1100
+  include_afford: 'yes'
+var_appl1_outgoings_childcare_cost: 820
+var_appl1_outgoings_nursery_school_fee: 460
+var_appl1_outgoings_maintenance_payment: 0
+var_appl1_outgoings_other_committed_exp: 275
+var_appl1_outgoings_pension_contribution: 850
+var_appl1_outgoings_investments: 500
+var_appl2_date_of_birth: 599616000
+var_appl2_retirement_age: 68
+var_appl2_employment_details_employment_type: employed
+var_appl2_employment_details_employed_type: permanent
+var_appl2_employment_details_is_ten_percent: 'no'
+var_appl2_income_sterling: 'yes'
+var_appl2_gross_annual_salary: 94000
+var_appl2_recent_overtime: 480
+var_appl2_recent_overtime_frequency: monthly
+var_appl2_recent_commission: 1400
+var_appl2_recent_commission_frequency: quarterly
+var_appl2_recent_nongtd_bonus: 12000
+var_appl2_recent_nongtd_bonus_frequency: yearly
+var_appl2_prev_nongtd_bonus: 18000
+var_appl2_prev_nongtd_bonus_frequency: yearly
+var_appl2_recent_additional_hours: 300
+var_appl2_recent_additional_hours_frequency: monthly
+var_appl2_recent_nursing_bank: 500
+var_appl2_recent_nursing_bank_frequency: annually
+var_appl2_recent_regular_allowance: 125
+var_appl2_recent_regular_allowance_frequency: weekly
+var_appl2_recent_other_allowance: 260
+var_appl2_recent_other_allowance_frequency: monthly
+var_appl2_land_curr_profit: 325
+var_appl2_child_benefits_amt: 204
+var_appl2_child_benefits_frequency: every_4_weeks
+var_appl2_child_tax_credits: 75
+var_appl2_child_tax_credits_frequency: monthly
+var_appl2_employment_and_support_allowance: 1200
+var_appl2_employment_and_support_allowance_frequency: annually
+var_appl2_personal_independence_payment: 95
+var_appl2_personal_independence_payment_frequency: weekly
+var_appl2_disability_living_allowance: 560
+var_appl2_disability_living_allowance_frequency: half_yearly
+var_appl2_carers_allowance: 700
+var_appl2_carers_allowance_frequency: semi_annually
+var_appl2_income_support: 55
+var_appl2_income_support_frequency: fortnightly
+var_appl2_other_state_benefits: 1000
+var_appl2_other_state_benefits_frequency: quarterly
+var_appl2_mthly_maint_amt: 0
+var_appl2_dependents_details:
+- age: 13
+  relationship: child
+var_appl2_credit_commitments:
+- type: cards
+  provider: Lloyds
+  monthly_payment: 130
+  current_balance: 3800
+  include_afford: 'yes'
+- type: store_card
+  provider: Retail Finance
+  monthly_payment: 45
+  current_balance: 900
+  include_afford: 'yes'
+- type: overdrafts
+  provider: NatWest
+  monthly_payment: 0
+  current_balance: 1200
+  include_afford: 'yes'
+- type: secured_loans
+  provider: Shawbrook
+  monthly_payment: 520
+  current_balance: 34000
+  include_afford: 'yes'
+- type: lease
+  provider: Tesla Finance
+  monthly_payment: 610
+  current_balance: 28000
+  include_afford: 'yes'
+- type: personal_loans
+  provider: Zopa
+  monthly_payment: 310
+  current_balance: 9100
+  include_afford: 'no'
+var_appl2_outgoings_childcare_cost: 280
+var_appl2_outgoings_nursery_school_fee: 0
+var_appl2_outgoings_maintenance_payment: 375
+var_appl2_outgoings_other_committed_exp: 190
+var_appl2_outgoings_pension_contribution: 620
+var_appl2_outgoings_investments: 350
+var_other_properties:
+- occupancy_status: rental_property_already_let
+  is_rental_property: 'yes'
+  mortgage_status: 'yes'
+  monthly_rent: 1450
+  monthly_repayment: 1725
+  monthly_council_tax: 145
+  current_balance: 238000
+  remaining_term: 276
+- occupancy_status: main_residence
+  is_rental_property: 'no'
+  mortgage_status: 'yes'
+  monthly_repayment: 1320
+  current_balance: 186000
+  remaining_term: 204
+- occupancy_status: second_home
+  is_rental_property: 'no'
+  mortgage_status: 'yes'
+  monthly_repayment: 910
+  current_balance: 124000
+  remaining_term: 156

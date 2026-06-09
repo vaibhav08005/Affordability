@@ -35,6 +35,7 @@ const applicantSchema = z.object({
   dateOfBirth: z.string().optional(),
   age: z.number().int().min(18).max(100),
   retirementAge: z.number().int().min(50).max(100).optional(),
+  monthlyPensionContribution: money.optional(),
   employment: z.object({
     type: z.enum(["employed", "self_employed", "pension", "other"]),
     isContractor: z.boolean().optional(),
@@ -105,6 +106,9 @@ export const lenderReadyInputSchema = z.object({
     overdraftBalances: money,
     otherMonthlyOutgoings: money,
     monthlyBuyToLetPayments: money,
+    monthlyChildcareAndEducation: money.optional(),
+    monthlyMaintenancePayments: money.optional(),
+    monthlyInsuranceAndPensions: money.optional(),
     otherMortgageCommitments: z.array(z.object({
       outstandingBalance: money,
       remainingTermYears: positiveInteger

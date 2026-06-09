@@ -344,6 +344,10 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
   await fillSelfEmploymentIncome(page, applicant);
   await fillFirstAvailableCurrency(page, [`${prefix} pension income`, "Pension income"], applicant.employment.annualPensionIncome ?? 0);
   await fillVariableEmploymentIncome(page, applicant);
+  await fillAllowanceIncome(page, applicant);
+  await fillGovernmentBenefits(page, applicant);
+  await fillOtherAnnualIncome(page, applicant);
+  await fillMonthlyDeductions(page, applicant);
   await fillFirstAvailableCurrency(page, [`${prefix} other income`, "Other income"], totalOtherIncome(applicant));
 }
 
@@ -366,6 +370,79 @@ async function fillVariableEmploymentIncome(page: Page, applicant: Applicant): P
     await page.waitForTimeout(150);
     await setTextInputById(page, `${applicantId}AnnualOvertime`, String(overtime));
   }
+}
+
+async function fillAllowanceIncome(page: Page, applicant: Applicant): Promise<void> {
+  const applicantId = `Applicant${applicant.index}`;
+  const carAllowance = incomeAmount(applicant, ["town_area_or_car_allowance"]);
+  const shiftAllowance = incomeAmount(applicant, ["shift_allowance"]);
+  const hasAllowances = carAllowance > 0 || shiftAllowance > 0;
+
+  await chooseButtonByLabelFor(page, `${applicantId}AllowanceYN`, hasAllowances ? "Yes" : "No");
+  if (!hasAllowances) return;
+
+  await page.waitForTimeout(150);
+  await setTextInputById(page, `${applicantId}CarAllowance`, String(carAllowance));
+  await setTextInputById(page, `${applicantId}London`, "0");
+  await setTextInputById(page, `${applicantId}ShiftAllowance`, String(shiftAllowance));
+  await setTextInputById(page, `${applicantId}IndefiniteSubsidy`, "0");
+  await setTextInputById(page, `${applicantId}LongSubsidyPrivatePension`, "0");
+}
+
+async function fillGovernmentBenefits(page: Page, applicant: Applicant): Promise<void> {
+  const applicantId = `Applicant${applicant.index}`;
+  const childBenefit = incomeAmount(applicant, ["child_benefit"]);
+  const childTaxCredits = incomeAmount(applicant, ["child_tax_credit"]);
+  const workingTaxCredits = incomeAmount(applicant, ["working_tax_credit"]);
+  const indefiniteBenefits = incomeAmount(applicant, [
+    "attendance_allowance",
+    "carers_allowance",
+    "constant_attendance_allowance",
+    "disability_living_allowance",
+    "employment_support_allowance",
+    "income_support",
+    "industrial_injuries_disablement_benefit",
+    "personal_independence_payment",
+    "widowed_parents_allowance"
+  ]);
+  const universalCredit = incomeAmount(applicant, ["universal_credit"]);
+  const hasBenefits = childBenefit + childTaxCredits + workingTaxCredits + indefiniteBenefits + universalCredit > 0;
+
+  await chooseButtonByLabelFor(page, `${applicantId}GovtBenefitsYN`, hasBenefits ? "Yes" : "No");
+  if (!hasBenefits) return;
+
+  await page.waitForTimeout(150);
+  await setTextInputById(page, `${applicantId}ChildBenefit`, String(childBenefit));
+  await setTextInputById(page, `${applicantId}ChildTaxCredits`, String(childTaxCredits));
+  await setTextInputById(page, `${applicantId}WorkingTaxCredits`, String(workingTaxCredits));
+  await setTextInputById(page, `${applicantId}IndefiniteBenefits`, String(indefiniteBenefits));
+  await setTextInputById(page, `${applicantId}UniversalCredit`, String(universalCredit));
+}
+
+async function fillOtherAnnualIncome(page: Page, applicant: Applicant): Promise<void> {
+  const applicantId = `Applicant${applicant.index}`;
+  const secondJob = incomeAmount(applicant, ["additional_duty_hours", "nursing_bank"]);
+  const investment = incomeAmount(applicant, ["investment_income", "trust_income"]);
+  const maintenance = incomeAmount(applicant, ["maintenance"]);
+  const surplusRent = incomeAmount(applicant, ["rental_income_btl"]);
+  const hasOtherIncome = secondJob + investment + maintenance + surplusRent > 0;
+
+  await chooseButtonByLabelFor(page, `${applicantId}OtherIncomeYN`, hasOtherIncome ? "Yes" : "No");
+  if (!hasOtherIncome) return;
+
+  await page.waitForTimeout(150);
+  await setTextInputById(page, `${applicantId}SecondJob`, String(secondJob));
+  await setTextInputById(page, `${applicantId}Investment`, String(investment));
+  await setTextInputById(page, `${applicantId}MaintenanceIncome`, String(maintenance));
+  await setTextInputById(page, `${applicantId}SurplusRent`, String(surplusRent));
+  await setTextInputById(page, `${applicantId}Fostering`, "0");
+}
+
+async function fillMonthlyDeductions(page: Page, applicant: Applicant): Promise<void> {
+  const applicantId = `Applicant${applicant.index}`;
+  await setTextInputById(page, `${applicantId}PreTaxDeductions`, String(Math.round(applicant.monthlyPensionContribution ?? 0)));
+  await setTextInputById(page, `${applicantId}PostTaxDeductions`, "0");
+  await chooseButtonByLabelFor(page, `${applicantId}StudentLoans`, "No");
 }
 
 async function setTextInputById(page: Page, id: string, value: string): Promise<boolean> {
@@ -505,6 +582,7 @@ async function fillSelfEmploymentIncome(page: Page, applicant: Applicant): Promi
 }
 
 async function fillOutgoings(page: Page, input: LenderReadyInput): Promise<void> {
+  await setSantanderOutgoingsStore(page, input);
   await fillFirstAvailableCurrency(
     page,
     [
@@ -521,9 +599,14 @@ async function fillOutgoings(page: Page, input: LenderReadyInput): Promise<void>
       "Total outstanding credit card balances",
       "Outstanding credit card balances"
     ],
-    input.outgoings.creditCardBalances + input.outgoings.overdraftBalances
+    input.outgoings.creditCardBalances
   );
-  const otherMonthlyCommitted = input.outgoings.otherMonthlyOutgoings + input.outgoings.monthlyBuyToLetPayments;
+  await setTextInputById(page, "CreditCardBalance", String(Math.round(input.outgoings.creditCardBalances)));
+  const childcareAndEducation = input.outgoings.monthlyChildcareAndEducation ?? 0;
+  const maintenancePayments = input.outgoings.monthlyMaintenancePayments ?? 0;
+  const insuranceAndPensions = input.outgoings.monthlyInsuranceAndPensions ?? 0;
+  const additionalCommitments = input.outgoings.otherMonthlyOutgoings;
+  const otherMonthlyCommitted = childcareAndEducation + maintenancePayments + insuranceAndPensions + additionalCommitments;
   if (!(await chooseButtonByLabelFor(page, "OtherCommittedExpenditureYN", otherMonthlyCommitted > 0 ? "Yes" : "No"))) {
     await chooseFirstAvailableOption(page, [otherMonthlyCommitted > 0 ? "Yes" : "No"], [
       "Do you want to enter any other monthly committed expenditure",
@@ -531,17 +614,56 @@ async function fillOutgoings(page: Page, input: LenderReadyInput): Promise<void>
     ]);
   }
   if (otherMonthlyCommitted > 0) {
-    await fillFirstAvailableCurrency(
-      page,
-      [
-        "Any other expenditure you think we'll need to consider",
-        "Any other expenditure",
-        "Other monthly committed expenditure",
-        "Monthly committed expenditure"
-      ],
-      otherMonthlyCommitted
-    );
+    await page.waitForTimeout(150);
+    await setTextInputById(page, "Childcare", String(Math.round(childcareAndEducation)));
+    await setTextInputById(page, "MaintenancePayments", String(Math.round(maintenancePayments)));
+    await setTextInputById(page, "Insurances", String(Math.round(insuranceAndPensions)));
+    await setTextInputById(page, "GroundRent", "0");
+    await setTextInputById(page, "ServiceCharge", "0");
+    await setTextInputById(page, "FeudalCommitments", "0");
+    await setTextInputById(page, "AdditionalCommitments", String(Math.round(additionalCommitments)));
   }
+}
+
+async function setSantanderOutgoingsStore(page: Page, input: LenderReadyInput): Promise<void> {
+  const values = {
+    monthlyLoanRepayments: Math.round(input.outgoings.monthlyLoanRepayments),
+    creditCardBalances: Math.round(input.outgoings.creditCardBalances),
+    childcareAndEducation: Math.round(input.outgoings.monthlyChildcareAndEducation ?? 0),
+    maintenancePayments: Math.round(input.outgoings.monthlyMaintenancePayments ?? 0),
+    insuranceAndPensions: Math.round(input.outgoings.monthlyInsuranceAndPensions ?? 0),
+    additionalCommitments: Math.round(input.outgoings.otherMonthlyOutgoings)
+  };
+
+  await page.evaluate((storeValues) => {
+    const app = document.querySelector("#AffordabilityCalculator") as (Element & { __vue_app__?: unknown }) | null;
+    const context = (app?.__vue_app__ as { _context?: { provides?: Record<PropertyKey, unknown> } } | undefined)?._context;
+    const pinia = Reflect.ownKeys(context?.provides ?? {})
+      .map((key) => context?.provides?.[key])
+      .find((candidate): candidate is { state: { value: Record<string, Record<string, unknown>> } } =>
+        !!candidate &&
+        typeof candidate === "object" &&
+        "state" in candidate &&
+        !!(candidate as { state?: unknown }).state
+      );
+    const commitments = pinia?.state.value.commitments as Record<string, unknown> | undefined;
+    if (!commitments) return;
+    Object.assign(commitments, {
+      loanRepayments: storeValues.monthlyLoanRepayments,
+      monthlyLoanRepayments: storeValues.monthlyLoanRepayments,
+      totalMonthlyPayments: storeValues.monthlyLoanRepayments,
+      creditCardBalance: storeValues.creditCardBalances,
+      creditCardBalances: storeValues.creditCardBalances,
+      otherCommittedExpenditureYN: storeValues.childcareAndEducation + storeValues.maintenancePayments + storeValues.insuranceAndPensions + storeValues.additionalCommitments > 0 ? "Yes" : "No",
+      childcare: storeValues.childcareAndEducation,
+      maintenancePayments: storeValues.maintenancePayments,
+      insurances: storeValues.insuranceAndPensions,
+      groundRent: 0,
+      serviceCharge: 0,
+      feudalCommitments: 0,
+      additionalCommitments: storeValues.additionalCommitments
+    });
+  }, values).catch(() => undefined);
 }
 
 async function advance(page: Page): Promise<void> {
@@ -1181,6 +1303,27 @@ async function setSantanderIncomeStore(page: Page, input: LenderReadyInput): Pro
     const annualBonus1 = Math.round(applicant.employment.annualBonus ?? 0);
     const annualOvertime = Math.round(applicant.employment.annualOvertime ?? 0);
     const annualCommission = Math.round(applicant.employment.annualCommission ?? 0);
+    const carAllowance = incomeAmount(applicant, ["town_area_or_car_allowance"]);
+    const shiftAllowance = incomeAmount(applicant, ["shift_allowance"]);
+    const childBenefit = incomeAmount(applicant, ["child_benefit"]);
+    const childTaxCredits = incomeAmount(applicant, ["child_tax_credit"]);
+    const workingTaxCredits = incomeAmount(applicant, ["working_tax_credit"]);
+    const indefiniteBenefits = incomeAmount(applicant, [
+      "attendance_allowance",
+      "carers_allowance",
+      "constant_attendance_allowance",
+      "disability_living_allowance",
+      "employment_support_allowance",
+      "income_support",
+      "industrial_injuries_disablement_benefit",
+      "personal_independence_payment",
+      "widowed_parents_allowance"
+    ]);
+    const universalCredit = incomeAmount(applicant, ["universal_credit"]);
+    const secondJob = incomeAmount(applicant, ["additional_duty_hours", "nursing_bank"]);
+    const investment = incomeAmount(applicant, ["investment_income", "trust_income"]);
+    const maintenanceIncome = incomeAmount(applicant, ["maintenance"]);
+    const surplusRent = incomeAmount(applicant, ["rental_income_btl"]);
     const otherIncome = Math.round(totalOtherIncome(applicant));
     const isSoleTrader = applicant.employment.type === "self_employed" && ["sole_trader", "partnership", "llp"].includes(applicant.employment.businessType ?? "sole_trader");
     const isDirector = applicant.employment.type === "self_employed" && applicant.employment.businessType === "limited_company";
@@ -1202,7 +1345,19 @@ async function setSantanderIncomeStore(page: Page, input: LenderReadyInput): Pro
       annualBonus1,
       annualOvertime,
       annualCommission,
+      carAllowance,
+      shiftAllowance,
+      childBenefit,
+      childTaxCredits,
+      workingTaxCredits,
+      indefiniteBenefits,
+      universalCredit,
+      secondJob,
+      investment,
+      maintenanceIncome,
+      surplusRent,
       otherIncome,
+      preTaxDeductions: Math.round(applicant.monthlyPensionContribution ?? 0),
       nonRegularIncome,
       regularIncome,
       taxableGrossIncome,
@@ -1280,7 +1435,27 @@ async function setSantanderIncomeStore(page: Page, input: LenderReadyInput): Pro
         secondaryOvertime: 0,
         overtimeCalcFinal: applicant.annualOvertime,
         annualCommission: applicant.annualCommission,
-        otherIncomeYN: "No",
+        allowanceYN: applicant.carAllowance + applicant.shiftAllowance > 0 ? "Yes" : "No",
+        carAllowance: applicant.carAllowance,
+        london: 0,
+        shiftAllowance: applicant.shiftAllowance,
+        indefiniteSubsidy: 0,
+        longSubsidyPrivatePension: 0,
+        govtBenefitsYN: applicant.childBenefit + applicant.childTaxCredits + applicant.workingTaxCredits + applicant.indefiniteBenefits + applicant.universalCredit > 0 ? "Yes" : "No",
+        childBenefit: applicant.childBenefit,
+        childTaxCredits: applicant.childTaxCredits,
+        workingTaxCredits: applicant.workingTaxCredits,
+        indefiniteBenefits: applicant.indefiniteBenefits,
+        universalCredit: applicant.universalCredit,
+        otherIncomeYN: applicant.secondJob + applicant.investment + applicant.maintenanceIncome + applicant.surplusRent > 0 ? "Yes" : "No",
+        secondJob: applicant.secondJob,
+        investment: applicant.investment,
+        maintenanceIncome: applicant.maintenanceIncome,
+        surplusRent: applicant.surplusRent,
+        fostering: 0,
+        preTaxDeductions: applicant.preTaxDeductions,
+        postTaxDeductions: 0,
+        studentLoans: "No",
         otherAnnualIncome: applicant.otherIncome
       });
     }
@@ -1354,6 +1529,10 @@ function santanderOtherPropertyMonthlyPayment(property: LenderReadyInput["otherP
 
 function totalOtherIncome(applicant: Applicant): number {
   return applicant.otherIncome.reduce((sum, income) => sum + income.annualAmount, applicant.employment.otherAnnualPensionIncome ?? 0);
+}
+
+function incomeAmount(applicant: Applicant, types: Applicant["otherIncome"][number]["type"][]): number {
+  return Math.round(applicant.otherIncome.reduce((sum, income) => types.includes(income.type) ? sum + income.annualAmount : sum, 0));
 }
 
 function escapeRegExp(value: string): string {

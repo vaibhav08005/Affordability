@@ -1,0 +1,209 @@
+{
+  "lender": "santander",
+  "case": {
+    "journey": "hm",
+    "applicationType": "joint",
+    "numberOfApplicants": 2,
+    "mortgagePurpose": "purchase",
+    "customerType": "home_mover",
+    "repaymentType": "capital_and_interest",
+    "termYears": 30,
+    "sharedOwnershipOrEquity": false,
+    "hasInterestOnly": false
+  },
+  "property": {
+    "isInScotland": false,
+    "tenure": "freehold",
+    "epcRating": "unknown"
+  },
+  "loan": {
+    "propertyValue": 685000,
+    "loanAmount": 540000
+  },
+  "household": {
+    "dependants": [
+      {
+        "age": 4,
+        "relationship": "child"
+      },
+      {
+        "age": 9,
+        "relationship": "child"
+      },
+      {
+        "age": 13,
+        "relationship": "child"
+      }
+    ]
+  },
+  "applicants": [
+    {
+      "index": 1,
+      "dateOfBirth": "536457600",
+      "age": 39,
+      "retirementAge": 68,
+      "monthlyPensionContribution": 850,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 118000,
+        "annualOvertime": 8050,
+        "annualBonus": 19000,
+        "annualCommission": 24700,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "additional_duty_hours",
+          "annualAmount": 5460
+        },
+        {
+          "type": "nursing_bank",
+          "annualAmount": 2600
+        },
+        {
+          "type": "shift_allowance",
+          "annualAmount": 1500
+        },
+        {
+          "type": "town_area_or_car_allowance",
+          "annualAmount": 1800
+        },
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 5700
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 180
+        },
+        {
+          "type": "employment_support_allowance",
+          "annualAmount": 4140
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 4920
+        },
+        {
+          "type": "disability_living_allowance",
+          "annualAmount": 3250
+        },
+        {
+          "type": "carers_allowance",
+          "annualAmount": 4030
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 960
+        },
+        {
+          "type": "universal_credit",
+          "annualAmount": 6480
+        },
+        {
+          "type": "maintenance",
+          "annualAmount": 7800
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "dateOfBirth": "599616000",
+      "age": 37,
+      "retirementAge": 68,
+      "monthlyPensionContribution": 620,
+      "employment": {
+        "type": "employed",
+        "isContractor": false,
+        "annualGrossIncome": 94000,
+        "annualOvertime": 5760,
+        "annualBonus": 12000,
+        "annualCommission": 5600,
+        "annualPensionIncome": 0,
+        "otherAnnualPensionIncome": 0
+      },
+      "otherIncome": [
+        {
+          "type": "additional_duty_hours",
+          "annualAmount": 3600
+        },
+        {
+          "type": "nursing_bank",
+          "annualAmount": 500
+        },
+        {
+          "type": "shift_allowance",
+          "annualAmount": 3120
+        },
+        {
+          "type": "town_area_or_car_allowance",
+          "annualAmount": 5750
+        },
+        {
+          "type": "rental_income_btl",
+          "annualAmount": 3900
+        },
+        {
+          "type": "child_tax_credit",
+          "annualAmount": 900
+        },
+        {
+          "type": "employment_support_allowance",
+          "annualAmount": 1200
+        },
+        {
+          "type": "personal_independence_payment",
+          "annualAmount": 4370
+        },
+        {
+          "type": "disability_living_allowance",
+          "annualAmount": 1120
+        },
+        {
+          "type": "carers_allowance",
+          "annualAmount": 1400
+        },
+        {
+          "type": "income_support",
+          "annualAmount": 1430
+        },
+        {
+          "type": "universal_credit",
+          "annualAmount": 4000
+        }
+      ]
+    }
+  ],
+  "outgoings": {
+    "monthlyLoanRepayments": 2715,
+    "creditCardBalances": 10900,
+    "overdraftBalances": 1950,
+    "otherMonthlyOutgoings": 307,
+    "monthlyBuyToLetPayments": 1725,
+    "monthlyChildcareAndEducation": 1560,
+    "monthlyMaintenancePayments": 375,
+    "monthlyInsuranceAndPensions": 0,
+    "otherMortgageCommitments": []
+  },
+  "otherProperties": [
+    {
+      "isRental": true,
+      "propertyValue": 238000,
+      "monthlyMortgagePayment": 1725,
+      "monthlyRent": 1450,
+      "currentBalance": 238000,
+      "remainingTermYears": 23,
+      "repaymentType": "capital_and_interest"
+    },
+    {
+      "isRental": false,
+      "propertyValue": 124000,
+      "monthlyMortgagePayment": 910,
+      "currentBalance": 124000,
+      "remainingTermYears": 13,
+      "repaymentType": "capital_and_interest"
+    }
+  ]
+}

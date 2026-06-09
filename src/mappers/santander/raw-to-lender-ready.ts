@@ -101,6 +101,9 @@ export function mapSantanderRawInput(raw: RawRecord): SantanderRawMappingResult 
       overdraftBalances: mapOverdraftBalances(raw),
       otherMonthlyOutgoings: mapOtherMonthlyOutgoings(raw),
       monthlyBuyToLetPayments: otherProperties.filter((property) => property.isRental).reduce((sum, property) => sum + property.monthlyMortgagePayment, 0),
+      monthlyChildcareAndEducation: mapMonthlyChildcareAndEducation(raw),
+      monthlyMaintenancePayments: mapMonthlyMaintenancePayments(raw),
+      monthlyInsuranceAndPensions: 0,
       otherMortgageCommitments: []
     },
     otherProperties
@@ -261,6 +264,7 @@ function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): A
     dateOfBirth,
     age: dateOfBirth ? ageFromEpoch(dateOfBirth) : 35,
     retirementAge: rawNumber(raw[`${prefix}_retirement_age`], 70),
+    monthlyPensionContribution: rawNumber(raw[`${prefix}_outgoings_pension_contribution`], 0),
     employment: mapEmployment(raw, index, issues),
     otherIncome: mapOtherIncome(raw, index)
   };
@@ -440,15 +444,20 @@ function mapOverdraftBalances(raw: RawRecord): number {
 }
 
 function mapOtherMonthlyOutgoings(raw: RawRecord): number {
-  return sumApplicantNumbers(raw, "outgoings_childcare_cost") +
-    sumApplicantNumbers(raw, "outgoings_nursery_school_fee") +
-    sumApplicantNumbers(raw, "outgoings_maintenance_payment") +
-    sumApplicantNumbers(raw, "outgoings_pension_contribution") +
-    rawNumber(raw.var_property_details_mthly_grnd_rent, 0) +
+  return rawNumber(raw.var_property_details_mthly_grnd_rent, 0) +
     rawNumber(raw.var_property_details_mthly_serv_charges, 0) +
     rawNumber(raw.var_property_details_mthly_bldg_ins, 0) +
     rawNumber(raw.var_property_details_mthly_council_tax, 0) +
     rawNumber(raw.var_rent_income, 0);
+}
+
+function mapMonthlyChildcareAndEducation(raw: RawRecord): number {
+  return sumApplicantNumbers(raw, "outgoings_childcare_cost") +
+    sumApplicantNumbers(raw, "outgoings_nursery_school_fee");
+}
+
+function mapMonthlyMaintenancePayments(raw: RawRecord): number {
+  return sumApplicantNumbers(raw, "outgoings_maintenance_payment");
 }
 
 function mapSantanderOtherProperties(raw: RawRecord, issues: MappingIssue[]): LenderReadyInput["otherProperties"] {

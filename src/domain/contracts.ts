@@ -96,6 +96,9 @@ export interface LenderReadyInput {
     overdraftBalances: number;
     otherMonthlyOutgoings: number;
     monthlyBuyToLetPayments: number;
+    monthlyChildcareAndEducation?: number;
+    monthlyMaintenancePayments?: number;
+    monthlyInsuranceAndPensions?: number;
     otherMortgageCommitments: OtherMortgageCommitment[];
   };
   otherProperties: OtherProperty[];
@@ -106,6 +109,7 @@ export interface Applicant {
   dateOfBirth?: string;
   age: number;
   retirementAge?: number;
+  monthlyPensionContribution?: number;
   employment: {
     type: EmploymentType;
     isContractor?: boolean;

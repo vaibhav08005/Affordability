@@ -149,15 +149,68 @@ async function fillApplicant(page: Page, applicant: Applicant, input: LenderRead
 }
 
 async function addOtherIncome(page: Page, applicantIndex: number, category: string, amount: string): Promise<void> {
-  const beforeRows = await page.locator("select#Select4").count();
-  await page.locator("button[data-bind*='addincomedd']").nth(applicantIndex).click({ force: true });
-  await page.waitForFunction((count) => document.querySelectorAll("select#Select4").length > count, beforeRows, { timeout: 5000 }).catch(() => undefined);
-  const rowIndex = Math.max(beforeRows, 0);
-  await page.locator("select#Select4").nth(rowIndex).selectOption(category, { force: true }).catch(async () => {
-    await page.locator("select#Select4").nth(rowIndex).selectOption({ index: 0 }, { force: true });
-  });
-  await setInputValueByBind(page, "income_amount.formatted", amount, rowIndex);
-  await setInputValueById(page, "income_start_date", "01/01/2020", rowIndex);
+  const clicked = await page.evaluate((index) => {
+    const visible = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return !!(rect.width || rect.height || element.getClientRects().length);
+    };
+    const employmentSelect = [...document.querySelectorAll<HTMLSelectElement>("select[data-bind*='employment_status']")]
+      .filter(visible)[index];
+    if (!employmentSelect) return false;
+    const anchor = employmentSelect.getBoundingClientRect();
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>("button[data-bind*='addincomedd']")]
+      .filter(visible)
+      .map((button) => ({ button, rect: button.getBoundingClientRect() }))
+      .filter(({ rect }) => Math.abs(rect.left - anchor.left) < 260 && rect.top > anchor.top)
+      .sort((a, b) => Math.abs(a.rect.top - (anchor.top + 260)) - Math.abs(b.rect.top - (anchor.top + 260)));
+    const button = buttons[0]?.button;
+    if (!button) return false;
+    button.click();
+    return true;
+  }, applicantIndex);
+  if (!clicked) throw new Error(`Kensington field fill failed: could not add other income for applicant ${applicantIndex + 1}.`);
+
+  await page.waitForTimeout(300);
+  const filled = await page.evaluate(({ applicantIndex, category, amount }) => {
+    const visible = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return !!(rect.width || rect.height || element.getClientRects().length);
+    };
+    const employmentSelect = [...document.querySelectorAll<HTMLSelectElement>("select[data-bind*='employment_status']")]
+      .filter(visible)[applicantIndex];
+    if (!employmentSelect) return false;
+    const anchor = employmentSelect.getBoundingClientRect();
+    const select = [...document.querySelectorAll<HTMLSelectElement>("select#Select4")]
+      .filter(visible)
+      .map((field) => ({ field, rect: field.getBoundingClientRect() }))
+      .filter(({ rect }) => Math.abs(rect.left - anchor.left) < 260 && rect.top > anchor.top)
+      .sort((a, b) => b.rect.top - a.rect.top)[0]?.field;
+    if (!select) return false;
+
+    const exactOption = [...select.options].find((option) => option.value === category);
+    select.value = exactOption?.value ?? select.options[0]?.value ?? "";
+    select.dispatchEvent(new Event("input", { bubbles: true }));
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+    select.dispatchEvent(new Event("blur", { bubbles: true }));
+
+    const followingInputs = [...document.querySelectorAll<HTMLInputElement>("input")]
+      .filter(visible)
+      .filter((field) => !!(select.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING))
+      .map((field) => ({ field, bind: field.getAttribute("data-bind") ?? "", id: field.id }));
+    const amountInput = followingInputs.find(({ bind }) => bind.includes("income_amount.formatted"))?.field;
+    const startInput = followingInputs.find(({ id }) => id === "income_start_date")?.field;
+    if (!amountInput) return false;
+
+    for (const [field, nextValue] of [[amountInput, amount], [startInput, "01/01/2020"]] as Array<[HTMLInputElement | undefined, string]>) {
+      if (!field) continue;
+      field.value = nextValue;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+      field.dispatchEvent(new Event("blur", { bubbles: true }));
+    }
+    return true;
+  }, { applicantIndex, category, amount });
+  if (!filled) throw new Error(`Kensington field fill failed: could not fill other income for applicant ${applicantIndex + 1}.`);
 }
 
 async function fillDependantAges(page: Page, input: LenderReadyInput): Promise<void> {
@@ -351,7 +404,7 @@ async function setApplicantInputByBind(page: Page, applicantIndex: number, bindF
       .filter((input) => !!(input.offsetWidth || input.offsetHeight || input.getClientRects().length))
       .filter((input) => {
         const rect = input.getBoundingClientRect();
-        return Math.abs(rect.left - anchor.left) < 180 && rect.top >= anchor.top && rect.top <= anchor.top + 260;
+        return Math.abs(rect.left - anchor.left) < 260 && rect.top >= anchor.top && rect.top <= anchor.top + 520;
       })
       .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
     const field = fields[0];
@@ -363,9 +416,7 @@ async function setApplicantInputByBind(page: Page, applicantIndex: number, bindF
     return true;
   }, { applicantIndex, bindFragment, value });
 
-  if (!filled) {
-    await setInputValueByBind(page, bindFragment, value, 0);
-  }
+  if (!filled) throw new Error(`Kensington field fill failed: could not fill ${bindFragment} for applicant ${applicantIndex + 1}.`);
 }
 
 async function setSelectValueById(page: Page, id: string, value: string, index = 0): Promise<void> {

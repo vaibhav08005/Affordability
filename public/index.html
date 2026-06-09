@@ -133,6 +133,10 @@
         background: #14804a;
       }
 
+      .status.success-warning::before {
+        background: #facc15;
+      }
+
       .status.failed::before,
       .status.timed_out::before {
         background: #c2410c;
@@ -243,6 +247,9 @@
       });
       const activeRunsKey = "affordabilityActiveRuns";
       let pollTimer = null;
+      let currentCaseTableKey = null;
+      let currentCaseTableDetails = null;
+      let currentCaseTableLenders = [];
 
       window.addEventListener("hashchange", render);
       render();
@@ -277,6 +284,9 @@
       }
 
       async function renderCases() {
+        currentCaseTableKey = null;
+        currentCaseTableDetails = null;
+        currentCaseTableLenders = [];
         app.innerHTML = "<h1>Cases</h1><div class='empty'>Loading cases...</div>";
         const { cases } = await fetchJson("/api/cases");
         const activeRuns = await loadActiveRuns();
@@ -371,12 +381,20 @@
       }
 
       async function renderRun(runId) {
-        app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading run...</div>";
+        const tableKey = `run:${runId}`;
+        if (currentCaseTableKey !== tableKey) {
+          app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading run...</div>";
+        }
+
         const run = await fetchJson(`/api/runs/${encodeURIComponent(runId)}`);
         const details = await fetchJson(`/api/cases/${encodeURIComponent(run.caseId)}`);
 
         saveActiveRun(run.caseId, run.runId);
-        renderCaseTable(details, run.results, run);
+        if (currentCaseTableKey === tableKey) {
+          updateCaseTable(details, run.results, run);
+        } else {
+          renderCaseTable(details, run.results, run, tableKey);
+        }
 
         if (!isTerminalRun(run.status)) {
           pollTimer = setTimeout(() => {
@@ -390,9 +408,17 @@
       }
 
       async function renderCase(caseId) {
-        app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading case...</div>";
+        const tableKey = `case:${caseId}`;
+        if (currentCaseTableKey !== tableKey) {
+          app.innerHTML = "<button class='back'>Back to cases</button><div class='empty'>Loading case...</div>";
+        }
+
         const details = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}`);
-        renderCaseTable(details, details.lenders, details.latestRun ?? null);
+        if (currentCaseTableKey === tableKey) {
+          updateCaseTable(details, details.lenders, details.latestRun ?? null);
+        } else {
+          renderCaseTable(details, details.lenders, details.latestRun ?? null, tableKey);
+        }
 
         if (details.latestRun && !isTerminalRun(details.latestRun.status)) {
           saveActiveRun(caseId, details.latestRun.runId);
@@ -406,7 +432,11 @@
         }
       }
 
-      function renderCaseTable(details, lenders, run = null) {
+      function renderCaseTable(details, lenders, run = null, tableKey = null) {
+        currentCaseTableKey = tableKey;
+        currentCaseTableDetails = details;
+        currentCaseTableLenders = lenders;
+
         app.innerHTML = `
           <button class="back">Back to cases</button>
           <h1>${escapeHtml(details.title)}</h1>
@@ -415,7 +445,7 @@
             ${escapeHtml(details.summary.applicationType)} /
             ${escapeHtml(details.summary.repaymentType)} /
             ${details.summary.termYears} years
-            ${run ? `<br>${escapeHtml(formatRunProgress(run))}` : ""}
+            ${run ? `<br><span data-run-progress>${escapeHtml(formatRunProgress(run))}</span>` : ""}
           </div>
           <table class="table">
             <thead>
@@ -432,13 +462,13 @@
               ${lenders
                 .map(
                   (run) => `
-                    <tr>
+                    <tr data-lender-row="${escapeHtml(run.lender)}">
                       <td><strong>${formatLender(run.lender)}</strong></td>
-                      <td><span class="status ${run.status}">${formatStatus(run.status)}</span></td>
-                      <td class="amount">${formatAffordability(run)}</td>
-                      <td class="muted">${escapeHtml(formatMessage(run))}</td>
-                      <td>${run.output == null ? "-" : `<button class="input-link" data-output-lender="${escapeHtml(run.lender)}">View JSON</button>`}</td>
-                      <td>${formatEvidence(run)}</td>
+                      <td data-lender-status="${escapeHtml(run.lender)}">${statusHtml(run, details)}</td>
+                      <td class="amount" data-lender-affordability="${escapeHtml(run.lender)}">${formatAffordability(run)}</td>
+                      <td class="muted" data-lender-message="${escapeHtml(run.lender)}">${escapeHtml(formatMessage(run))}</td>
+                      <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
+                      <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
                     </tr>
                   `
                 )
@@ -452,13 +482,69 @@
         });
 
         app.querySelectorAll("[data-output-lender]").forEach((button) => {
+          button.dataset.boundOutputClick = "true";
           button.addEventListener("click", () => {
-            const run = lenders.find((candidate) => candidate.lender === button.dataset.outputLender);
+            const run = currentCaseTableLenders.find((candidate) => candidate.lender === button.dataset.outputLender);
             if (run?.output) {
               showJson(`Mapped output: ${formatLender(run.lender)}`, run.output);
             }
           });
         });
+      }
+
+      function updateCaseTable(details, lenders, run = null) {
+        currentCaseTableDetails = details;
+        currentCaseTableLenders = lenders;
+
+        const progress = app.querySelector("[data-run-progress]");
+        if (!progress && run) {
+          renderCaseTable(details, lenders, run, currentCaseTableKey);
+          return;
+        }
+
+        if (progress && run) {
+          progress.textContent = formatRunProgress(run);
+        }
+
+        for (const lenderRun of lenders) {
+          const lender = cssEscape(lenderRun.lender);
+          const row = app.querySelector(`[data-lender-row="${lender}"]`);
+          if (!row) {
+            renderCaseTable(details, lenders, run, currentCaseTableKey);
+            return;
+          }
+
+          setHtml(`[data-lender-status="${lender}"]`, statusHtml(lenderRun, details));
+          setText(`[data-lender-affordability="${lender}"]`, formatAffordability(lenderRun));
+          setText(`[data-lender-message="${lender}"]`, formatMessage(lenderRun));
+          setHtml(`[data-lender-output="${lender}"]`, formatOutput(lenderRun));
+          setHtml(`[data-lender-evidence="${lender}"]`, formatEvidence(lenderRun));
+        }
+
+        app.querySelectorAll("[data-output-lender]").forEach((button) => {
+          if (button.dataset.boundOutputClick === "true") return;
+          button.dataset.boundOutputClick = "true";
+          button.addEventListener("click", () => {
+            const run = currentCaseTableLenders.find((candidate) => candidate.lender === button.dataset.outputLender);
+            if (run?.output) {
+              showJson(`Mapped output: ${formatLender(run.lender)}`, run.output);
+            }
+          });
+        });
+      }
+
+      function setText(selector, value) {
+        const element = app.querySelector(selector);
+        if (element && element.textContent !== value) {
+          element.textContent = value;
+        }
+      }
+
+      function setHtml(selector, value) {
+        const element = app.querySelector(selector);
+        if (element && element.innerHTML !== value) {
+          element.innerHTML = value;
+        }
       }
 
       async function fetchJson(url, options = undefined) {
@@ -570,6 +656,21 @@
         return "Not run";
       }
 
+      function statusHtml(run, details) {
+        return `<span class="status ${statusClass(run, details)}">${formatStatus(run.status)}</span>`;
+      }
+
+      function statusClass(run, details) {
+        if (run.status !== "success") return run.status;
+        const loanAmount = Number(details.summary.loanAmount);
+        const affordabilityAmount = Number(run.affordabilityAmount);
+        return Number.isFinite(loanAmount) &&
+          Number.isFinite(affordabilityAmount) &&
+          affordabilityAmount < loanAmount
+            ? "success-warning"
+            : "success";
+      }
+
       function formatCaseAction(item, activeRunId) {
         if (activeRunId) {
           return `<button class="run-button" data-open-run-id="${escapeHtml(activeRunId)}">View active run</button>`;
@@ -582,6 +683,12 @@
         if (["not_run", "queued", "running", "timed_out"].includes(run.status)) return "-";
         if (run.affordabilityAmount == null) return "Failed";
         return money.format(run.affordabilityAmount);
+      }
+
+      function formatOutput(run) {
+        return run.output == null
+          ? "-"
+          : `<button class="input-link" data-output-lender="${escapeHtml(run.lender)}">View JSON</button>`;
       }
 
       function formatMessage(run) {
@@ -637,6 +744,14 @@
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
+      }
+
+      function cssEscape(value) {
+        if (window.CSS && typeof window.CSS.escape === "function") {
+          return window.CSS.escape(value);
+        }
+
+        return String(value).replace(/["\\]/g, "\\$&");
       }
     </script>
   </body>
