@@ -184,7 +184,7 @@ function buildApplicants(raw: RawRecord, numberOfApplicants: 1 | 2, issues: Mapp
 
 function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Applicant {
   const prefix = `var_appl${index}`;
-  const dateOfBirth = optionalString(raw[`${prefix}_date_of_birth`]);
+  const dateOfBirth = normalizeDateOfBirth(optionalString(raw[`${prefix}_date_of_birth`]));
   if (!dateOfBirth) {
     issues.push({
       field: `${prefix}_date_of_birth`,
@@ -194,7 +194,7 @@ function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): A
   return {
     index,
     dateOfBirth,
-    age: dateOfBirth ? ageFromEpoch(dateOfBirth) : 35,
+    age: dateOfBirth ? ageFromDate(dateOfBirth) : 35,
     retirementAge: rawNumber(raw[`${prefix}_retirement_age`], 70),
     employment: mapEmployment(raw, index),
     otherIncome: mapOtherIncome(raw, index)
@@ -214,9 +214,9 @@ function mapEmployment(raw: RawRecord, index: 1 | 2): Applicant["employment"] {
     type,
     isContractor,
     annualGrossIncome: mapAnnualGrossIncome(raw, prefix, isContractor, type),
-    annualOvertime: annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
+    annualOvertime: 0,
     annualBonus: mapVariableIncome(raw, prefix),
-    annualCommission: annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
+    annualCommission: 0,
     annualPensionIncome: rawNumber(raw[`${prefix}_mthly_pension`], 0) * 12,
     otherAnnualPensionIncome: 0
   };
@@ -295,8 +295,10 @@ function mapVariableIncome(raw: RawRecord, prefix: string): number {
     annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]) +
     annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]);
   const previous = annualize(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]);
-  if (recent === 0 && previous === 0) return 0;
-  return twoYearLowerOrAverage(recent, previous);
+  const averagedVariableIncome = recent === 0 && previous === 0 ? 0 : twoYearLowerOrAverage(recent, previous);
+  return averagedVariableIncome +
+    annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]) +
+    annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]);
 }
 
 function twoYearLowerOrAverage(current: number, previous: number): number {
@@ -308,9 +310,6 @@ function twoYearLowerOrAverage(current: number, previous: number): number {
 function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] {
   const prefix = `var_appl${index}`;
   const entries: Applicant["otherIncome"] = [];
-  addIncome(entries, "investment_income", annualize(raw[`${prefix}_investment_income`], raw[`${prefix}_investment_income_frequency`]));
-  addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
-  addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   addIncome(entries, "child_benefit", annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
   addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
   addIncome(entries, "attendance_allowance", annualize(raw[`${prefix}_attendance_allowance`], raw[`${prefix}_attendance_allowance_frequency`]));
@@ -500,10 +499,27 @@ function monthsToYears(months: number): number {
   return Math.max(1, Math.round(months / 12));
 }
 
-function ageFromEpoch(value: string): number {
-  const epoch = Number(value);
-  if (!Number.isFinite(epoch) || epoch <= 0) return 35;
-  const birthDate = new Date(epoch * 1000);
+function normalizeDateOfBirth(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    const [day, month, year] = value.split("/");
+    return `${year}-${month}-${day}`;
+  }
+
+  const numericValue = Number(value);
+  if (Number.isFinite(numericValue) && numericValue > 0) {
+    const milliseconds = numericValue > 10_000_000_000 ? numericValue : numericValue * 1000;
+    const date = new Date(milliseconds);
+    if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
+  }
+
+  return value;
+}
+
+function ageFromDate(value: string): number {
+  const birthDate = new Date(value);
+  if (Number.isNaN(birthDate.getTime())) return 35;
   const now = new Date();
   let age = now.getUTCFullYear() - birthDate.getUTCFullYear();
   const hasHadBirthday = now.getUTCMonth() > birthDate.getUTCMonth() || (now.getUTCMonth() === birthDate.getUTCMonth() && now.getUTCDate() >= birthDate.getUTCDate());

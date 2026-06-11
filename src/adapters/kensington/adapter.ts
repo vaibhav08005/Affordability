@@ -451,18 +451,23 @@ function dependantButton(input: LenderReadyInput): string {
 }
 
 function groundRentAndService(input: LenderReadyInput): number {
+  const mapped = (input.outgoings.monthlyGroundRent ?? 0) + (input.outgoings.monthlyServiceCharge ?? 0);
+  if (mapped > 0) return mapped;
   return input.property.tenure === "leasehold" ? 100 : 0;
 }
 
 function childcare(input: LenderReadyInput): number {
+  if (input.outgoings.monthlyChildcareAndEducation != null) return input.outgoings.monthlyChildcareAndEducation;
   return input.household.dependants.filter((dependant) => dependant.age < 12).length * 150;
 }
 
 function maintenance(input: LenderReadyInput): number {
+  if (input.outgoings.monthlyMaintenancePayments != null) return input.outgoings.monthlyMaintenancePayments;
   return Math.round(input.outgoings.otherMonthlyOutgoings * 0.25);
 }
 
 function schoolFees(input: LenderReadyInput): number {
+  if (input.outgoings.monthlySchoolFees != null) return input.outgoings.monthlySchoolFees;
   return Math.round(input.outgoings.otherMonthlyOutgoings * 0.25);
 }
 

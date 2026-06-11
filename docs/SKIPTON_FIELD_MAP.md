@@ -55,8 +55,8 @@ Applicant 1 income IDs end in `0`; applicant 2 income IDs end in `1`.
 | Dividends Received (Ltd Comp Only) | `MainContent_txtIncome000008<i>` | `employment.netProfitCurrentYear` for limited company | Employment status Self-employed, limited company | 04 |
 | Directors Remuneration (Ltd Comp Only) | `MainContent_txtIncome000009<i>` | `employment.annualGrossIncome` or current profit fallback | Employment status Self-employed, limited company | 04 |
 | Any other income? | `MainContent_rblAdditionalIncome<i>_0` = Yes, `_1` = No | Derived from variable/other/pension/contractor income | Yes reveals extra income fields | 04, 05, 07, 08 |
-| Guaranteed Other | `MainContent_txtIncome2<i>` | `employment.annualBonus` plus non-benefit/non-maintenance/non-rental `otherIncome[]`, such as investment income | Additional income = Yes | 01 optional, 03, 08 |
-| Non-Guaranteed Other | `MainContent_txtIncome3<i>` | `annualOvertime + annualCommission` | Additional income = Yes | 01 optional, 08 |
+| Guaranteed Other | `MainContent_txtIncome2<i>` | non-benefit/non-maintenance/non-rental `otherIncome[]`, such as regular allowance or investment income | Additional income = Yes | 01 optional, 03, 08 |
+| Non-Guaranteed Other | `MainContent_txtIncome3<i>` | `annualBonus + annualOvertime + annualCommission`; mapper includes overtime, other allowance, additional hours, and nursing bank in `annualOvertime` for this Skipton bucket | Additional income = Yes | 01 optional, 08 |
 | Net Profit additional | `MainContent_txtIncome4<i>` | Currently zero for non self-employed additional panel | Additional income = Yes | Field recorded |
 | Dividends additional | `MainContent_txtIncome5<i>` | Currently zero for non self-employed additional panel | Additional income = Yes | Field recorded |
 | Directors remuneration additional | `MainContent_txtIncome6<i>` | Currently zero for non self-employed additional panel | Additional income = Yes | Field recorded |
@@ -72,8 +72,8 @@ Expenditure IDs repeat by applicant suffix `_0`, `_1`.
 
 | Question text | Field ID/name | Input source path | Conditional trigger | Test case coverage |
 | --- | --- | --- | --- | --- |
-| Maintenance/Child Support | `MainContent_txtExpenditure_000003_<i>` | Adapter default `0` | Per applicant | Field recorded |
-| Nursery/Child Care Costs | `MainContent_txtExpenditure_000005_<i>` | Adapter default `0` | Per applicant | 02 dependent branch present |
+| Maintenance/Child Support | `MainContent_txtExpenditure_000003_<i>` | `outgoings.monthlyMaintenancePayments` | Per applicant; adapter places aggregate on applicant 1 | Field recorded |
+| Nursery/Child Care Costs | `MainContent_txtExpenditure_000005_<i>` | `outgoings.monthlyChildcareAndEducation` | Per applicant; adapter places aggregate on applicant 1 | 02 dependent branch present |
 | Tuition Fees | `MainContent_txtExpenditure_000006_<i>` | Adapter default `0` | Per applicant | Field recorded |
 | Credit Cards | `MainContent_txtExpenditure_000023_<i>` | `outgoings.creditCardBalances` | Per applicant; adapter places aggregate on applicant 1 | 01, 10 |
 | Store Cards | `MainContent_txtExpenditure_000024_<i>` | Adapter default `0` | Per applicant | Field recorded |

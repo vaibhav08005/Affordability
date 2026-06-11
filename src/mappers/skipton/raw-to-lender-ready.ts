@@ -101,6 +101,8 @@ export function mapSkiptonRawInput(raw: RawRecord): SkiptonRawMappingResult {
       overdraftBalances: mapOverdraftBalances(raw),
       otherMonthlyOutgoings: mapOtherMonthlyOutgoings(raw),
       monthlyBuyToLetPayments: otherProperties.reduce((sum, property) => sum + property.monthlyMortgagePayment, 0),
+      monthlyChildcareAndEducation: mapChildcareAndEducation(raw),
+      monthlyMaintenancePayments: mapMonthlyMaintenanceAndCommittedExpenditure(raw),
       otherMortgageCommitments
     },
     otherProperties
@@ -291,7 +293,7 @@ function mapEmployment(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Ap
     type,
     isContractor,
     annualGrossIncome: mapAnnualGrossIncome(raw, prefix, isContractor),
-    annualOvertime: annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
+    annualOvertime: mapSkiptonNonGuaranteedOtherExcludingBonus(raw, prefix),
     annualBonus: mapVariableIncomeLowerOfRecentAndAverage(raw, prefix, "recent_nongtd_bonus", "prev_nongtd_bonus"),
     annualCommission: annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
     annualPensionIncome: rawNumber(raw[`${prefix}_mthly_pension`], 0) * 12,
@@ -379,6 +381,13 @@ function mapVariableIncomeLowerOfRecentAndAverage(raw: RawRecord, prefix: string
   return twoYearLowerOrAverage(recent, previous);
 }
 
+function mapSkiptonNonGuaranteedOtherExcludingBonus(raw: RawRecord, prefix: string): number {
+  return annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]) +
+    annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]) +
+    annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]) +
+    annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]);
+}
+
 function twoYearLowerOrAverage(current: number, previous: number): number {
   if (current === 0 && previous === 0) return 0;
   if (previous <= 0) return Math.round(current);
@@ -390,9 +399,6 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   const entries: Applicant["otherIncome"] = [];
 
   addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
-  addIncome(entries, "shift_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
-  addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
-  addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   addIncome(entries, "child_benefit", annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
   addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
@@ -438,8 +444,6 @@ function mapDependants(raw: RawRecord, numberOfApplicants: 1 | 2): LenderReadyIn
 
 function mapMonthlyLoanRepayments(raw: RawRecord): number {
   return sumCreditCommitments(raw, ["loans", "loan", "student_loans", "student_loan", "secured_loans", "hire_purchase", "lease", "buy_now_pay_later"]) +
-    sumApplicantNumbers(raw, "outgoings_other_committed_exp") +
-    sumApplicantNumbers(raw, "outgoings_maintenance_payment") +
     mapBuyToLetShortfall(raw);
 }
 
@@ -452,8 +456,18 @@ function mapOverdraftBalances(raw: RawRecord): number {
 }
 
 function mapOtherMonthlyOutgoings(raw: RawRecord): number {
+  return mapChildcareAndEducation(raw) +
+    mapMonthlyMaintenanceAndCommittedExpenditure(raw);
+}
+
+function mapChildcareAndEducation(raw: RawRecord): number {
   return sumApplicantNumbers(raw, "outgoings_childcare_cost") +
     sumApplicantNumbers(raw, "outgoings_nursery_school_fee");
+}
+
+function mapMonthlyMaintenanceAndCommittedExpenditure(raw: RawRecord): number {
+  return sumApplicantNumbers(raw, "outgoings_maintenance_payment") +
+    sumApplicantNumbers(raw, "outgoings_other_committed_exp");
 }
 
 function mapBuyToLetShortfall(raw: RawRecord): number {
@@ -475,7 +489,7 @@ function mapOtherProperties(raw: RawRecord): LenderReadyInput["otherProperties"]
     .filter((property) => isBuyToLetProperty(property))
     .map((property) => ({
       isRental: true,
-      propertyValue: rawNumber(property.property_value, 0),
+      propertyValue: rawNumber(property.property_value, rawNumber(property.current_balance, 0)),
       monthlyMortgagePayment: rawNumber(property.monthly_repayment, 0),
       monthlyRent: optionalMoney(property.monthly_rent),
       currentBalance: optionalMoney(property.current_balance),

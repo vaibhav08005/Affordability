@@ -31,10 +31,10 @@ Public URL `https://www.kensingtonmortgages.co.uk/intermediaries/calculators/res
 | Monthly expenditure | Number of dependants | Buttons `0`, `1`, `2`, `3`, `4+` in expenditure section | `household.dependants.length` | Always visible | 01-10 |
 | Monthly expenditure | Age of dependant 1..4 | Repeated `input[data-bind="textInput: age"]` by dependant index | `household.dependants[n].age` | Visible after dependant count greater than zero; required whole number greater than zero | 02, 05, 08, 09, 10 |
 | Monthly expenditure | Shared ownership rent | `#shared_ownership_rent`, `data-bind="textInput: shared_ownership_rent.formatted"` | `case.monthlySharedOwnershipRent` | Visible and required for Residential Shared Ownership product selection | 06 |
-| Monthly expenditure | Ground Rent and Service Charges | `#ground_rent_service_charge` | leasehold/service-charge assumption from property tenure | Always visible | 06, 07 |
-| Monthly expenditure | Childcare/Nursery Costs | `#childcare` | estimated from child dependants | Always visible | 02, 05, 09 |
-| Monthly expenditure | Maintenance | `#maintenance` | maintenance outgoings fallback | Always visible | 05, 10 |
-| Monthly expenditure | School and Education Costs | `#school_fees` | `outgoings.otherMonthlyOutgoings` portion | Always visible | 05, 10 |
+| Monthly expenditure | Ground Rent and Service Charges | `#ground_rent_service_charge` | `outgoings.monthlyGroundRent + outgoings.monthlyServiceCharge`; leasehold fallback when missing | Always visible | 06, 07 |
+| Monthly expenditure | Childcare/Nursery Costs | `#childcare` | `outgoings.monthlyChildcareAndEducation`; dependant-count fallback when missing | Always visible | 02, 05, 09 |
+| Monthly expenditure | Maintenance | `#maintenance` | `outgoings.monthlyMaintenancePayments`; `otherMonthlyOutgoings` fallback when missing | Always visible | 05, 10 |
+| Monthly expenditure | School and Education Costs | `#school_fees` | `outgoings.monthlySchoolFees`; `otherMonthlyOutgoings` fallback when missing | Always visible | 05, 10 |
 | Monthly expenditure | Current outstanding credit commitments | `#credit_expenditure1` | `outgoings.monthlyLoanRepayments` plus other mortgage monthly payments | Always visible | 05, 10 |
 | Monthly expenditure | Outstanding revolving credit balances | `#revolvingCreditBalance` | `creditCardBalances + overdraftBalances` | Always visible | 05, 10 |
 | Results | Calculate | `#SubmitButton`, `data-bind="click: calculate"` | n/a | Appends `RESIDENTIAL RESULTS` or validation text | 01-10 |

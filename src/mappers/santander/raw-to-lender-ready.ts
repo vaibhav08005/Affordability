@@ -251,7 +251,7 @@ function buildApplicants(raw: RawRecord, numberOfApplicants: 1 | 2, issues: Mapp
 
 function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Applicant {
   const prefix = `var_appl${index}`;
-  const dateOfBirth = optionalString(raw[`${prefix}_date_of_birth`]);
+  const dateOfBirth = normalizeDateOfBirth(optionalString(raw[`${prefix}_date_of_birth`]));
   if (!dateOfBirth) {
     issues.push({
       field: `${prefix}_date_of_birth`,
@@ -262,9 +262,11 @@ function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): A
   return {
     index,
     dateOfBirth,
-    age: dateOfBirth ? ageFromEpoch(dateOfBirth) : 35,
+    age: dateOfBirth ? ageFromDate(dateOfBirth) : 35,
     retirementAge: rawNumber(raw[`${prefix}_retirement_age`], 70),
     monthlyPensionContribution: rawNumber(raw[`${prefix}_outgoings_pension_contribution`], 0),
+    monthlyStudentLoanPayment: sumApplicantCreditCommitments(raw, index, ["student_loans", "student_loan"], "monthly_payment"),
+    studentLoanBalance: sumApplicantCreditCommitments(raw, index, ["student_loans", "student_loan"], "current_balance"),
     employment: mapEmployment(raw, index, issues),
     otherIncome: mapOtherIncome(raw, index)
   };
@@ -294,9 +296,9 @@ function mapEmployment(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): Ap
     type,
     isContractor,
     annualGrossIncome: mapAnnualGrossIncome(raw, prefix, isContractor, type),
-    annualOvertime: annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
+    annualOvertime: annualizeSantanderEmployment(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
     annualBonus: mapAnnualBonus(raw, prefix),
-    annualCommission: annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
+    annualCommission: annualizeSantanderEmployment(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
     annualPensionIncome: rawNumber(raw[`${prefix}_mthly_pension`], 0) * 12,
     otherAnnualPensionIncome: 0
   };
@@ -352,8 +354,8 @@ function mapAnnualGrossIncome(raw: RawRecord, prefix: string, isContractor: bool
 }
 
 function mapAnnualBonus(raw: RawRecord, prefix: string): number {
-  const recent = annualize(raw[`${prefix}_recent_nongtd_bonus`], raw[`${prefix}_recent_nongtd_bonus_frequency`]);
-  const previous = annualize(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]);
+  const recent = annualizeSantanderEmployment(raw[`${prefix}_recent_nongtd_bonus`], raw[`${prefix}_recent_nongtd_bonus_frequency`]);
+  const previous = annualizeSantanderEmployment(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]);
   if (recent === 0 && previous === 0) return 0;
   if (previous <= 0) return Math.round(recent);
   return Math.round(recent < previous ? recent : (recent + previous) / 2);
@@ -390,19 +392,19 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   const entries: Applicant["otherIncome"] = [];
   const annualGrossIncome = rawNumber(raw[`${prefix}_gross_annual_salary`], 0);
 
-  addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
-  addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
-  addIncome(entries, "shift_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
-  addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
+  addIncome(entries, "additional_duty_hours", annualizeStandard(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
+  addIncome(entries, "nursing_bank", annualizeStandard(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
+  addIncome(entries, "shift_allowance", annualizeStandard(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
+  addIncome(entries, "town_area_or_car_allowance", annualizeStandard(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
-  addIncome(entries, "child_benefit", annualGrossIncome > 60000 ? 0 : annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
-  addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
-  addIncome(entries, "employment_support_allowance", annualize(raw[`${prefix}_employment_and_support_allowance`], raw[`${prefix}_employment_and_support_allowance_frequency`]));
-  addIncome(entries, "personal_independence_payment", annualize(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]));
-  addIncome(entries, "disability_living_allowance", annualize(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]));
-  addIncome(entries, "carers_allowance", annualize(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]));
-  addIncome(entries, "income_support", annualize(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]));
-  addIncome(entries, "universal_credit", annualize(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
+  addIncome(entries, "child_benefit", annualGrossIncome > 60000 ? 0 : annualizeStandard(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
+  addIncome(entries, "child_tax_credit", annualizeStandard(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
+  addIncome(entries, "employment_support_allowance", annualizeStandard(raw[`${prefix}_employment_and_support_allowance`], raw[`${prefix}_employment_and_support_allowance_frequency`]));
+  addIncome(entries, "personal_independence_payment", annualizeStandard(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]));
+  addIncome(entries, "disability_living_allowance", annualizeStandard(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]));
+  addIncome(entries, "carers_allowance", annualizeStandard(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]));
+  addIncome(entries, "income_support", annualizeStandard(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]));
+  addIncome(entries, "universal_credit", annualizeStandard(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
   addIncome(entries, "maintenance", rawNumber(raw[`${prefix}_mthly_maint_amt`], 0) * 12);
 
   return mergeIncome(entries);
@@ -534,6 +536,22 @@ function sumCreditCommitments(raw: RawRecord, types: string[]): number {
   return total;
 }
 
+function sumApplicantCreditCommitments(
+  raw: RawRecord,
+  applicantIndex: 1 | 2,
+  types: string[],
+  amountField: "monthly_payment" | "current_balance"
+): number {
+  let total = 0;
+  for (const item of rawArray(raw[`var_appl${applicantIndex}_credit_commitments`])) {
+    const commitment = item as RawRecord;
+    if (!yes(commitment.include_afford)) continue;
+    if (!types.includes(normalized(commitment.type))) continue;
+    total += rawNumber(commitment[amountField], 0);
+  }
+  return total;
+}
+
 function sumApplicantNumbers(raw: RawRecord, suffix: string): number {
   return rawNumber(raw[`var_appl1_${suffix}`], 0) + rawNumber(raw[`var_appl2_${suffix}`], 0);
 }
@@ -571,7 +589,7 @@ function mapBusinessType(value: unknown): SelfEmploymentType | undefined {
   return undefined;
 }
 
-function annualize(amount: unknown, frequency: unknown): number {
+function annualizeSantanderEmployment(amount: unknown, frequency: unknown): number {
   const value = rawNumber(amount, 0);
   if (value === 0) return 0;
   switch (normalized(frequency)) {
@@ -581,6 +599,36 @@ function annualize(amount: unknown, frequency: unknown): number {
       return value * 5 * 46;
     case "weekly":
       return value * 46;
+    case "fortnightly":
+      return value * 23;
+    case "every_4_weeks":
+      return value * 13;
+    case "monthly":
+      return value * 12;
+    case "two_monthly":
+      return value * 6;
+    case "quarterly":
+      return value * 4;
+    case "half_yearly":
+    case "semi_annually":
+      return value * 2;
+    case "annually":
+    case "yearly":
+    default:
+      return value;
+  }
+}
+
+function annualizeStandard(amount: unknown, frequency: unknown): number {
+  const value = rawNumber(amount, 0);
+  if (value === 0) return 0;
+  switch (normalized(frequency)) {
+    case "hourly":
+      return value * 8 * 5 * 52;
+    case "daily":
+      return value * 5 * 52;
+    case "weekly":
+      return value * 52;
     case "fortnightly":
       return value * 26;
     case "every_4_weeks":
@@ -605,10 +653,27 @@ function monthsToYears(months: number): number {
   return Math.max(1, Math.round(months / 12));
 }
 
-function ageFromEpoch(value: string): number {
-  const epoch = Number(value);
-  if (!Number.isFinite(epoch) || epoch <= 0) return 35;
-  const birthDate = new Date(epoch * 1000);
+function normalizeDateOfBirth(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    const [day, month, year] = value.split("/");
+    return `${year}-${month}-${day}`;
+  }
+
+  const numericValue = Number(value);
+  if (Number.isFinite(numericValue) && numericValue > 0) {
+    const milliseconds = numericValue > 10_000_000_000 ? numericValue : numericValue * 1000;
+    const date = new Date(milliseconds);
+    if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
+  }
+
+  return value;
+}
+
+function ageFromDate(value: string): number {
+  const birthDate = new Date(value);
+  if (Number.isNaN(birthDate.getTime())) return 35;
   const now = new Date();
   let age = now.getUTCFullYear() - birthDate.getUTCFullYear();
   const hasHadBirthday =

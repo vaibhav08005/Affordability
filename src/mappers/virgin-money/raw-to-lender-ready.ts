@@ -406,8 +406,6 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   const prefix = `var_appl${index}`;
   const entries: Applicant["otherIncome"] = [];
 
-  addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
-  addIncome(entries, "shift_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
   addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
   addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
@@ -502,7 +500,7 @@ function mapOtherProperties(raw: RawRecord): LenderReadyInput["otherProperties"]
     .filter((property) => isBuyToLetProperty(property))
     .map((property) => ({
       isRental: true,
-      propertyValue: rawNumber(property.property_value, 0),
+      propertyValue: rawNumber(property.property_value, rawNumber(property.current_balance, 0)),
       monthlyMortgagePayment: rawNumber(property.monthly_repayment, 0),
       monthlyRent: optionalMoney(property.monthly_rent),
       currentBalance: optionalMoney(property.current_balance),

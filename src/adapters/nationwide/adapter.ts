@@ -326,10 +326,29 @@ async function fillNationwideOtherIncome(page: Page, applicant: Applicant): Prom
         pension: "AffCalc-q1300-AnnualPensionIncome"
       };
 
-  await setInputValueById(page, ids.investment, "0");
+  const annualInvestmentIncome =
+    otherIncomeAnnualTotal(applicant, "investment_income") +
+    otherIncomeAnnualTotal(applicant, "additional_duty_hours") +
+    otherIncomeAnnualTotal(applicant, "nursing_bank");
+  const annualStateDisabilityBenefit =
+    otherIncomeAnnualTotal(applicant, "attendance_allowance") +
+    otherIncomeAnnualTotal(applicant, "carers_allowance") +
+    otherIncomeAnnualTotal(applicant, "constant_attendance_allowance") +
+    otherIncomeAnnualTotal(applicant, "disability_living_allowance") +
+    otherIncomeAnnualTotal(applicant, "industrial_injuries_disablement_benefit") +
+    otherIncomeAnnualTotal(applicant, "personal_independence_payment");
+  const annualUniversalCredit =
+    otherIncomeAnnualTotal(applicant, "child_tax_credit") +
+    otherIncomeAnnualTotal(applicant, "employment_support_allowance") +
+    otherIncomeAnnualTotal(applicant, "income_support") +
+    otherIncomeAnnualTotal(applicant, "other_income") +
+    otherIncomeAnnualTotal(applicant, "universal_credit") +
+    otherIncomeAnnualTotal(applicant, "working_tax_credit");
+
+  await setInputValueById(page, ids.investment, String(Math.round(annualInvestmentIncome)));
   await setInputValueById(page, ids.mortgageFreeRent, "0");
-  await setInputValueById(page, ids.disability, "0");
-  await setInputValueById(page, ids.universalCredit, String(Math.round(otherIncomeAnnualTotal(applicant, "universal_credit"))));
+  await setInputValueById(page, ids.disability, String(Math.round(annualStateDisabilityBenefit)));
+  await setInputValueById(page, ids.universalCredit, String(Math.round(annualUniversalCredit)));
   await setInputValueById(page, ids.childBenefit, String(Math.round(otherIncomeAnnualTotal(applicant, "child_benefit"))));
   await setInputValueById(page, ids.maintenance, String(Math.round(otherIncomeAnnualTotal(applicant, "maintenance"))));
   await setInputValueById(page, ids.monthlyPension, String(Math.round(totalAnnualPensionIncome(applicant) / 12)));
@@ -337,14 +356,14 @@ async function fillNationwideOtherIncome(page: Page, applicant: Applicant): Prom
 }
 
 async function fillOutgoingsStep(page: Page, input: LenderReadyInput): Promise<void> {
-  await fillOutgoingsApplicant(page, "1320", input.outgoings.creditCardBalances, input.outgoings.monthlyLoanRepayments, input.outgoings.otherMonthlyOutgoings);
+  await fillOutgoingsApplicant(page, "1320", input.outgoings);
   if (input.case.numberOfApplicants > 1) {
-    await fillOutgoingsApplicant(page, "1430", 0, 0, 0);
+    await fillOutgoingsApplicant(page, "1430");
   }
-  await setInputValueById(page, "AffCalc-q1620-CouncilTax", "0");
-  await setInputValueById(page, "AffCalc-q1630-BuildingInsurance", "1");
-  await setInputValueById(page, "AffCalc-q1640-ServiceCharge", "0");
-  await setInputValueById(page, "AffCalc-q1650-GroundRent", "0");
+  await setInputValueById(page, "AffCalc-q1620-CouncilTax", String(Math.round(input.outgoings.monthlyCouncilTax ?? 0)));
+  await setInputValueById(page, "AffCalc-q1630-BuildingInsurance", String(Math.max(1, Math.round(input.outgoings.monthlyBuildingInsurance ?? 1))));
+  await setInputValueById(page, "AffCalc-q1640-ServiceCharge", String(Math.round(input.outgoings.monthlyServiceCharge ?? 0)));
+  await setInputValueById(page, "AffCalc-q1650-GroundRent", String(Math.round(input.outgoings.monthlyGroundRent ?? 0)));
   await setInputValueById(page, "AffCalc-q1660-SharedOwnershipRental", String(Math.round(input.case.monthlySharedOwnershipRent ?? 0)));
   await fillExistingMortgages(page, input);
 }
@@ -352,25 +371,24 @@ async function fillOutgoingsStep(page: Page, input: LenderReadyInput): Promise<v
 async function fillOutgoingsApplicant(
   page: Page,
   firstQuestionNumber: "1320" | "1430",
-  creditCardBalances: number,
-  monthlyLoanRepayments: number,
-  otherMonthlyOutgoings: number
+  outgoings?: LenderReadyInput["outgoings"]
 ): Promise<void> {
   const offset = firstQuestionNumber === "1320" ? 0 : 110;
-  await setInputValueById(page, `AffCalc-q${1320 + offset}-TotalCreditCardBalances`, String(Math.round(creditCardBalances)));
+  const creditAndOverdraftBalances = (outgoings?.creditCardBalances ?? 0) + (outgoings?.overdraftBalances ?? 0);
+  await setInputValueById(page, `AffCalc-q${1320 + offset}-TotalCreditCardBalances`, String(Math.round(creditAndOverdraftBalances)));
   await setInputValueById(page, `AffCalc-q${1325 + offset}-TotalCreditCardBalanceToBeCleared`, "0");
-  await checkRadioById(page, `AffCalc-q${1328 + offset}-CreditCardBalanceClearedMonthly-${creditCardBalances > 0 ? "1" : "0"}`);
-  await setInputValueById(page, `AffCalc-q${1330 + offset}-MonthlyPersonalLoanOrHire`, String(Math.round(monthlyLoanRepayments)));
+  await checkRadioById(page, `AffCalc-q${1328 + offset}-CreditCardBalanceClearedMonthly-${creditAndOverdraftBalances > 0 ? "1" : "0"}`);
+  await setInputValueById(page, `AffCalc-q${1330 + offset}-MonthlyPersonalLoanOrHire`, String(Math.round(outgoings?.monthlyPersonalLoanOrHirePurchase ?? outgoings?.monthlyLoanRepayments ?? 0)));
   await setInputValueById(page, `AffCalc-q${1335 + offset}-MonthlyPersonalLoanOrHireToBeCleared`, "0");
-  await setInputValueById(page, `AffCalc-q${1340 + offset}-MonthlySecuredLoanPayments`, "0");
-  await setInputValueById(page, `AffCalc-q${1350 + offset}-MonthlyDpaPayment`, "0");
+  await setInputValueById(page, `AffCalc-q${1340 + offset}-MonthlySecuredLoanPayments`, String(Math.round(outgoings?.monthlySecuredLoanPayments ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1350 + offset}-MonthlyDpaPayment`, String(Math.round(outgoings?.monthlyBuyNowPayLater ?? 0)));
   await setInputValueById(page, `AffCalc-q${1355 + offset}-MonthlyDpaPaymentToBeCleared`, "0");
-  await setInputValueById(page, `AffCalc-q${1360 + offset}-MonthlyStudentLoan`, "0");
-  await setInputValueById(page, `AffCalc-q${1370 + offset}-MonthlyTravelCosts`, "0");
-  await setInputValueById(page, `AffCalc-q${1380 + offset}-MonthlyOtherExpenditure`, String(Math.round(otherMonthlyOutgoings)));
-  await setInputValueById(page, `AffCalc-q${1390 + offset}-MonthlyChildCare`, "0");
-  await setInputValueById(page, `AffCalc-q${1400 + offset}-MonthlySchoolFees`, "0");
-  await setInputValueById(page, `AffCalc-q${1410 + offset}-MonthlyDependentMaintenance`, "0");
+  await setInputValueById(page, `AffCalc-q${1360 + offset}-MonthlyStudentLoan`, String(Math.round(outgoings?.monthlyStudentLoanPayments ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1370 + offset}-MonthlyTravelCosts`, String(Math.round(outgoings?.monthlyTravelCosts ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1380 + offset}-MonthlyOtherExpenditure`, String(Math.round(outgoings?.otherMonthlyOutgoings ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1390 + offset}-MonthlyChildCare`, String(Math.round(outgoings?.monthlyChildcareAndEducation ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1400 + offset}-MonthlySchoolFees`, String(Math.round(outgoings?.monthlySchoolFees ?? 0)));
+  await setInputValueById(page, `AffCalc-q${1410 + offset}-MonthlyDependentMaintenance`, String(Math.round(outgoings?.monthlyMaintenancePayments ?? 0)));
   await setInputValueById(page, `AffCalc-q${1420 + offset}-MonthlyCostOfFinancialDependents`, "0");
 }
 

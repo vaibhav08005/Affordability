@@ -189,6 +189,18 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
         "Annual bonuses, overtime, or commission",
         "Bonuses, overtime, or commission"
       ], (applicant.employment.annualBonus ?? 0) + (applicant.employment.annualCommission ?? 0));
+      await fillOptionalLastCurrencyByLabelOrText(page, [
+        "Current annualised bonus paid two-monthly, quarterly, half-yearly or yearly (if applicable)",
+        "Current year annualised bonus paid two-monthly, quarterly, half-yearly or yearly (if applicable)",
+        "Current annualised bonus",
+        "Current year bonus"
+      ], applicant.employment.currentAnnualBonus ?? 0);
+      await fillOptionalLastCurrencyByLabelOrText(page, [
+        "Previous annualised bonus paid two-monthly, quarterly, half-yearly or yearly (if applicable)",
+        "Previous year annualised bonus paid two-monthly, quarterly, half-yearly or yearly (if applicable)",
+        "Previous annualised bonus",
+        "Previous year bonus"
+      ], applicant.employment.previousAnnualBonus ?? 0);
       await fillLastAvailableCurrency(page, [
         "Annual overtime income (if applicable)",
         "Annual overtime"
@@ -197,8 +209,8 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
     }
   } else if (employmentLabel === "Self-employed") {
     await selectSelfEmploymentType(page, applicant);
-    await fillLastCurrencyByLabelOrText(page, "Latest year", applicant.employment.netProfitCurrentYear ?? 0);
-    await fillLastCurrencyByLabelOrText(page, "Previous year", applicant.employment.netProfitPreviousYear ?? 0);
+    await fillSelfEmployedIncomeYear(page, applicant, "latestYearAmount", applicant.employment.netProfitCurrentYear ?? 0);
+    await fillSelfEmployedIncomeYear(page, applicant, "previousYearAmount", applicant.employment.netProfitPreviousYear ?? 0);
   }
 
   await fillNthCurrency(page, "Annual pension income (if applicable)", applicant.index - 1, applicant.employment.annualPensionIncome ?? 0);
@@ -417,12 +429,11 @@ async function chooseLastLooseRadioIfPresent(page: Page, groupName: string, opti
 }
 
 async function chooseVariableIncomeFrequency(page: Page, applicant: Applicant): Promise<void> {
-  if ((applicant.employment.annualOvertime ?? 0) > 0 || (applicant.employment.annualCommission ?? 0) > 0) {
+  if ((applicant.employment.annualOvertime ?? 0) > 0 || (applicant.employment.annualCommission ?? 0) > 0 || (applicant.employment.annualBonus ?? 0) > 0) {
     await checkLastAvailable(page, ["Weekly, fortnightly, or monthly"]);
-    return;
   }
 
-  if ((applicant.employment.annualBonus ?? 0) > 0) {
+  if ((applicant.employment.currentAnnualBonus ?? 0) > 0 || (applicant.employment.previousAnnualBonus ?? 0) > 0) {
     await checkLastAvailable(page, ["Two-monthly, quarterly, half-yearly or yearly"]);
   }
 }
@@ -466,6 +477,16 @@ async function fillLastCurrencyByLabelOrText(page: Page, label: string, value: n
     return;
   }
 
+  const partialLabelFields = page.getByLabel(new RegExp(escapeRegExp(label), "i"));
+  try {
+    const field = partialLabelFields.last();
+    await field.waitFor({ state: "visible", timeout: 5000 });
+    await field.fill(currencyValue(value));
+    return;
+  } catch {
+    // Continue to the DOM-text fallback below for older Barclays field markup.
+  }
+
   const field = page.locator(`xpath=(//*[normalize-space(.)="${label}"]/following::input[1])[last()]`);
   if (await field.count() > 0) {
     await field.fill(currencyValue(value));
@@ -473,6 +494,46 @@ async function fillLastCurrencyByLabelOrText(page: Page, label: string, value: n
   }
 
   throw new Error(`Unable to find Barclays currency field by label or text: ${label}.`);
+}
+
+async function fillSelfEmployedIncomeYear(
+  page: Page,
+  applicant: Applicant,
+  yearField: "latestYearAmount" | "previousYearAmount",
+  value: number
+): Promise<void> {
+  const applicantIndex = applicant.index - 1;
+  const field = page
+    .locator(
+      `input[name^="applicantDetails.${applicantIndex}.incomeDetails."][name*="selfEmployedDetails"][name$=".${yearField}"]`
+    )
+    .last();
+
+  try {
+    await field.waitFor({ state: "visible", timeout: 10000 });
+    await field.fill(currencyValue(value));
+  } catch {
+    const label = yearField === "latestYearAmount" ? "Latest year" : "Previous year";
+    throw new Error(`Unable to find Barclays self-employed ${label} field for applicant ${applicant.index}.`);
+  }
+}
+
+async function fillOptionalLastCurrencyByLabelOrText(page: Page, labels: string[], value: number): Promise<void> {
+  if (value <= 0) return;
+  for (const label of labels) {
+    const fields = page.getByLabel(label, { exact: true });
+    const count = await fields.count();
+    if (count > 0) {
+      await fields.nth(count - 1).fill(currencyValue(value));
+      return;
+    }
+
+    const field = page.locator(`xpath=(//*[normalize-space(.)="${label}"]/following::input[1])[last()]`);
+    if (await field.count() > 0) {
+      await field.fill(currencyValue(value));
+      return;
+    }
+  }
 }
 
 async function fillOptionalCurrency(scope: Page | Locator, labels: string[], value: number): Promise<void> {
@@ -598,6 +659,10 @@ function variableIncomeTotal(applicant: Applicant): number {
 
 function currencyValue(value: number): string {
   return String(Math.round(value));
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function extractMaximumCurrency(text: string): number | null {

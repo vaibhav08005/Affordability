@@ -165,8 +165,8 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
     (applicant.employment.type !== "pension" && totalPensionIncome(applicant) > 0);
   await checkRadioById(page, `MainContent_rblAdditionalIncome${suffix}_${hasAdditionalIncome ? 0 : 1}`);
   if (hasAdditionalIncome) {
-    await setInputValueById(page, `MainContent_txtIncome2${suffix}`, money((applicant.employment.annualBonus ?? 0) + guaranteedOtherIncome(applicant)));
-    await setInputValueById(page, `MainContent_txtIncome3${suffix}`, money((applicant.employment.annualOvertime ?? 0) + (applicant.employment.annualCommission ?? 0)));
+    await setInputValueById(page, `MainContent_txtIncome2${suffix}`, money(guaranteedOtherIncome(applicant)));
+    await setInputValueById(page, `MainContent_txtIncome3${suffix}`, money(variableIncome(applicant)));
     if (applicant.employment.type !== "self_employed") {
       await setInputValueById(page, `MainContent_txtIncome4${suffix}`, "0");
       await setInputValueById(page, `MainContent_txtIncome5${suffix}`, "0");
@@ -183,8 +183,8 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
 async function fillExpenditure(page: Page, input: LenderReadyInput): Promise<void> {
   const applicantCount = input.case.numberOfApplicants;
   for (let index = 0; index < applicantCount; index += 1) {
-    await setInputValueById(page, `MainContent_txtExpenditure_000003_${index}`, "0");
-    await setInputValueById(page, `MainContent_txtExpenditure_000005_${index}`, "0");
+    await setInputValueById(page, `MainContent_txtExpenditure_000003_${index}`, money(index === 0 ? input.outgoings.monthlyMaintenancePayments ?? 0 : 0));
+    await setInputValueById(page, `MainContent_txtExpenditure_000005_${index}`, money(index === 0 ? input.outgoings.monthlyChildcareAndEducation ?? 0 : 0));
     await setInputValueById(page, `MainContent_txtExpenditure_000006_${index}`, "0");
     await setInputValueById(page, `MainContent_txtExpenditure_000023_${index}`, money(index === 0 ? input.outgoings.creditCardBalances : 0));
     await setInputValueById(page, `MainContent_txtExpenditure_000024_${index}`, "0");

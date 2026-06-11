@@ -4,6 +4,7 @@ import type { LenderReadyInput } from "./contracts.js";
 const money = z.number().finite().nonnegative();
 const positiveInteger = z.number().int().positive();
 const halifaxOtherIncomeType = z.enum([
+  "other_income",
   "additional_duty_hours",
   "attendance_allowance",
   "carers_allowance",
@@ -36,6 +37,8 @@ const applicantSchema = z.object({
   age: z.number().int().min(18).max(100),
   retirementAge: z.number().int().min(50).max(100).optional(),
   monthlyPensionContribution: money.optional(),
+  monthlyStudentLoanPayment: money.optional(),
+  studentLoanBalance: money.optional(),
   employment: z.object({
     type: z.enum(["employed", "self_employed", "pension", "other"]),
     isContractor: z.boolean().optional(),
@@ -45,6 +48,8 @@ const applicantSchema = z.object({
     annualGrossIncome: money.optional(),
     annualOvertime: money.optional(),
     annualBonus: money.optional(),
+    currentAnnualBonus: money.optional(),
+    previousAnnualBonus: money.optional(),
     annualCommission: money.optional(),
     annualPensionIncome: money.optional(),
     otherAnnualPensionIncome: money.optional()
@@ -106,7 +111,17 @@ export const lenderReadyInputSchema = z.object({
     overdraftBalances: money,
     otherMonthlyOutgoings: money,
     monthlyBuyToLetPayments: money,
+    monthlyPersonalLoanOrHirePurchase: money.optional(),
+    monthlySecuredLoanPayments: money.optional(),
+    monthlyBuyNowPayLater: money.optional(),
+    monthlyStudentLoanPayments: money.optional(),
+    monthlyTravelCosts: money.optional(),
+    monthlyCouncilTax: money.optional(),
+    monthlyBuildingInsurance: money.optional(),
+    monthlyGroundRent: money.optional(),
+    monthlyServiceCharge: money.optional(),
     monthlyChildcareAndEducation: money.optional(),
+    monthlySchoolFees: money.optional(),
     monthlyMaintenancePayments: money.optional(),
     monthlyInsuranceAndPensions: money.optional(),
     otherMortgageCommitments: z.array(z.object({

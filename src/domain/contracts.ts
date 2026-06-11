@@ -25,6 +25,7 @@ export type EmploymentType = "employed" | "self_employed" | "pension" | "other";
 export type SelfEmploymentType = "sole_trader" | "limited_company" | "partnership" | "llp";
 export type SharedOwnershipScheme = "shared_ownership" | "shared_equity";
 export type HalifaxOtherIncomeType =
+  | "other_income"
   | "additional_duty_hours"
   | "attendance_allowance"
   | "carers_allowance"
@@ -96,7 +97,17 @@ export interface LenderReadyInput {
     overdraftBalances: number;
     otherMonthlyOutgoings: number;
     monthlyBuyToLetPayments: number;
+    monthlyPersonalLoanOrHirePurchase?: number;
+    monthlySecuredLoanPayments?: number;
+    monthlyBuyNowPayLater?: number;
+    monthlyStudentLoanPayments?: number;
+    monthlyTravelCosts?: number;
+    monthlyCouncilTax?: number;
+    monthlyBuildingInsurance?: number;
+    monthlyGroundRent?: number;
+    monthlyServiceCharge?: number;
     monthlyChildcareAndEducation?: number;
+    monthlySchoolFees?: number;
     monthlyMaintenancePayments?: number;
     monthlyInsuranceAndPensions?: number;
     otherMortgageCommitments: OtherMortgageCommitment[];
@@ -110,6 +121,8 @@ export interface Applicant {
   age: number;
   retirementAge?: number;
   monthlyPensionContribution?: number;
+  monthlyStudentLoanPayment?: number;
+  studentLoanBalance?: number;
   employment: {
     type: EmploymentType;
     isContractor?: boolean;
@@ -119,6 +132,8 @@ export interface Applicant {
     annualGrossIncome?: number;
     annualOvertime?: number;
     annualBonus?: number;
+    currentAnnualBonus?: number;
+    previousAnnualBonus?: number;
     annualCommission?: number;
     annualPensionIncome?: number;
     otherAnnualPensionIncome?: number;

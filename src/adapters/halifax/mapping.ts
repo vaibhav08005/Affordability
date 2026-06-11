@@ -61,6 +61,7 @@ export const sharedOwnershipSchemeLabels: Record<SharedOwnershipScheme, string> 
 };
 
 export const otherIncomeLabels: Record<HalifaxOtherIncomeType, string> = {
+  other_income: "Investment income",
   additional_duty_hours: "Additional duty hours",
   attendance_allowance: "Attendance allowance",
   carers_allowance: "Carer's allowance",

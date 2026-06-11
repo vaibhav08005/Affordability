@@ -440,9 +440,10 @@ async function fillOtherAnnualIncome(page: Page, applicant: Applicant): Promise<
 
 async function fillMonthlyDeductions(page: Page, applicant: Applicant): Promise<void> {
   const applicantId = `Applicant${applicant.index}`;
+  const hasStudentLoan = (applicant.studentLoanBalance ?? 0) > 0 || (applicant.monthlyStudentLoanPayment ?? 0) > 0;
   await setTextInputById(page, `${applicantId}PreTaxDeductions`, String(Math.round(applicant.monthlyPensionContribution ?? 0)));
   await setTextInputById(page, `${applicantId}PostTaxDeductions`, "0");
-  await chooseButtonByLabelFor(page, `${applicantId}StudentLoans`, "No");
+  await chooseButtonByLabelFor(page, `${applicantId}StudentLoans`, hasStudentLoan ? "Yes" : "No");
 }
 
 async function setTextInputById(page: Page, id: string, value: string): Promise<boolean> {

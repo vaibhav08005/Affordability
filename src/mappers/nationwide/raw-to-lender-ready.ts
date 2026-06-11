@@ -100,6 +100,18 @@ export function mapNationwideRawInput(raw: RawRecord): NationwideRawMappingResul
       overdraftBalances: mapOverdraftBalances(raw),
       otherMonthlyOutgoings: mapOtherMonthlyOutgoings(raw),
       monthlyBuyToLetPayments: otherProperties.filter((property) => property.isRental).reduce((sum, property) => sum + property.monthlyMortgagePayment, 0),
+      monthlyPersonalLoanOrHirePurchase: mapMonthlyPersonalLoanOrHirePurchase(raw),
+      monthlySecuredLoanPayments: sumMonthlyCreditCommitments(raw, ["secured_loans"]),
+      monthlyBuyNowPayLater: sumMonthlyCreditCommitments(raw, ["buy_now_pay_later"]),
+      monthlyStudentLoanPayments: sumMonthlyCreditCommitments(raw, ["student_loans", "student_loan"]),
+      monthlyTravelCosts: sumApplicantNumbers(raw, "outgoings_transport_travel"),
+      monthlyCouncilTax: rawNumber(raw.var_property_details_mthly_council_tax, 0),
+      monthlyBuildingInsurance: rawNumber(raw.var_property_details_mthly_bldg_ins, 0),
+      monthlyGroundRent: rawNumber(raw.var_property_details_mthly_grnd_rent, 0),
+      monthlyServiceCharge: rawNumber(raw.var_property_details_mthly_serv_charges, 0),
+      monthlyChildcareAndEducation: sumApplicantNumbers(raw, "outgoings_childcare_cost"),
+      monthlySchoolFees: sumApplicantNumbers(raw, "outgoings_nursery_school_fee"),
+      monthlyMaintenancePayments: sumApplicantNumbers(raw, "outgoings_maintenance_payment"),
       otherMortgageCommitments: []
     },
     otherProperties
@@ -411,6 +423,11 @@ function mapMonthlyLoanRepayments(raw: RawRecord): number {
     helpToBuyMonthlyInterest(raw);
 }
 
+function mapMonthlyPersonalLoanOrHirePurchase(raw: RawRecord): number {
+  return sumMonthlyCreditCommitments(raw, ["loans", "loan", "personal_loans", "hire_purchase", "lease"]) +
+    helpToBuyMonthlyInterest(raw);
+}
+
 function mapCreditCardBalances(raw: RawRecord): number {
   return sumCreditCommitments(raw, ["cards", "card", "credit_card", "store_card"]);
 }
@@ -420,15 +437,7 @@ function mapOverdraftBalances(raw: RawRecord): number {
 }
 
 function mapOtherMonthlyOutgoings(raw: RawRecord): number {
-  return sumApplicantNumbers(raw, "outgoings_other_committed_exp") +
-    sumApplicantNumbers(raw, "outgoings_transport_travel") +
-    sumApplicantNumbers(raw, "outgoings_childcare_cost") +
-    sumApplicantNumbers(raw, "outgoings_nursery_school_fee") +
-    sumApplicantNumbers(raw, "outgoings_maintenance_payment") +
-    rawNumber(raw.var_property_details_mthly_council_tax, 0) +
-    rawNumber(raw.var_property_details_mthly_grnd_rent, 0) +
-    rawNumber(raw.var_property_details_mthly_serv_charges, 0) +
-    rawNumber(raw.var_property_details_mthly_bldg_ins, 0);
+  return sumApplicantNumbers(raw, "outgoings_other_committed_exp");
 }
 
 function mapNationwideOtherProperties(raw: RawRecord, issues: MappingIssue[]): LenderReadyInput["otherProperties"] {
@@ -450,6 +459,14 @@ function mapNationwideOtherProperties(raw: RawRecord, issues: MappingIssue[]): L
   for (const [index, property] of rawProperties.entries()) {
     if (!yes(property.mortgage_status) || normalized(property.occupancy_status).includes("main_residence")) {
       continue;
+    }
+
+    if (!hasValue(property.ownership_status)) {
+      issues.push({
+        field: `var_other_properties[${index}].ownership_status`,
+        message:
+          "Other property ownership status was missing; mapped it as an applicant-owned existing mortgage for the current Nationwide adapter."
+      });
     }
 
     const monthlyRent = optionalMoney(property.monthly_rent);
@@ -501,6 +518,19 @@ function sumCreditCommitments(raw: RawRecord, types: string[]): number {
       } else {
         total += rawNumber(commitment.monthly_payment, 0);
       }
+    }
+  }
+  return total;
+}
+
+function sumMonthlyCreditCommitments(raw: RawRecord, types: string[]): number {
+  let total = 0;
+  for (const index of [1, 2]) {
+    for (const item of rawArray(raw[`var_appl${index}_credit_commitments`])) {
+      const commitment = item as RawRecord;
+      if (!yes(commitment.include_afford)) continue;
+      if (!types.includes(normalized(commitment.type))) continue;
+      total += rawNumber(commitment.monthly_payment, 0);
     }
   }
   return total;

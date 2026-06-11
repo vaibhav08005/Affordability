@@ -171,7 +171,7 @@ function buildApplicants(raw: RawRecord, numberOfApplicants: 1 | 2, issues: Mapp
 
 function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[], loanAmount: number): Applicant {
   const prefix = `var_appl${index}`;
-  const dateOfBirth = optionalString(raw[`${prefix}_date_of_birth`]);
+  const dateOfBirth = normalizeDateOfBirth(optionalString(raw[`${prefix}_date_of_birth`]));
   if (!dateOfBirth) {
     issues.push({
       field: `${prefix}_date_of_birth`,
@@ -181,7 +181,7 @@ function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[], lo
   return {
     index,
     dateOfBirth,
-    age: dateOfBirth ? ageFromEpoch(dateOfBirth) : 35,
+    age: dateOfBirth ? ageFromDate(dateOfBirth) : 35,
     retirementAge: rawNumber(raw[`${prefix}_retirement_age`], 70),
     employment: mapEmployment(raw, index, loanAmount),
     otherIncome: mapOtherIncome(raw, index)
@@ -203,6 +203,8 @@ function mapEmployment(raw: RawRecord, index: 1 | 2, loanAmount: number): Applic
     annualGrossIncome: mapAnnualGrossIncome(raw, prefix, isContractor),
     annualOvertime: annualizeBarclays(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]),
     annualBonus: mapBarclaysBonus(raw, prefix),
+    currentAnnualBonus: mapBarclaysInfrequentBonus(raw[`${prefix}_recent_nongtd_bonus`], raw[`${prefix}_recent_nongtd_bonus_frequency`]),
+    previousAnnualBonus: mapBarclaysInfrequentBonus(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]),
     annualCommission: annualizeBarclays(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]),
     annualPensionIncome: rawNumber(raw[`${prefix}_mthly_pension`], 0) * 12,
     otherAnnualPensionIncome: 0
@@ -243,17 +245,42 @@ function mapAnnualGrossIncome(raw: RawRecord, prefix: string, isContractor: bool
     if (dayRate > 0) return dayRate * 0.87 * 230;
     const contractSalary = rawNumber(raw[`${prefix}_contract_salary`], 0);
     if (contractSalary > 0) return contractSalary;
+    const salary = rawNumber(raw[`${prefix}_gross_annual_salary`] ?? raw[`${prefix}_business_salary`] ?? raw[`${prefix}_dir_partnr_curr_yr_salary`], 0);
+    const currentDividends = rawNumber(raw[`${prefix}_business_curr_yr_dividends`], 0);
+    const currentProfit = rawNumber(raw[`${prefix}_business_curr_yr_share_profit`] ?? raw[`${prefix}_business_curr_yr_net_profit`], 0);
+    if (salary > 0 || currentDividends > 0 || currentProfit > 0) {
+      return salary + Math.max(currentDividends, currentProfit);
+    }
   }
   return rawNumber(raw[`${prefix}_gross_annual_salary`], 0) +
-    annualizeBarclays(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]) +
-    annualizeBarclays(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]) +
-    annualizeBarclays(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]) +
-    annualizeBarclays(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]);
+    annualizeBarclaysGrossIncomeComponent(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]) +
+    annualizeBarclaysGrossIncomeComponent(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]) +
+    annualizeBarclaysGrossIncomeComponent(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]) +
+    annualizeBarclaysGrossIncomeComponent(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]);
 }
 
 function mapBarclaysBonus(raw: RawRecord, prefix: string): number {
-  return annualizeBarclays(raw[`${prefix}_recent_nongtd_bonus`], raw[`${prefix}_recent_nongtd_bonus_frequency`]) +
-    annualizeBarclays(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]);
+  const recent = mapBarclaysFrequentBonus(raw[`${prefix}_recent_nongtd_bonus`], raw[`${prefix}_recent_nongtd_bonus_frequency`]);
+  const previous = mapBarclaysFrequentBonus(raw[`${prefix}_prev_nongtd_bonus`], raw[`${prefix}_prev_nongtd_bonus_frequency`]);
+  return recent > 0 ? recent : previous;
+}
+
+function mapBarclaysFrequentBonus(value: unknown, frequency: unknown): number {
+  return isBarclaysFrequentVariableFrequency(frequency) ? annualizeBarclays(value, frequency) : 0;
+}
+
+function mapBarclaysInfrequentBonus(value: unknown, frequency: unknown): number {
+  return isBarclaysInfrequentVariableFrequency(frequency) ? annualizeBarclays(value, frequency) : 0;
+}
+
+function isBarclaysFrequentVariableFrequency(frequency: unknown): boolean {
+  const value = normalized(frequency);
+  return ["weekly", "fortnightly", "monthly"].some((token) => value.includes(token));
+}
+
+function isBarclaysInfrequentVariableFrequency(frequency: unknown): boolean {
+  const value = normalized(frequency);
+  return ["two_monthly", "quarterly", "half_yearly", "semi_annually", "annually", "annual", "yearly"].some((token) => value.includes(token));
 }
 
 function mapSelfEmployedProfits(raw: RawRecord, prefix: string, businessType: SelfEmploymentType, loanAmount: number): { current: number; previous: number } {
@@ -272,9 +299,10 @@ function mapSelfEmployedProfits(raw: RawRecord, prefix: string, businessType: Se
     const previousDividends = rawNumber(raw[`${prefix}_business_prev_yr_dividends`] ?? raw[`${prefix}_business_curr_yr_dividends`], 0);
     const currentProfit = rawNumber(raw[`${prefix}_business_curr_yr_net_profit`], 0);
     const previousProfit = rawNumber(raw[`${prefix}_business_prev_yr_net_profit`], 0);
+    const canUseRetainedProfit = loanAmount <= 1_000_000 && hasBarclaysLtdCompanyControl(raw);
     return {
-      current: loanAmount <= 1_000_000 ? Math.max(salary + currentDividends, salary + currentProfit) : salary + currentDividends,
-      previous: loanAmount <= 1_000_000 ? Math.max(salary + previousDividends, salary + previousProfit) : salary + previousDividends
+      current: canUseRetainedProfit ? Math.max(salary + currentDividends, salary + currentProfit) : salary + currentDividends,
+      previous: canUseRetainedProfit ? Math.max(salary + previousDividends, salary + previousProfit) : salary + previousDividends
     };
   }
   return {
@@ -286,14 +314,14 @@ function mapSelfEmployedProfits(raw: RawRecord, prefix: string, businessType: Se
 function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] {
   const prefix = `var_appl${index}`;
   const entries: Applicant["otherIncome"] = [];
-  addIncome(entries, "child_benefit", annualizeBarclays(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
-  addIncome(entries, "child_tax_credit", annualizeBarclays(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
-  addIncome(entries, "employment_support_allowance", annualizeBarclays(raw[`${prefix}_employment_and_support_allowance`], raw[`${prefix}_employment_and_support_allowance_frequency`]));
-  addIncome(entries, "personal_independence_payment", annualizeBarclays(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]));
-  addIncome(entries, "disability_living_allowance", annualizeBarclays(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]));
-  addIncome(entries, "carers_allowance", annualizeBarclays(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]));
-  addIncome(entries, "income_support", annualizeBarclays(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]));
-  addIncome(entries, "universal_credit", annualizeBarclays(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
+  addIncome(entries, "child_benefit", annualizeStandard(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
+  addIncome(entries, "child_tax_credit", annualizeStandard(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
+  addIncome(entries, "employment_support_allowance", annualizeStandard(raw[`${prefix}_employment_and_support_allowance`], raw[`${prefix}_employment_and_support_allowance_frequency`]));
+  addIncome(entries, "personal_independence_payment", annualizeStandard(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]));
+  addIncome(entries, "disability_living_allowance", annualizeStandard(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]));
+  addIncome(entries, "carers_allowance", annualizeStandard(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]));
+  addIncome(entries, "income_support", annualizeStandard(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]));
+  addIncome(entries, "universal_credit", annualizeStandard(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
   addIncome(entries, "maintenance", rawNumber(raw[`${prefix}_mthly_maint_amt`], 0) * 12);
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   return mergeIncome(entries);
@@ -475,6 +503,54 @@ function annualizeBarclays(amount: unknown, frequency: unknown): number {
   }
 }
 
+function annualizeBarclaysGrossIncomeComponent(amount: unknown, frequency: unknown): number {
+  const value = rawNumber(amount, 0);
+  if (value === 0) return 0;
+  if (normalized(frequency) === "fortnightly") return value * 23;
+  return annualizeBarclays(amount, frequency);
+}
+
+function annualizeStandard(amount: unknown, frequency: unknown): number {
+  const value = rawNumber(amount, 0);
+  if (value === 0) return 0;
+  switch (normalized(frequency)) {
+    case "daily":
+      return value * 5 * 52;
+    case "weekly":
+      return value * 52;
+    case "fortnightly":
+      return value * 26;
+    case "every_4_weeks":
+      return value * 13;
+    case "monthly":
+      return value * 12;
+    case "two_monthly":
+      return value * 6;
+    case "quarterly":
+      return value * 4;
+    case "half_yearly":
+    case "semi_annually":
+      return value * 2;
+    case "annually":
+    case "yearly":
+    default:
+      return value;
+  }
+}
+
+function hasBarclaysLtdCompanyControl(raw: RawRecord): boolean {
+  const applicantShareholding =
+    rawNumber(raw.var_appl1_employed_company_details_ownership_percentage, 0) +
+    rawNumber(raw.var_appl2_employed_company_details_ownership_percentage, 0);
+  const jointShareholding = rawNumber(
+    raw.var_joint_shareholding_percentage ??
+      raw.var_joint_share_percentage ??
+      raw.var_joint_company_share_percentage,
+    0
+  );
+  return applicantShareholding > 50 || jointShareholding === 100;
+}
+
 function sumDepositSources(raw: RawRecord): number {
   return rawArray(raw.var_deposit_source_details).reduce<number>((sum, item) => sum + rawNumber((item as RawRecord).amount, 0), 0);
 }
@@ -501,10 +577,27 @@ function monthsToYears(months: number): number {
   return Math.max(1, Math.round(months / 12));
 }
 
-function ageFromEpoch(value: string): number {
-  const epoch = Number(value);
-  if (!Number.isFinite(epoch) || epoch <= 0) return 35;
-  const birthDate = new Date(epoch * 1000);
+function normalizeDateOfBirth(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    const [day, month, year] = value.split("/");
+    return `${year}-${month}-${day}`;
+  }
+
+  const numericValue = Number(value);
+  if (Number.isFinite(numericValue) && numericValue > 0) {
+    const milliseconds = numericValue > 10_000_000_000 ? numericValue : numericValue * 1000;
+    const date = new Date(milliseconds);
+    if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
+  }
+
+  return value;
+}
+
+function ageFromDate(value: string): number {
+  const birthDate = new Date(value);
+  if (Number.isNaN(birthDate.getTime())) return 35;
   const now = new Date();
   let age = now.getUTCFullYear() - birthDate.getUTCFullYear();
   const hasHadBirthday = now.getUTCMonth() > birthDate.getUTCMonth() ||

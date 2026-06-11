@@ -301,7 +301,7 @@ function inferEmploymentType(
   tenPercentShare: boolean
 ): EmploymentType {
   if (["retired", "pension"].some((token) => employmentType.includes(token))) return "pension";
-  if (businessType || ownershipPercentage >= 25 || tenPercentShare || employmentType.includes("self")) return "self_employed";
+  if (businessType || ownershipPercentage > 10 || tenPercentShare || employmentType.includes("self")) return "self_employed";
   if (employmentType.includes("not_working") || employmentType.includes("homemaker")) return "other";
   return "employed";
 }
@@ -351,6 +351,10 @@ function mapSelfEmployedProfits(raw: RawRecord, prefix: string, businessType: Se
     if (currentShare > 0 && previousShare > 0) {
       return { current: currentShare, previous: previousShare };
     }
+    return {
+      current: salary + rawNumber(raw[`${prefix}_business_curr_yr_dividends`], 0),
+      previous: salary + rawNumber(raw[`${prefix}_business_prev_yr_dividends`] ?? raw[`${prefix}_business_curr_yr_dividends`], 0)
+    };
   }
 
   return {
@@ -366,7 +370,7 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
   addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
   addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]));
-  addIncome(entries, "town_area_or_car_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
+  addIncome(entries, "shift_allowance", annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]));
   addIncome(entries, "rental_income_btl", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   addIncome(entries, "child_benefit", annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
   addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
@@ -378,7 +382,7 @@ function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] 
   addIncome(entries, "universal_credit", annualize(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
   addIncome(entries, "maintenance", rawNumber(raw[`${prefix}_mthly_maint_amt`], 0) * 12);
 
-  return mergeIncome(entries);
+  return limitHalifaxOtherIncomeRows(mergeIncome(entries), 4);
 }
 
 function addIncome(entries: Applicant["otherIncome"], type: HalifaxOtherIncomeType, annualAmount: number): void {
@@ -391,6 +395,31 @@ function mergeIncome(entries: Applicant["otherIncome"]): Applicant["otherIncome"
     totals.set(entry.type, (totals.get(entry.type) ?? 0) + entry.annualAmount);
   }
   return [...totals.entries()].map(([type, annualAmount]) => ({ type, annualAmount }));
+}
+
+function limitHalifaxOtherIncomeRows(entries: Applicant["otherIncome"], maxRows: number): Applicant["otherIncome"] {
+  if (entries.length <= maxRows) return entries;
+
+  const sorted = [...entries].sort((left, right) => right.annualAmount - left.annualAmount);
+  const directRows = sorted.slice(0, maxRows - 1);
+  const remainder = sorted.slice(maxRows - 1).reduce((sum, entry) => sum + entry.annualAmount, 0);
+  const catchAllType: HalifaxOtherIncomeType = "investment_income";
+  const catchAllIndex = directRows.findIndex((entry) => entry.type === catchAllType);
+  if (catchAllIndex >= 0) {
+    directRows[catchAllIndex] = {
+      ...directRows[catchAllIndex],
+      annualAmount: directRows[catchAllIndex].annualAmount + remainder
+    };
+    return directRows;
+  }
+
+  return [
+    ...directRows,
+    {
+      type: catchAllType,
+      annualAmount: remainder
+    }
+  ];
 }
 
 function mapDependants(raw: RawRecord, numberOfApplicants: 1 | 2): LenderReadyInput["household"]["dependants"] {
@@ -446,7 +475,12 @@ function mapBuyToLetShortfall(raw: RawRecord): number {
     if (!isBuyToLetProperty(property)) return sum;
     const rent = rawNumber(property.monthly_rent, 0);
     const mortgage = rawNumber(property.monthly_repayment, 0);
-    const propertyCosts = rawNumber(property.monthly_council_tax, 0);
+    const propertyCosts =
+      rawNumber(property.monthly_council_tax, 0) +
+      rawNumber(property.monthly_building_insurance, 0) +
+      rawNumber(property.monthly_property_costs, 0) +
+      rawNumber(property.monthly_maintenance_cost, 0) +
+      rawNumber(property.other_maintenance_cost, 0);
     const shortfall = rent - mortgage - propertyCosts;
     return shortfall < 0 ? sum + Math.abs(shortfall) : sum;
   }, 0);
