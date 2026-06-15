@@ -314,16 +314,29 @@ function validationMessages(messages: string): string {
 }
 
 async function clickButtonAfterQuestion(page: Page, question: string, label: string): Promise<void> {
+  await page.waitForFunction(
+    ({ question, label }) => {
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
+      const marker = [...document.querySelectorAll("label,h1,h2,h3,h4,p,div")]
+        .filter((node) => clean(node.textContent).includes(question))
+        .sort((a, b) => clean(a.textContent).length - clean(b.textContent).length)[0];
+      if (!marker) return false;
+
+      const markerTop = marker.getBoundingClientRect().top;
+      return [...document.querySelectorAll("button")]
+        .some((button) =>
+          clean(button.textContent) === label &&
+          !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length) &&
+          button.getBoundingClientRect().top >= markerTop
+        );
+    },
+    { question, label },
+    { timeout: 5000 }
+  ).catch(() => undefined);
+
   const clicked = await page.evaluate(({ question, label }) => {
     const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
-    const exactButton = [...document.querySelectorAll("button")]
-      .find((button) => clean(button.textContent) === label && !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length));
-    if (exactButton) {
-      exactButton.click();
-      return true;
-    }
-
-    const marker = [...document.querySelectorAll("label,h1,h2,h3,h4,p,div,button")]
+    const marker = [...document.querySelectorAll("label,h1,h2,h3,h4,p,div")]
       .filter((node) => clean(node.textContent).includes(question))
       .sort((a, b) => clean(a.textContent).length - clean(b.textContent).length)[0];
     const container = marker?.closest("fieldset, section, div");

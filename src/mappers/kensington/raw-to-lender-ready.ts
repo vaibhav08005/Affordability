@@ -346,8 +346,8 @@ function kensingtonSelfEmployedIncome(
 
   if (businessType === "llp") {
     return {
-      current: salary + (shareholding >= 25 ? Math.max(currentShareProfit, currentDividends) : currentDividends),
-      previous: salary + (shareholding >= 25 ? Math.max(previousShareProfit, previousDividends) : previousDividends)
+      current: salary + kensingtonLlpIncomeComponent(currentShareProfit, currentDividends, shareholding),
+      previous: salary + kensingtonLlpIncomeComponent(previousShareProfit, previousDividends, shareholding)
     };
   }
 
@@ -368,6 +368,14 @@ function kensingtonSelfEmployedIncome(
     current: lowerOfLatestAndAverage(currentProfit, previousProfit),
     previous: previousProfit
   };
+}
+
+function kensingtonLlpIncomeComponent(shareProfit: number, dividends: number, shareholding: number): number {
+  if (shareholding >= 25) {
+    return Math.max(shareProfit, dividends);
+  }
+
+  return dividends > 0 ? dividends : shareProfit;
 }
 
 function kensingtonOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] {
