@@ -154,8 +154,8 @@ async function fillNatWestCalculator(page: Page, input: LenderReadyInput): Promi
   await selectFirstAvailableOption(page, ["Total number of dependants", "Number of dependants", "Financial dependants", "Dependants"], [String(input.household.dependants.length)]);
   await fillFirstAvailableCurrency(page, ["Credit card balances", "Credit/store card balances", "Total credit card balances", "Total credit card/store card/overdraft/mail order/budget account balance"], input.outgoings.creditCardBalances + input.outgoings.overdraftBalances);
   await fillFirstAvailableCurrency(page, ["Monthly loan repayments", "Loan commitments", "Monthly credit commitments", "Monthly loan payments"], input.outgoings.monthlyLoanRepayments);
+  await fillFirstAvailableCurrency(page, ["Monthly hire purchase payments", "Hire purchase payments", "Monthly car lease payments"], input.outgoings.monthlyPersonalLoanOrHirePurchase ?? 0);
   await fillFirstAvailableCurrency(page, ["Other monthly outgoings", "Other committed expenditure", "Other financial commitments", "Maintenance / other committed expenditure"], input.outgoings.otherMonthlyOutgoings);
-  await fillFirstAvailableCurrency(page, ["Monthly Buy to Let mortgage payments", "Buy to Let mortgage payments", "Monthly BTL payments"], input.outgoings.monthlyBuyToLetPayments);
   await selectFirstAvailableOption(page, ["Are there any personal changes that will affect the customers ability to pay this mortgage over the next 5 years"], ["No"]);
 
   await fillOtherMortgages(page, input);
@@ -168,9 +168,8 @@ async function fillApplicant(page: Page, applicant: Applicant, isInScotland: boo
 
   if (applicant.employment.type === "employed") {
     await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} main income annual gross`, "Annual basic income", "Gross annual income", "Annual gross income", "Basic salary"], applicant.employment.annualGrossIncome ?? 0);
-    await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} gross annual guaranteed bonus / discretionary bonus paid monthly or quarterly`, "Annual overtime", "Overtime"], (applicant.employment.annualOvertime ?? 0) + (applicant.employment.annualCommission ?? 0));
+    await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} gross annual guaranteed bonus / discretionary bonus paid monthly or quarterly`, "Annual overtime", "Overtime"], 0);
     await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} gross annual discretionary bonus paid half yearly or annually`, "Annual bonus", "Bonus"], applicant.employment.annualBonus ?? 0);
-    await fillFirstAvailableCurrency(scope, ["Annual commission", "Commission"], applicant.employment.annualCommission ?? 0);
   }
 
   if (applicant.employment.type === "self_employed") {
@@ -181,7 +180,7 @@ async function fillApplicant(page: Page, applicant: Applicant, isInScotland: boo
     await fillFirstAvailableCurrency(scope, ["Previous year", "Net profit previous year"], applicant.employment.netProfitPreviousYear ?? 0);
   }
 
-  await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} pension contributions on completion of this mortgage`, "Annual pension income", "Pension income"], applicant.employment.annualPensionIncome ?? 0);
+  await fillFirstAvailableCurrency(page, [`Applicant ${applicant.index} pension contributions on completion of this mortgage`, "Pension contributions"], applicant.monthlyPensionContribution ?? 0);
   await fillFirstAvailableCurrency(scope, ["Other annual pension income", "Other pension income"], applicant.employment.otherAnnualPensionIncome ?? 0);
   await fillFirstAvailableCurrency(scope, ["Other annual income", "Other income"], totalOtherIncome(applicant));
 }
@@ -191,7 +190,6 @@ async function fillOtherMortgages(page: Page, input: LenderReadyInput): Promise<
   await chooseFirstAvailableOption(page, hasOtherMortgages ? ["Yes"] : ["No"], ["Other mortgages", "Existing mortgages", "Other properties"]);
 
   const totalOtherMortgagePayments =
-    input.outgoings.monthlyBuyToLetPayments +
     input.otherProperties.reduce((sum, property) => sum + property.monthlyMortgagePayment, 0);
   const totalOtherMortgageBalances =
     input.otherProperties.reduce((sum, property) => sum + (property.currentBalance ?? 0), 0) +

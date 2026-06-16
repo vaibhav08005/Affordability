@@ -101,6 +101,7 @@ export function mapNatWestRawInput(raw: RawRecord): NatWestRawMappingResult {
       overdraftBalances: mapOverdraftBalances(raw),
       otherMonthlyOutgoings: mapOtherMonthlyOutgoings(raw),
       monthlyBuyToLetPayments,
+      monthlyPersonalLoanOrHirePurchase: mapMonthlyHirePurchasePayments(raw),
       otherMortgageCommitments: []
     },
     otherProperties
@@ -254,6 +255,7 @@ function buildApplicant(raw: RawRecord, index: 1 | 2, issues: MappingIssue[]): A
     dateOfBirth,
     age: ageFromDate(dateOfBirth),
     retirementAge: rawNumber(raw[`${prefix}_retirement_age`], 70),
+    monthlyPensionContribution: rawNumber(raw[`${prefix}_outgoings_pension_contribution`], 0),
     employment: mapEmployment(raw, index),
     otherIncome: mapOtherIncome(raw, index)
   };
@@ -325,7 +327,10 @@ function mapAnnualGrossIncome(raw: RawRecord, prefix: string, isContractor: bool
   }
   return rawNumber(raw[`${prefix}_gross_annual_salary`], 0) +
     annualize(raw[`${prefix}_recent_regular_allowance`], raw[`${prefix}_recent_regular_allowance_frequency`]) +
-    annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]);
+    annualize(raw[`${prefix}_recent_other_allowance`], raw[`${prefix}_recent_other_allowance_frequency`]) +
+    annualize(raw[`${prefix}_recent_overtime`], raw[`${prefix}_recent_overtime_frequency`]) +
+    annualize(raw[`${prefix}_recent_commission`], raw[`${prefix}_recent_commission_frequency`]) +
+    natWestMainIncomeAdditions(raw, prefix);
 }
 
 function mapAnnualBonus(raw: RawRecord, prefix: string, type: EmploymentType, ownershipPercentage: number): number {
@@ -366,19 +371,28 @@ function mapSelfEmployedProfits(raw: RawRecord, prefix: string, businessType: Se
 function mapOtherIncome(raw: RawRecord, index: 1 | 2): Applicant["otherIncome"] {
   const prefix = `var_appl${index}`;
   const entries: Applicant["otherIncome"] = [];
-  addIncome(entries, "investment_income", rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12);
   addIncome(entries, "nursing_bank", annualize(raw[`${prefix}_recent_nursing_bank`], raw[`${prefix}_recent_nursing_bank_frequency`]));
   addIncome(entries, "additional_duty_hours", annualize(raw[`${prefix}_recent_additional_hours`], raw[`${prefix}_recent_additional_hours_frequency`]));
-  addIncome(entries, "child_benefit", annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
+  if (childBenefitEligible(raw, prefix)) {
+    addIncome(entries, "child_benefit", annualize(raw[`${prefix}_child_benefits_amt`], raw[`${prefix}_child_benefits_frequency`]));
+  }
   addIncome(entries, "child_tax_credit", annualize(raw[`${prefix}_child_tax_credits`], raw[`${prefix}_child_tax_credits_frequency`]));
   addIncome(entries, "employment_support_allowance", annualize(raw[`${prefix}_employment_and_support_allowance`], raw[`${prefix}_employment_and_support_allowance_frequency`]));
-  addIncome(entries, "personal_independence_payment", annualize(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]));
-  addIncome(entries, "disability_living_allowance", annualize(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]));
-  addIncome(entries, "carers_allowance", annualize(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]));
-  addIncome(entries, "income_support", annualize(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]));
   addIncome(entries, "universal_credit", annualize(raw[`${prefix}_other_state_benefits`], raw[`${prefix}_other_state_benefits_frequency`]));
-  addIncome(entries, "maintenance", rawNumber(raw[`${prefix}_mthly_maint_amt`], 0) * 12);
   return mergeIncome(entries);
+}
+
+function natWestMainIncomeAdditions(raw: RawRecord, prefix: string): number {
+  return rawNumber(raw[`${prefix}_land_curr_profit`], 0) * 12 +
+    annualize(raw[`${prefix}_carers_allowance`], raw[`${prefix}_carers_allowance_frequency`]) +
+    rawNumber(raw[`${prefix}_mthly_maint_amt`], 0) * 12 +
+    annualize(raw[`${prefix}_personal_independence_payment`], raw[`${prefix}_personal_independence_payment_frequency`]) +
+    annualize(raw[`${prefix}_disability_living_allowance`], raw[`${prefix}_disability_living_allowance_frequency`]) +
+    annualize(raw[`${prefix}_income_support`], raw[`${prefix}_income_support_frequency`]);
+}
+
+function childBenefitEligible(raw: RawRecord, prefix: string): boolean {
+  return rawNumber(raw[`${prefix}_gross_annual_salary`], 0) < 50000;
 }
 
 function mapDependants(raw: RawRecord, numberOfApplicants: 1 | 2): LenderReadyInput["household"]["dependants"] {
@@ -401,9 +415,13 @@ function mapDependants(raw: RawRecord, numberOfApplicants: 1 | 2): LenderReadyIn
 }
 
 function mapMonthlyLoanRepayments(raw: RawRecord): number {
-  return sumCreditCommitments(raw, ["loans", "loan", "student_loans", "student_loan", "secured_loans", "hire_purchase", "lease", "buy_now_pay_later"]) +
+  return sumCreditCommitments(raw, ["loans", "loan", "personal_loans", "personal_loan", "student_loans", "student_loan", "secured_loans", "secured_loan", "buy_now_pay_later"]) +
     mapBuyToLetShortfall(raw) +
     helpToBuyMonthlyInterest(raw);
+}
+
+function mapMonthlyHirePurchasePayments(raw: RawRecord): number {
+  return sumCreditCommitments(raw, ["hire_purchase", "lease"]);
 }
 
 function mapCreditCardBalances(raw: RawRecord): number {
@@ -416,14 +434,11 @@ function mapOverdraftBalances(raw: RawRecord): number {
 
 function mapOtherMonthlyOutgoings(raw: RawRecord): number {
   return sumApplicantNumbers(raw, "outgoings_other_committed_exp") +
-    sumApplicantNumbers(raw, "outgoings_transport_travel") +
     sumApplicantNumbers(raw, "outgoings_childcare_cost") +
     sumApplicantNumbers(raw, "outgoings_nursery_school_fee") +
     sumApplicantNumbers(raw, "outgoings_maintenance_payment") +
-    rawNumber(raw.var_property_details_mthly_council_tax, 0) +
     rawNumber(raw.var_property_details_mthly_grnd_rent, 0) +
-    rawNumber(raw.var_property_details_mthly_serv_charges, 0) +
-    rawNumber(raw.var_property_details_mthly_bldg_ins, 0);
+    rawNumber(raw.var_property_details_mthly_serv_charges, 0);
 }
 
 function mapNatWestOtherProperties(raw: RawRecord, issues: MappingIssue[]): LenderReadyInput["otherProperties"] {
