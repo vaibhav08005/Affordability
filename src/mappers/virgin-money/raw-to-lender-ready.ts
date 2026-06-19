@@ -517,6 +517,7 @@ function mapResidentialMortgageCommitments(raw: RawRecord): LenderReadyInput["ou
     .filter((property) => !isBuyToLetProperty(property))
     .map((property) => ({
       outstandingBalance: rawNumber(property.current_balance, 0),
+      monthlyRepayment: rawNumber(property.monthly_repayment, 0),
       remainingTermYears: Math.max(1, monthsToYears(rawNumber(property.remaining_term, 12)))
     }))
     .filter((commitment) => commitment.outstandingBalance > 0);

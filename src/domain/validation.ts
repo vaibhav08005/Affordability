@@ -126,6 +126,7 @@ export const lenderReadyInputSchema = z.object({
     monthlyInsuranceAndPensions: money.optional(),
     otherMortgageCommitments: z.array(z.object({
       outstandingBalance: money,
+      monthlyRepayment: money.optional(),
       remainingTermYears: positiveInteger
     })).default([])
   }),

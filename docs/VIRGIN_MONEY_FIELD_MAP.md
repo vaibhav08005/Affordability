@@ -62,7 +62,9 @@ Virgin Money is a multi-page MVC form:
 | Monthly childcare and education | `Form_Outgoings_MonthlyChildcareEducation` | Adapter default 0 | None | 02 dependent branch noted |
 | Monthly maintenance/child support | `Form_Outgoings_MonthlyMaintenanceCSA` | Adapter default 0 | None | 07 field noted |
 | Other residential properties | `YesOtherResi`, `NoOtherResi` | `otherProperties.length > 0 || otherMortgageCommitments.length > 0` | Yes caps LTV and may reveal extra details in future work | 09, 10 |
+| Total other residential monthly repayments | `Form_Outgoings_OtherResidentialMortgagesMonthlyRepayment` | `outgoings.otherMortgageCommitments[].monthlyRepayment` | Visible when other residential properties is Yes | 02 |
 | Other buy-to-let mortgages | `YesOtherBTL`, `NoOtherBTL` | `outgoings.monthlyBuyToLetPayments > 0` | None observed beyond yes/no | 09 |
+| Other buy-to-let monthly repayments | `Form_Outgoings_OtherBuyToLetMortgagesMonthlyRepayment` | `outgoings.monthlyBuyToLetPayments` | Visible when other BTL mortgages is Yes | 02, 09 |
 | Current credit card balances | `Form_Outgoings_OutstandingCredit` | `creditCardBalances + overdraftBalances` | None | 01, 10 |
 | Credit outstanding after completion | `Form_Outgoings_OutstandingCreditCompletion` | Same as current credit balance | None | 01, 10 |
 | Current loan repayments per month | `Form_Outgoings_CurrentLoanRepayments` | `monthlyLoanRepayments` | None | 01, 05, 10 |

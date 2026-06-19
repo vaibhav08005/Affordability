@@ -158,6 +158,7 @@ export interface OtherProperty {
 
 export interface OtherMortgageCommitment {
   outstandingBalance: number;
+  monthlyRepayment?: number;
   remainingTermYears: number;
 }
 

@@ -325,9 +325,9 @@ function secondIncome(applicant: Applicant): number {
 }
 
 function otherResidentialMonthlyRepayments(input: LenderReadyInput): number {
-  const propertyPayments = input.otherProperties.reduce((sum, property) => sum + property.monthlyMortgagePayment, 0);
-  const commitments = input.outgoings.otherMortgageCommitments.length * 1;
-  return Math.max(1, propertyPayments + commitments);
+  const commitments = input.outgoings.otherMortgageCommitments
+    .reduce((sum, commitment) => sum + (commitment.monthlyRepayment ?? 0), 0);
+  return Math.max(1, commitments);
 }
 
 function otherPropertyRent(input: LenderReadyInput): number {
