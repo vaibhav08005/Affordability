@@ -152,6 +152,30 @@
         color: #697586;
       }
 
+      .message-cell {
+        max-width: 620px;
+        white-space: nowrap;
+      }
+
+      .message-text {
+        display: inline-block;
+        max-width: min(520px, 55vw);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+
+      .details-button {
+        color: #2563eb;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        margin-left: 10px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+
       .summary {
         margin: -8px 0 20px;
         color: #52606d;
@@ -466,7 +490,7 @@
                       <td><strong>${formatLender(run.lender)}</strong></td>
                       <td data-lender-status="${escapeHtml(run.lender)}">${statusHtml(run, details)}</td>
                       <td class="amount" data-lender-affordability="${escapeHtml(run.lender)}">${formatAffordability(run)}</td>
-                      <td class="muted" data-lender-message="${escapeHtml(run.lender)}">${escapeHtml(formatMessage(run))}</td>
+                      <td class="muted message-cell" data-lender-message="${escapeHtml(run.lender)}">${formatMessageCell(run)}</td>
                       <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
                       <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
                     </tr>
@@ -490,6 +514,8 @@
             }
           });
         });
+
+        bindMessageDetails();
       }
 
       function updateCaseTable(details, lenders, run = null) {
@@ -516,7 +542,7 @@
 
           setHtml(`[data-lender-status="${lender}"]`, statusHtml(lenderRun, details));
           setText(`[data-lender-affordability="${lender}"]`, formatAffordability(lenderRun));
-          setText(`[data-lender-message="${lender}"]`, formatMessage(lenderRun));
+          setHtml(`[data-lender-message="${lender}"]`, formatMessageCell(lenderRun));
           setHtml(`[data-lender-output="${lender}"]`, formatOutput(lenderRun));
           setHtml(`[data-lender-evidence="${lender}"]`, formatEvidence(lenderRun));
         }
@@ -531,6 +557,8 @@
             }
           });
         });
+
+        bindMessageDetails();
       }
 
       function setText(selector, value) {
@@ -643,6 +671,27 @@
         });
       }
 
+      function showText(title, value) {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
+          <div class="modal-panel" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+            <div class="modal-header">
+              <h2>${escapeHtml(title)}</h2>
+              <button class="close-button" aria-label="Close">&times;</button>
+            </div>
+            <pre class="input-json">${escapeHtml(value)}</pre>
+          </div>
+        `;
+
+        document.body.append(modal);
+        const close = () => modal.remove();
+        modal.querySelector(".close-button").addEventListener("click", close);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) close();
+        });
+      }
+
       function formatLender(value) {
         return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
       }
@@ -691,9 +740,37 @@
           : `<button class="input-link" data-output-lender="${escapeHtml(run.lender)}">View JSON</button>`;
       }
 
+      function formatMessageCell(run) {
+        const message = formatMessage(run);
+        const compact = compactMessage(message);
+        const needsDetails = message.length > 160 || message !== compact;
+        return `
+          <span class="message-text" title="${escapeHtml(compact)}">${escapeHtml(compact)}</span>
+          ${needsDetails ? `<button class="details-button" data-error-lender="${escapeHtml(run.lender)}">Details</button>` : ""}
+        `;
+      }
+
       function formatMessage(run) {
         if (run.status === "success") return "Congratulations, affordability result returned successfully.";
         return run.message;
+      }
+
+      function compactMessage(message) {
+        const singleLine = String(message ?? "").replace(/\s+/g, " ").trim();
+        return singleLine.length > 160 ? `${singleLine.slice(0, 157)}...` : singleLine;
+      }
+
+      function bindMessageDetails() {
+        app.querySelectorAll("[data-error-lender]").forEach((button) => {
+          if (button.dataset.boundErrorClick === "true") return;
+          button.dataset.boundErrorClick = "true";
+          button.addEventListener("click", () => {
+            const run = currentCaseTableLenders.find((candidate) => candidate.lender === button.dataset.errorLender);
+            if (run) {
+              showText(`Error details: ${formatLender(run.lender)}`, formatMessage(run));
+            }
+          });
+        });
       }
 
       function formatRunProgress(run) {
