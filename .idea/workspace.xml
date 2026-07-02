@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c68a448d-4207-4cc8-b573-bf8576697986" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/adapters/hsbc/adapter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/hsbc/adapter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mappers/hsbc/raw-to-lender-ready.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/mappers/hsbc/raw-to-lender-ready.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mappers/production-case-49.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/mappers/production-case-49.test.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3Fs4kJZQ30dv19AgWuU5WfTrMac" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c68a448d-4207-4cc8-b573-bf8576697986" name="Changes" comment="" />
+      <created>1782850587564</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1782850587564</updated>
+    </task>
+    <servers />
+  </component>
+</project>

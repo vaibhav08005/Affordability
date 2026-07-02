@@ -137,12 +137,12 @@ function mapLoanAmount(raw: RawRecord, mortgagePurpose: MortgagePurpose, propert
 
 function mapTermYears(raw: RawRecord, issues: MappingIssue[]): number {
   const rawTerm = monthsToYears(rawNumber(raw.var_new_mortgage_term ?? raw.var_mortgage_term, 300));
-  if (rawTerm > 30) {
+  if (rawTerm > 25) {
     issues.push({
       field: "case.termYears",
-      message: "HSBC workbook lists mortgage term choices up to 30 years; mapped term was capped at 30."
+      message: "HSBC calculator lists mortgage term choices up to 25 years; mapped term was capped at 25."
     });
-    return 30;
+    return 25;
   }
   return rawTerm;
 }

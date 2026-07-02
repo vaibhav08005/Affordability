@@ -420,17 +420,18 @@ async function fillFirstUsableField(locator: Locator, value: string): Promise<bo
 }
 
 async function fillTerm(page: Page, termYears: number): Promise<void> {
+  const cappedTermYears = Math.min(termYears, 25);
   const yearsFilled =
-    await selectById(page, "yearsAndMonths.years-field", [String(termYears)]) ||
-    await selectFirstAvailableOption(page, ["Mortgage term", "Mortgage term years", "Term years", "Years"], [String(termYears)]) ||
-    await fillFirstAvailableText(page, ["Mortgage term years", "Term years"], String(termYears));
+    await selectById(page, "yearsAndMonths.years-field", [String(cappedTermYears)]) ||
+    await selectFirstAvailableOption(page, ["Mortgage term", "Mortgage term years", "Term years", "Years"], [String(cappedTermYears)]) ||
+    await fillFirstAvailableText(page, ["Mortgage term years", "Term years"], String(cappedTermYears));
 
   await selectById(page, "yearsAndMonths.months-field", ["0"]) ||
   await selectFirstAvailableOption(page, ["Mortgage term months", "Term months", "Months"], ["0"]) ||
     await fillFirstAvailableText(page, ["Mortgage term months", "Term months"], "0");
 
   if (!yearsFilled) {
-    await fillFirstAvailableText(page, ["Mortgage term", "Loan term"], String(termYears));
+    await fillFirstAvailableText(page, ["Mortgage term", "Loan term"], String(cappedTermYears));
   }
 }
 

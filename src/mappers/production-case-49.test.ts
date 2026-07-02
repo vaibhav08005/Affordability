@@ -20,6 +20,7 @@ test("HSBC mapper normalizes DOB and avoids double-counting variable income", as
   const raw = await loadRawCase();
   const mapped = lenderReadyInputSchema.parse(mapHsbcRawInput(raw).input);
 
+  assert.equal(mapped.case.termYears, 25);
   assert.equal(mapped.applicants[0].dateOfBirth, "1987-01-01");
   assert.equal(mapped.applicants[1].dateOfBirth, "1989-01-01");
 

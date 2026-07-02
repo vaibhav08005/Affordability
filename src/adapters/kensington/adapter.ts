@@ -67,7 +67,7 @@ export const kensingtonAdapter: LenderAdapter = {
 
 async function openKensingtonCalculator(page: Page, context: RunContext): Promise<void> {
   await page.goto(KENSINGTON_CALCULATOR_URL, { waitUntil: "networkidle" });
-  await clickFirstAvailableButton(page, ["Reject optional cookies", "Accept optional cookies"]).catch(() => undefined);
+  await dismissKensingtonCookieBanner(page);
   await page.locator("#clientName").waitFor({ state: "visible", timeout: Math.min(context.timeoutMs, 20000) });
 }
 
@@ -107,6 +107,7 @@ async function fillKensingtonCalculator(page: Page, input: LenderReadyInput, con
   await setInputValueById(page, "revolvingCreditBalance", money(input.outgoings.creditCardBalances + input.outgoings.overdraftBalances));
 
   const apiResult = page.waitForResponse((response) => response.url().includes("/kmc-api/webcalculator"), { timeout: Math.min(context.timeoutMs, 20000) }).catch(() => null);
+  await dismissKensingtonCookieBanner(page);
   await page.locator("#SubmitButton").click({ force: true });
   const response = await Promise.race([
     apiResult,
@@ -118,6 +119,39 @@ async function fillKensingtonCalculator(page: Page, input: LenderReadyInput, con
   ]);
   if (!response) return null;
   return parseApiMaximum(await response.text().catch(() => ""));
+}
+
+async function dismissKensingtonCookieBanner(page: Page): Promise<void> {
+  const clicked = await page.evaluate(() => {
+    const selectors = [
+      "#onetrust-reject-all-handler",
+      "#onetrust-accept-btn-handler",
+      ".save-preference-btn-handler",
+      "#accept-recommended-btn-handler",
+      "#close-pc-btn-handler"
+    ];
+    for (const selector of selectors) {
+      const button = document.querySelector<HTMLElement>(selector);
+      if (button && !!(button.offsetWidth || button.offsetHeight || button.getClientRects().length)) {
+        button.click();
+        return true;
+      }
+    }
+    return false;
+  }).catch(() => false) ||
+    await clickFirstAvailableButton(page, ["Reject optional cookies", "Accept optional cookies", "Save Preferences", "Allow Cookies"]).catch(() => false);
+
+  if (clicked) {
+    await page.waitForTimeout(500);
+  }
+
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>("#onetrust-banner-sdk, #onetrust-pc-sdk, .onetrust-pc-dark-filter")
+      .forEach((element) => {
+        element.style.display = "none";
+        element.setAttribute("aria-hidden", "true");
+      });
+  }).catch(() => undefined);
 }
 
 async function fillApplicant(page: Page, applicant: Applicant, input: LenderReadyInput): Promise<void> {
