@@ -29,8 +29,10 @@
     "map:nationwide:cases": "npm run build && node scripts/map-nationwide-raw-cases.mjs",
     "start": "node dist/server.js",
     "start:cli": "node dist/cli.js samples/halifax/test-case-1.json",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "clean": "node scripts/clean-dist.mjs",
     "check": "tsc -p tsconfig.json --noEmit",
+    "test:extension": "npm run build && node --test extension/extension.test.mjs",
     "test": "node --test dist/**/*.test.js"
   },
   "dependencies": {

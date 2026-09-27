@@ -79,6 +79,20 @@
         cursor: wait;
       }
 
+      .open-calculator {
+        background: #1d4ed8;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+
+      .open-calculator:disabled { opacity: .55; cursor: wait; }
+      .calculator-status { display: block; color: #52606d; font-size: 11px; margin-top: 5px; max-width: 190px; }
+
       .table {
         width: 100%;
         border-collapse: collapse;
@@ -480,6 +494,7 @@
                 <th>Message</th>
                 <th>Output</th>
                 <th>Evidence</th>
+                <th>Live calculator</th>
               </tr>
             </thead>
             <tbody>
@@ -493,6 +508,7 @@
                       <td class="muted message-cell" data-lender-message="${escapeHtml(run.lender)}">${formatMessageCell(run)}</td>
                       <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
                       <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
+                      <td><button class="open-calculator" data-calculator-case="${escapeHtml(details.id)}" data-calculator-lender="${escapeHtml(run.lender)}">Open filled calculator</button><span class="calculator-status" data-calculator-status role="status"></span></td>
                     </tr>
                   `
                 )
@@ -516,6 +532,7 @@
         });
 
         bindMessageDetails();
+        bindCalculatorButtons();
       }
 
       function updateCaseTable(details, lenders, run = null) {
@@ -559,6 +576,56 @@
         });
 
         bindMessageDetails();
+        bindCalculatorButtons();
+      }
+
+      function bindCalculatorButtons() {
+        app.querySelectorAll("[data-calculator-case]").forEach((button) => {
+          if (button.dataset.calculatorBound) return;
+          button.dataset.calculatorBound = "true";
+          button.addEventListener("click", () => openFilledCalculator(button));
+        });
+      }
+
+      async function openFilledCalculator(button) {
+        const status = button.parentElement.querySelector("[data-calculator-status]");
+        const requestId = crypto.randomUUID();
+        const channel = "mortgage-affordability-extension-v1";
+        button.disabled = true;
+        status.textContent = "Connecting to Chrome extension…";
+        try {
+          await new Promise((resolve, reject) => {
+            let acknowledged = false;
+            const readyTimer = setTimeout(() => finish(new Error("Chrome extension not found. Install it, then refresh this page.")), 1500);
+            const resultTimer = setTimeout(() => finish(new Error("The extension did not open the calculator in time.")), 30000);
+            function finish(error) {
+              clearTimeout(readyTimer);
+              clearTimeout(resultTimer);
+              window.removeEventListener("message", onMessage);
+              if (error) reject(error); else resolve();
+            }
+            function onMessage(event) {
+              if (event.source !== window || event.origin !== location.origin) return;
+              const data = event.data;
+              if (data?.channel !== channel || data.requestId !== requestId) return;
+              if (data.type === "OPEN_ACK") {
+                acknowledged = true;
+                clearTimeout(readyTimer);
+                status.textContent = "Preparing mapped case…";
+              } else if (data.type === "OPEN_RESULT") {
+                if (!acknowledged) clearTimeout(readyTimer);
+                finish(data.ok ? null : new Error(data.error || "Could not open the calculator."));
+              }
+            }
+            window.addEventListener("message", onMessage);
+            window.postMessage({ channel, type: "OPEN_REQUEST", requestId, caseId: button.dataset.calculatorCase, lender: button.dataset.calculatorLender }, location.origin);
+          });
+          status.textContent = "Opened in Chrome. Review the fields before calculating.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Could not open the calculator.";
+        } finally {
+          button.disabled = false;
+        }
       }
 
       function setText(selector, value) {

@@ -13,6 +13,7 @@ The interface provides a small local page for:
 - Opening screenshot/PDF evidence artifacts for saved runs.
 - Running affordability for the selected case across all nine mapped lenders.
 - Polling asynchronous run progress when worker fanout is enabled.
+- Opening each lender's editable calculator in the user's Chrome through the [Chrome extension](CHROME_EXTENSION.md).
 
 The UI is intentionally minimal and does not use a frontend framework.
 

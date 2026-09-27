@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Affordability Calculator Opener",
+  "version": "0.1.0",
+  "description": "Open lender calculators in Chrome and fill case data for manual review.",
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["https://www.santanderforintermediaries.co.uk/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mortgage-affordability-demo-476501925780.europe-west2.run.app/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": ["website.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://onlinemortgages.uk.barclays/*",
+        "https://www2.halifax-intermediariesonline.co.uk/*",
+        "https://www.hsbc.co.uk/*",
+        "https://www.kensingtonmortgages.co.uk/*",
+        "https://spa.mortgages.natwest.com/*",
+        "https://www.nationwide-intermediary.co.uk/*",
+        "https://www.santanderforintermediaries.co.uk/*",
+        "https://affordability.skipton-intermediaries.co.uk/*",
+        "https://intermediaries.virginmoney.com/*"
+      ],
+      "js": ["fill-plan.js", "lender.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

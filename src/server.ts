@@ -147,6 +147,41 @@ app.get("/api/cases/:caseId/input", async (request, response) => {
   }
 });
 
+app.post("/api/extension-input", async (request, response) => {
+  response.set("Cache-Control", "no-store");
+  const origin = request.get("origin");
+  if (!origin || !request.is("application/json")) {
+    response.status(403).json({ error: "The case must be requested from this website." });
+    return;
+  }
+  try {
+    const parsedOrigin = new URL(origin);
+    if (!["http:", "https:"].includes(parsedOrigin.protocol) || parsedOrigin.origin !== origin ||
+        parsedOrigin.host.toLowerCase() !== request.get("host")?.toLowerCase()) {
+      response.status(403).json({ error: "The case must be requested from this website." });
+      return;
+    }
+  } catch {
+    response.status(403).json({ error: "The case must be requested from this website." });
+    return;
+  }
+  const { caseId, lender } = request.body ?? {};
+  if (typeof caseId !== "string" || !/^[a-z0-9-]{1,150}$/.test(caseId) || !isMappedLender(lender)) {
+    response.status(400).json({ error: "Invalid case or lender." });
+    return;
+  }
+  try {
+    const sample = await loadMappedSampleForCase(caseId, lender);
+    if (!sample) {
+      response.status(404).json({ error: "Case input is unavailable." });
+      return;
+    }
+    response.json({ caseId, lender, input: sample.input });
+  } catch (error) {
+    response.status(400).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
 app.post("/api/cases/:caseId/run-affordability", async (request, response) => {
   try {
     const caseSample = await loadHalifaxCaseSample(request.params.caseId);
@@ -751,6 +786,10 @@ function isLenderId(value: unknown): value is LenderId {
     value === "virgin_money" ||
     value === "kensington"
   );
+}
+
+function isMappedLender(value: unknown): value is MappedLender {
+  return typeof value === "string" && mappedLenders.includes(value as MappedLender);
 }
 
 function caseIdFromInput(input: LenderReadyInput): string {

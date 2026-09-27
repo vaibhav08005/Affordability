@@ -6,6 +6,7 @@ dist
 docs
 Mapping_xlxs
 node_modules
+runner-packages
 tmp
 
 .env

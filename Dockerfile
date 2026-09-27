@@ -10,6 +10,7 @@ RUN npm ci
 COPY src ./src
 COPY public ./public
 COPY samples ./samples
+COPY scripts/clean-dist.mjs ./scripts/clean-dist.mjs
 
 RUN npm run build && npm prune --omit=dev
 
