@@ -5,6 +5,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import {
   employmentTypeRadioIndex,
   regionValues,
@@ -20,6 +21,12 @@ interface PageEvidence {
 
 export const skiptonAdapter: LenderAdapter = {
   lender: "skipton",
+  async prepareForReview(input, context) {
+    return prepareManualCalculator(context, SKIPTON_CALCULATOR_URL, async (page) => {
+      await openSkiptonCalculator(page, context);
+      await fillSkiptonCalculator(page, input, context, [], true);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context, SKIPTON_CALCULATOR_URL);
@@ -85,7 +92,13 @@ async function openSkiptonCalculator(page: Page, context: RunContext): Promise<v
   await page.locator("#MainContent_btnNext").waitFor({ state: "visible", timeout: Math.min(context.timeoutMs, 20000) });
 }
 
-async function fillSkiptonCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
+async function fillSkiptonCalculator(
+  page: Page,
+  input: LenderReadyInput,
+  context: RunContext,
+  pageEvidence: PageEvidence[],
+  stopBeforeCalculate = false
+): Promise<void> {
   await fillApplicationDetails(page, input);
   await capturePageEvidence(page, context, pageEvidence, "01-application-details");
   await next(page, "CONTINUE TO STEP 2");
@@ -97,7 +110,7 @@ async function fillSkiptonCalculator(page: Page, input: LenderReadyInput, contex
   await next(page, "CONTINUE TO STEP 4");
   await fillExpenditure(page, input);
   await capturePageEvidence(page, context, pageEvidence, "04-expenditure");
-  await calculate(page);
+  if (!stopBeforeCalculate) await calculate(page);
 }
 
 async function fillApplicationDetails(page: Page, input: LenderReadyInput): Promise<void> {
@@ -359,6 +372,7 @@ function otherMortgageBalance(input: LenderReadyInput): number {
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.captureEvidence === false) return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `skipton-${name}`);
   pageEvidence.push({

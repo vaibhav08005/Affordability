@@ -4,7 +4,7 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { loadRunContext } from "./config.js";
-import { runAffordabilityAutomation } from "./service.js";
+import { prepareCalculatorForReview, runAffordabilityAutomation } from "./service.js";
 import type { AffordabilityResult, LenderId, LenderReadyInput, RunStatus } from "./domain/contracts.js";
 import { lenderReadyInputSchema } from "./domain/validation.js";
 import { mapBarclaysRawInput } from "./mappers/barclays/raw-to-lender-ready.js";
@@ -21,6 +21,7 @@ import { createArtifactReadStream, parseStorageUri, uploadResultArtifacts } from
 import { FirestoreRunStateRepository } from "./repositories/firestore-run-state-repository.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
 import { InMemoryRunStateRepository, type LenderRunRecord, type RunStateRepository } from "./repositories/run-state.js";
+import { ManualCalculatorSessionManager } from "./infrastructure/manual-calculator-sessions.js";
 
 const app = express();
 const rootDir = process.cwd();
@@ -28,6 +29,7 @@ const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
 const runStateRepository = createRunStateRepository();
+const manualCalculatorSessions = new ManualCalculatorSessionManager();
 type MappedLender =
   | "barclays"
   | "halifax"
@@ -127,10 +129,22 @@ app.get("/api/cases/:caseId", async (request, response) => {
       return;
     }
 
-    response.json(caseDetails);
+    response.json({
+      ...caseDetails,
+      manualCalculatorAvailable: isManualBrowserRequestAllowed(request),
+      manualSessions: isManualBrowserRequestAllowed(request) ? manualCalculatorSessions.listForCase(request.params.caseId) : []
+    });
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
+});
+
+app.get("/api/cases/:caseId/manual-sessions", (request, response) => {
+  if (!isManualBrowserRequestAllowed(request)) {
+    response.status(403).json({ error: "Manual calculator windows can only be managed from the local desktop app." });
+    return;
+  }
+  response.json({ sessions: manualCalculatorSessions.listForCase(request.params.caseId) });
 });
 
 app.get("/api/cases/:caseId/input", async (request, response) => {
@@ -145,6 +159,54 @@ app.get("/api/cases/:caseId/input", async (request, response) => {
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
+});
+
+app.post("/api/cases/:caseId/lenders/:lender/prepare", async (request, response) => {
+  if (!isManualBrowserRequestAllowed(request)) {
+    response.status(403).json({ error: "Manual calculator windows can only be opened from the local desktop app." });
+    return;
+  }
+
+  const lender = request.params.lender;
+  if (!isMappedLender(lender)) {
+    response.status(400).json({ error: "Unsupported lender." });
+    return;
+  }
+
+  try {
+    const sample = await loadMappedSampleForCase(request.params.caseId, lender);
+    if (!sample) {
+      response.status(404).json({ error: "Case not found." });
+      return;
+    }
+
+    const opened = await manualCalculatorSessions.open(
+      request.params.caseId,
+      lender,
+      () => prepareCalculatorForReview(sample.input, loadRunContext())
+    );
+    response.json({
+      ...opened.session,
+      status: opened.reused ? "already_open" : "ready"
+    });
+  } catch (error) {
+    response.status(422).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.delete("/api/manual-calculator-sessions/:sessionId", async (request, response) => {
+  if (!isManualBrowserRequestAllowed(request)) {
+    response.status(403).json({ error: "Manual calculator windows can only be managed from the local desktop app." });
+    return;
+  }
+
+  const closed = await manualCalculatorSessions.close(request.params.sessionId);
+  if (!closed) {
+    response.status(404).json({ error: "Calculator session not found or already closed." });
+    return;
+  }
+
+  response.json({ status: "closed" });
 });
 
 app.post("/api/cases/:caseId/run-affordability", async (request, response) => {
@@ -235,9 +297,18 @@ app.post("/worker/lender-task", async (request, response) => {
 });
 
 const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Affordability automation API listening on ${port}`);
 });
+
+let shuttingDown = false;
+const shutdown = () => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  void manualCalculatorSessions.closeAll().finally(() => server.close());
+};
+process.once("SIGINT", shutdown);
+process.once("SIGTERM", shutdown);
 
 interface CaseSample {
   id: string;
@@ -751,6 +822,16 @@ function isLenderId(value: unknown): value is LenderId {
     value === "virgin_money" ||
     value === "kensington"
   );
+}
+
+function isMappedLender(value: string): value is MappedLender {
+  return mappedLenders.includes(value as MappedLender);
+}
+
+function isManualBrowserRequestAllowed(request: express.Request): boolean {
+  if (process.env.K_SERVICE) return false;
+  const address = request.socket.remoteAddress?.toLowerCase();
+  return Boolean(address && (address === "::1" || address === "127.0.0.1" || address.startsWith("::ffff:127.")));
 }
 
 function caseIdFromInput(input: LenderReadyInput): string {

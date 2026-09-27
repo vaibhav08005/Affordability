@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderId, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import {
   applicationTypeLabels,
   customerTypeApplicationLabels,
@@ -16,6 +17,13 @@ import {
 
 export const hsbcAdapter: LenderAdapter = {
   lender: "hsbc" as LenderId,
+  async prepareForReview(input, context) {
+    return prepareManualCalculator(context, HSBC_CALCULATOR_URL, async (page) => {
+      await openHsbcCalculator(page, context);
+      await fillHsbcCalculator(page, input);
+      await acceptCookies(page);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context);

@@ -2,14 +2,13 @@ import { chromium, type Locator, type Page } from "playwright";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult } from "../../domain/contracts.js";
-import type { RunContext } from "../types.js";
+import type { BrowserSession, RunContext } from "../types.js";
 
-export interface BrowserSession {
-  page: Page;
-  close(): Promise<void>;
-}
-
-export async function createBrowserSession(context: RunContext, preferredUrl: string): Promise<BrowserSession> {
+export async function createBrowserSession(
+  context: RunContext,
+  preferredUrl?: string,
+  options: { headless?: boolean; newPage?: boolean } = {}
+): Promise<BrowserSession> {
   if (context.executionMode === "attached") {
     if (!context.browserWSEndpoint) {
       throw new Error("Attached browser execution requires BROWSER_WS_ENDPOINT.");
@@ -17,22 +16,29 @@ export async function createBrowserSession(context: RunContext, preferredUrl: st
 
     const browser = await chromium.connectOverCDP(context.browserWSEndpoint);
     const browserContext = browser.contexts()[0] ?? await browser.newContext();
-    const page =
-      browserContext.pages().find((candidate) => candidate.url().startsWith(preferredUrl)) ??
-      browserContext.pages()[0] ??
-      await browserContext.newPage();
+    const page = options.newPage
+      ? await browserContext.newPage()
+      : browserContext.pages().find((candidate) => preferredUrl && candidate.url().startsWith(preferredUrl)) ??
+        browserContext.pages()[0] ??
+        await browserContext.newPage();
     await page.setViewportSize({ width: 1365, height: 1000 }).catch(() => undefined);
+    let closed = false;
 
     return {
       page,
       async close() {
+        if (closed) return;
+        closed = true;
+        if (options.newPage) {
+          await page.close().catch(() => undefined);
+        }
         await browser.close();
       }
     };
   }
 
   const browser = await chromium.launch({
-    headless: context.headless,
+    headless: options.headless ?? context.headless,
     args: ["--disable-blink-features=AutomationControlled"]
   });
   const browserContext = await browser.newContext({
@@ -50,16 +56,30 @@ export async function createBrowserSession(context: RunContext, preferredUrl: st
       height: 1000
     }
   });
+  let closed = false;
 
   return {
     page: await browserContext.newPage(),
     async close() {
+      if (closed) return;
+      closed = true;
       await browser.close();
     }
   };
 }
 
+export async function createManualBrowserSession(context: RunContext, preferredUrl?: string): Promise<BrowserSession> {
+  return createBrowserSession(
+    { ...context, captureEvidence: false },
+    preferredUrl,
+    { headless: false, newPage: true }
+  );
+}
+
 export async function captureEvidence(page: Page, context: RunContext, name: string): Promise<string> {
+  if (context.captureEvidence === false) {
+    throw new Error("Evidence capture is disabled for this browser session.");
+  }
   await mkdir(context.screenshotDir, { recursive: true });
   const path = join(context.screenshotDir, `${name}-${Date.now()}.png`);
   await page.screenshot({ path, fullPage: true });

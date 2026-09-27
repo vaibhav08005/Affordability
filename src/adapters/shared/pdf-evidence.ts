@@ -16,6 +16,7 @@ export async function capturePageEvidence(
   lender: string,
   name: string
 ): Promise<void> {
+  if (context.captureEvidence === false) return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `${lender}-${name}`);
   pageEvidence.push({

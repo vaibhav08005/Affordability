@@ -53,6 +53,31 @@
         white-space: nowrap;
       }
 
+      .manual-button {
+        background: #e8efff;
+        border-radius: 6px;
+        color: #1d4ed8;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+
+      .manual-button:disabled {
+        color: #697586;
+        cursor: wait;
+      }
+
+      .manual-close-button {
+        color: #697586;
+        cursor: pointer;
+        font-size: 12px;
+        margin-left: 6px;
+        text-decoration: underline;
+        white-space: nowrap;
+      }
+
       .input-link {
         color: #2563eb;
         cursor: pointer;
@@ -271,9 +296,11 @@
       });
       const activeRunsKey = "affordabilityActiveRuns";
       let pollTimer = null;
+      let manualPollTimer = null;
       let currentCaseTableKey = null;
       let currentCaseTableDetails = null;
       let currentCaseTableLenders = [];
+      let currentCaseTableManualSessions = [];
 
       window.addEventListener("hashchange", render);
       render();
@@ -282,6 +309,10 @@
         if (pollTimer) {
           clearTimeout(pollTimer);
           pollTimer = null;
+        }
+        if (manualPollTimer) {
+          clearTimeout(manualPollTimer);
+          manualPollTimer = null;
         }
 
         const params = parseHash();
@@ -311,6 +342,7 @@
         currentCaseTableKey = null;
         currentCaseTableDetails = null;
         currentCaseTableLenders = [];
+        currentCaseTableManualSessions = [];
         app.innerHTML = "<h1>Cases</h1><div class='empty'>Loading cases...</div>";
         const { cases } = await fetchJson("/api/cases");
         const activeRuns = await loadActiveRuns();
@@ -460,6 +492,7 @@
         currentCaseTableKey = tableKey;
         currentCaseTableDetails = details;
         currentCaseTableLenders = lenders;
+        currentCaseTableManualSessions = details.manualSessions ?? [];
 
         app.innerHTML = `
           <button class="back">Back to cases</button>
@@ -480,6 +513,7 @@
                 <th>Message</th>
                 <th>Output</th>
                 <th>Evidence</th>
+                <th>Manual calculator</th>
               </tr>
             </thead>
             <tbody>
@@ -493,6 +527,7 @@
                       <td class="muted message-cell" data-lender-message="${escapeHtml(run.lender)}">${formatMessageCell(run)}</td>
                       <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
                       <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
+                      <td data-lender-manual="${escapeHtml(run.lender)}"></td>
                     </tr>
                   `
                 )
@@ -516,11 +551,13 @@
         });
 
         bindMessageDetails();
+        updateManualControls();
       }
 
       function updateCaseTable(details, lenders, run = null) {
         currentCaseTableDetails = details;
         currentCaseTableLenders = lenders;
+        currentCaseTableManualSessions = details.manualSessions ?? currentCaseTableManualSessions;
 
         const progress = app.querySelector("[data-run-progress]");
         if (!progress && run) {
@@ -559,6 +596,7 @@
         });
 
         bindMessageDetails();
+        updateManualControls();
       }
 
       function setText(selector, value) {
@@ -578,10 +616,102 @@
       async function fetchJson(url, options = undefined) {
         const response = await fetch(url, options);
         if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
+          const errorBody = await response.json().catch(() => null);
+          throw new Error(errorBody?.error ?? `Request failed: ${response.status}`);
         }
 
         return response.json();
+      }
+
+      function updateManualControls() {
+        if (!currentCaseTableDetails) return;
+        for (const lenderRun of currentCaseTableLenders) {
+          const lender = cssEscape(lenderRun.lender);
+          const cell = app.querySelector(`[data-lender-manual="${lender}"]`);
+          if (!cell) continue;
+          const session = currentCaseTableManualSessions.find((candidate) => candidate.lender === lenderRun.lender);
+          cell.innerHTML = formatManualCalculatorControl(
+            currentCaseTableDetails.id,
+            lenderRun.lender,
+            session,
+            currentCaseTableDetails.manualCalculatorAvailable !== false
+          );
+        }
+        bindManualCalculatorButtons();
+        scheduleManualSessionPoll();
+      }
+
+      function bindManualCalculatorButtons() {
+        app.querySelectorAll("[data-prepare-lender]").forEach((button) => {
+          if (button.dataset.boundManualOpen === "true") return;
+          button.dataset.boundManualOpen = "true";
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            await prepareLenderCalculator(button);
+          });
+        });
+
+        app.querySelectorAll("[data-close-manual-session]").forEach((button) => {
+          if (button.dataset.boundManualClose === "true") return;
+          button.dataset.boundManualClose = "true";
+          button.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            await closeManualCalculator(button);
+          });
+        });
+      }
+
+      async function prepareLenderCalculator(button) {
+        const caseId = button.dataset.caseId;
+        const lender = button.dataset.prepareLender;
+        button.disabled = true;
+        button.textContent = "Opening...";
+
+        try {
+          await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/lenders/${encodeURIComponent(lender)}/prepare`, {
+            method: "POST"
+          });
+          await refreshManualSessions(caseId);
+        } catch (error) {
+          console.error(error);
+          showText(`Could not open ${formatLender(lender)} calculator`, error instanceof Error ? error.message : String(error));
+          if (currentCaseTableDetails?.id === caseId) updateManualControls();
+        }
+      }
+
+      async function closeManualCalculator(button) {
+        const sessionId = button.dataset.closeManualSession;
+        const caseId = button.dataset.caseId;
+        button.disabled = true;
+        try {
+          await fetchJson(`/api/manual-calculator-sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
+          await refreshManualSessions(caseId);
+        } catch (error) {
+          console.error(error);
+          if (currentCaseTableDetails?.id === caseId) await refreshManualSessions(caseId).catch(() => undefined);
+        }
+      }
+
+      async function refreshManualSessions(caseId) {
+        const result = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/manual-sessions`);
+        if (currentCaseTableDetails?.id !== caseId) return;
+        currentCaseTableManualSessions = result.sessions;
+        updateManualControls();
+      }
+
+      function scheduleManualSessionPoll() {
+        if (manualPollTimer) {
+          clearTimeout(manualPollTimer);
+          manualPollTimer = null;
+        }
+        if (!currentCaseTableDetails || currentCaseTableManualSessions.length === 0) return;
+
+        const caseId = currentCaseTableDetails.id;
+        manualPollTimer = setTimeout(() => {
+          if (currentCaseTableDetails?.id === caseId) {
+            void refreshManualSessions(caseId).catch(() => scheduleManualSessionPoll());
+          }
+        }, 3000);
       }
 
       async function loadActiveRuns() {
@@ -789,6 +919,20 @@
             ${run.evidenceType === "pdf" ? pdfIcon() : imageIcon()}
           </a>
         `;
+      }
+
+      function formatManualCalculatorControl(caseId, lender, session, available = true) {
+        const encodedCaseId = escapeHtml(caseId);
+        const encodedLender = escapeHtml(lender);
+        if (!available) return "<span class='muted'>Local desktop only</span>";
+        if (session) {
+          return `
+            <button class="manual-button" data-case-id="${encodedCaseId}" data-prepare-lender="${encodedLender}">Focus calculator</button>
+            <button class="manual-close-button" data-case-id="${encodedCaseId}" data-close-manual-session="${escapeHtml(session.sessionId)}">Close</button>
+          `;
+        }
+
+        return `<button class="manual-button" data-case-id="${encodedCaseId}" data-prepare-lender="${encodedLender}">Open filled calculator</button>`;
       }
 
       function pdfIcon() {

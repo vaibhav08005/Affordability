@@ -17,6 +17,7 @@ import {
 } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import { capturePageEvidence, createEvidencePdf, type PageEvidence } from "../shared/pdf-evidence.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import {
   mortgageTypeLabels,
   remortgageReasonLabels,
@@ -28,6 +29,12 @@ import {
 
 export const santanderAdapter: LenderAdapter = {
   lender: "santander",
+  async prepareForReview(input, context) {
+    return prepareManualCalculator(context, SANTANDER_CALCULATOR_URL, async (page) => {
+      await openSantanderCalculator(page, context);
+      await fillSantanderCalculator(page, input, context, [], true);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context, SANTANDER_CALCULATOR_URL);
@@ -94,7 +101,13 @@ async function openSantanderCalculator(page: Page, context: RunContext): Promise
   await clickFirstAvailableButton(page, ["Accept all cookies", "Reject all", "No, continue"]).catch(() => undefined);
 }
 
-async function fillSantanderCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
+async function fillSantanderCalculator(
+  page: Page,
+  input: LenderReadyInput,
+  context: RunContext,
+  pageEvidence: PageEvidence[],
+  stopBeforeCalculate = false
+): Promise<void> {
   await fillMortgageDetails(page, input);
   await capturePageEvidence(page, context, pageEvidence, "santander", "01-mortgage-details");
   await advance(page);
@@ -107,8 +120,10 @@ async function fillSantanderCalculator(page: Page, input: LenderReadyInput, cont
       await setSantanderIncomeStore(page, input);
       await fillOutgoings(page, input);
       await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
-      if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
-        await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
+      if (!stopBeforeCalculate) {
+        if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
+          await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
+        }
       }
       return;
     }
@@ -122,8 +137,10 @@ async function fillSantanderCalculator(page: Page, input: LenderReadyInput, cont
   }
   await fillOutgoings(page, input);
   await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
-  if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
-    await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
+  if (!stopBeforeCalculate) {
+    if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
+      await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
+    }
   }
 }
 
@@ -1500,7 +1517,8 @@ function totalApplicantsGrossIncome(input: LenderReadyInput): number {
   }, 0);
 }
 
-function santanderCurrentBalance(input: LenderReadyInput): number {
+export function santanderCurrentBalance(input: LenderReadyInput): number {
+  if (input.case.mortgagePurpose === "purchase") return Math.round(input.loan.currentBalance ?? 0);
   return Math.round(input.loan.currentBalance ?? input.loan.loanAmount);
 }
 

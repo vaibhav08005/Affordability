@@ -334,6 +334,7 @@ LENDER_RUN_BATCH_SIZE    Inline local batch size, default 3
 
 Useful project docs:
 
+- `docs/PROJECT_SUMMARY.md`
 - `docs/PROJECT_HANDOFF.md`
 - `docs/WEB_INTERFACE.md`
 - `docs/RAW_MAPPING.md`

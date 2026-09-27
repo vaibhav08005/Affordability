@@ -3,6 +3,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import {
   defaultProductRange,
   employmentStatusValues,
@@ -13,6 +14,12 @@ import {
 
 export const kensingtonAdapter: LenderAdapter = {
   lender: "kensington",
+  async prepareForReview(input, context) {
+    return prepareManualCalculator(context, KENSINGTON_CALCULATOR_URL, async (page) => {
+      await openKensingtonCalculator(page, context);
+      await fillKensingtonCalculator(page, input, context, false);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context, KENSINGTON_CALCULATOR_URL);
@@ -66,12 +73,20 @@ export const kensingtonAdapter: LenderAdapter = {
 };
 
 async function openKensingtonCalculator(page: Page, context: RunContext): Promise<void> {
-  await page.goto(KENSINGTON_CALCULATOR_URL, { waitUntil: "networkidle" });
+  await page.goto(KENSINGTON_CALCULATOR_URL, { waitUntil: "domcontentloaded" }).catch(async (error) => {
+    if (await page.locator("#clientName").isVisible().catch(() => false)) return;
+    throw error;
+  });
   await dismissKensingtonCookieBanner(page);
   await page.locator("#clientName").waitFor({ state: "visible", timeout: Math.min(context.timeoutMs, 20000) });
 }
 
-async function fillKensingtonCalculator(page: Page, input: LenderReadyInput, context: RunContext): Promise<number | null> {
+async function fillKensingtonCalculator(
+  page: Page,
+  input: LenderReadyInput,
+  context: RunContext,
+  submit = true
+): Promise<number | null> {
   await setInputValueById(page, "clientName", "Kensington Test Client");
   await setInputValueById(page, "loan_term_requested", String(input.case.termYears));
   await clickButtonAfterQuestion(page, "What type of mortgage will it be?", input.case.mortgagePurpose === "purchase" ? "Purchase" : "Remortgage");
@@ -105,6 +120,9 @@ async function fillKensingtonCalculator(page: Page, input: LenderReadyInput, con
   await setInputValueById(page, "school_fees", money(schoolFees(input)));
   await setInputValueById(page, "credit_expenditure1", money(monthlyCreditCommitments(input)));
   await setInputValueById(page, "revolvingCreditBalance", money(input.outgoings.creditCardBalances + input.outgoings.overdraftBalances));
+  await setInputValueById(page, "loan_term_requested", String(input.case.termYears));
+
+  if (!submit) return null;
 
   const apiResult = page.waitForResponse((response) => response.url().includes("/kmc-api/webcalculator"), { timeout: Math.min(context.timeoutMs, 20000) }).catch(() => null);
   await dismissKensingtonCookieBanner(page);

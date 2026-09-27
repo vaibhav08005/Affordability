@@ -12,6 +12,7 @@ The interface provides a small local page for:
 - Seeing lender affordability results for the selected case.
 - Opening screenshot/PDF evidence artifacts for saved runs.
 - Running affordability for the selected case across all nine mapped lenders.
+- Opening a selected lender's real calculator with the case fields filled for manual review and editing.
 - Polling asynchronous run progress when worker fanout is enabled.
 
 The UI is intentionally minimal and does not use a frontend framework.
@@ -52,6 +53,8 @@ To show lender browser automation windows:
 $env:HEADLESS="false"
 npm.cmd run api
 ```
+
+The **Open filled calculator** action always opens a visible local Chromium window, even when normal automation uses headless mode. It fills the selected lender's calculator and stops before the final calculate/submit action. The user can edit the live calculator page and close it when finished. The action is restricted to local desktop requests and is disabled on Cloud Run.
 
 ## Case Data Source
 
@@ -202,6 +205,20 @@ LENDER_RUN_BATCH_SIZE
 
 Default batch size is 3.
 
+### `POST /api/cases/:caseId/lenders/:lender/prepare`
+
+Maps the raw case for the selected lender, opens a visible local browser, and fills the calculator without triggering its final calculate/submit action. It returns only the manual browser session metadata; it does not save a lender run, affordability result, or screenshot. Repeating the request for the same case and lender focuses the already-open calculator instead of opening a duplicate.
+
+This endpoint accepts loopback requests only and is unavailable on Cloud Run. The API process must run in the user's interactive desktop session.
+
+### `GET /api/cases/:caseId/manual-sessions`
+
+Returns active manual calculator sessions for the case so the interface can show and refresh the open/closed state.
+
+### `DELETE /api/manual-calculator-sessions/:sessionId`
+
+Closes the selected calculator session. Closing its browser window also removes the session automatically. Sessions expire after one hour, and the API closes remaining sessions during graceful shutdown.
+
 When `LENDER_WORKER_FANOUT=true` or Cloud Tasks is configured, the endpoint creates a run record, enqueues one lender task per lender, and returns `202` with a `runId`.
 
 ### `GET /api/runs/:runId`
@@ -223,6 +240,7 @@ Private worker endpoint used by Cloud Tasks. Each request runs exactly one lende
 7. If no `runId` is returned, the page navigates to the selected case detail view after inline completion.
 8. The case detail view displays the latest in-memory or repository-backed result for each lender.
 9. User can open raw input and evidence links when available.
+10. From a lender row, user can open a separate filled calculator, focus an already-open calculator, or close its session.
 
 ## Result Storage
 
