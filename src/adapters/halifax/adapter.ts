@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   customerTypeLabels,
@@ -20,6 +21,13 @@ import {
 
 export const halifaxAdapter: LenderAdapter = {
   lender: "halifax",
+  prepareForReview(input, context) {
+    return prepareManualCalculator(context, HALIFAX_CALCULATOR_URL, async (page) => {
+      await openHalifaxCalculator(page, context);
+      await assertCalculatorAvailable(page);
+      await fillHalifaxCalculator(page, input);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context);

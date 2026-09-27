@@ -79,6 +79,27 @@
         cursor: wait;
       }
 
+      .live-button {
+        background: #2563eb;
+        border-radius: 6px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+
+      .live-button:disabled { background: #9aa5b1; cursor: not-allowed; }
+      .live-shell { display: grid; gap: 12px; }
+      .live-toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+      .live-host { color: #52606d; font-size: 13px; }
+      .live-status { color: #52606d; font-size: 13px; }
+      .live-screen { background: #eef2f6; min-height: 480px; outline: none; overflow: auto; padding: 12px; text-align: center; }
+      .live-screen:focus { box-shadow: inset 0 0 0 3px #2563eb; }
+      .live-screen img { display: block; margin: 0 auto; max-width: 100%; touch-action: none; user-select: none; }
+      .live-help { color: #52606d; font-size: 13px; line-height: 1.5; }
+
       .table {
         width: 100%;
         border-collapse: collapse;
@@ -274,6 +295,7 @@
       let currentCaseTableKey = null;
       let currentCaseTableDetails = null;
       let currentCaseTableLenders = [];
+      let liveSocket = null;
 
       window.addEventListener("hashchange", render);
       render();
@@ -285,10 +307,16 @@
         }
 
         const params = parseHash();
+        if (liveSocket && !params.live) {
+          liveSocket.close();
+          liveSocket = null;
+        }
         if (params.run) {
           await renderRun(params.run);
         } else if (params.case) {
           await renderCase(params.case);
+        } else if (params.live && params.lender) {
+          await renderLiveCalculator(params.live, params.lender);
         } else {
           await renderCases();
         }
@@ -302,6 +330,10 @@
         }
         if (hash.startsWith("run=")) {
           return { run: decodeURIComponent(hash.slice("run=".length)) };
+        }
+        if (hash.startsWith("live=")) {
+          const params = new URLSearchParams(hash);
+          return { live: params.get("live"), lender: params.get("lender") };
         }
 
         return {};
@@ -480,6 +512,7 @@
                 <th>Message</th>
                 <th>Output</th>
                 <th>Evidence</th>
+                <th>Live calculator</th>
               </tr>
             </thead>
             <tbody>
@@ -493,6 +526,7 @@
                       <td class="muted message-cell" data-lender-message="${escapeHtml(run.lender)}">${formatMessageCell(run)}</td>
                       <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
                       <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
+                      <td>${formatLiveCalculatorControl(details.id, run.lender, details.liveCalculatorAvailable)}</td>
                     </tr>
                   `
                 )
@@ -515,7 +549,18 @@
           });
         });
 
+        bindLiveCalculatorButtons();
         bindMessageDetails();
+      }
+
+      function bindLiveCalculatorButtons() {
+        app.querySelectorAll("[data-live-case]").forEach((button) => {
+          if (button.dataset.boundLiveClick === "true") return;
+          button.dataset.boundLiveClick = "true";
+          button.addEventListener("click", () => {
+            location.hash = `live=${encodeURIComponent(button.dataset.liveCase)}&lender=${encodeURIComponent(button.dataset.liveLender)}`;
+          });
+        });
       }
 
       function updateCaseTable(details, lenders, run = null) {
@@ -738,6 +783,135 @@
         return run.output == null
           ? "-"
           : `<button class="input-link" data-output-lender="${escapeHtml(run.lender)}">View JSON</button>`;
+      }
+
+      function formatLiveCalculatorControl(caseId, lender, available) {
+        return available
+          ? `<button class="live-button" data-live-case="${escapeHtml(caseId)}" data-live-lender="${escapeHtml(lender)}">Open filled calculator</button>`
+          : `<button class="live-button" disabled title="Enable the live calculator service to use this feature">Unavailable</button>`;
+      }
+
+      async function renderLiveCalculator(caseId, lender) {
+        app.innerHTML = `
+          <button class="back" data-live-back>Back to case</button>
+          <h1>${escapeHtml(formatLender(lender))} calculator</h1>
+          <div class="live-shell">
+            <div class="live-toolbar">
+              <strong class="live-host" data-live-host>Connecting to lender website</strong>
+              <span class="live-status" data-live-status role="status">Starting session…</span>
+              <button class="live-button" data-live-close>Close session</button>
+            </div>
+            <div class="live-screen" data-live-screen tabindex="0" role="application" aria-label="Interactive lender calculator">
+              <img data-live-frame alt="Live lender calculator" draggable="false" />
+            </div>
+            <p class="live-help">Edit the lender form here. When ready, use the lender’s own Calculate button. Changes and results in this live view are not saved to the case or evidence.</p>
+          </div>
+        `;
+        const back = () => { location.hash = `case=${encodeURIComponent(caseId)}`; };
+        app.querySelector("[data-live-back]").addEventListener("click", back);
+        app.querySelector("[data-live-close]").addEventListener("click", back);
+        const screen = app.querySelector("[data-live-screen]");
+        const frame = app.querySelector("[data-live-frame]");
+        const status = app.querySelector("[data-live-status]");
+        const host = app.querySelector("[data-live-host]");
+        const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+        const socket = new WebSocket(`${protocol}//${location.host}/api/live-calculator?caseId=${encodeURIComponent(caseId)}&lender=${encodeURIComponent(lender)}`);
+        socket.binaryType = "arraybuffer";
+        liveSocket = socket;
+        let ready = false;
+        let ended = false;
+        let lastMove = 0;
+
+        const send = (value) => {
+          if (ready && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(value));
+        };
+        const coordinates = (event) => {
+          const rect = frame.getBoundingClientRect();
+          return {
+            x: Math.max(0, Math.min(frame.naturalWidth, (event.clientX - rect.left) * frame.naturalWidth / rect.width)),
+            y: Math.max(0, Math.min(frame.naturalHeight, (event.clientY - rect.top) * frame.naturalHeight / rect.height))
+          };
+        };
+        frame.addEventListener("pointermove", (event) => {
+          if (!ready || !frame.naturalWidth || performance.now() - lastMove < 30) return;
+          lastMove = performance.now();
+          send({ type: "mouse", action: "move", ...coordinates(event) });
+        });
+        frame.addEventListener("pointerdown", (event) => {
+          if (!ready || !frame.naturalWidth) return;
+          event.preventDefault();
+          screen.focus({ preventScroll: true });
+          frame.setPointerCapture(event.pointerId);
+          send({ type: "mouse", action: "down", button: mouseButton(event.button), ...coordinates(event) });
+        });
+        frame.addEventListener("pointerup", (event) => {
+          if (!ready || !frame.naturalWidth) return;
+          event.preventDefault();
+          send({ type: "mouse", action: "up", button: mouseButton(event.button), ...coordinates(event) });
+          if (frame.hasPointerCapture(event.pointerId)) frame.releasePointerCapture(event.pointerId);
+        });
+        frame.addEventListener("pointercancel", (event) => {
+          if (ready && frame.naturalWidth) send({ type: "mouse", action: "up", button: mouseButton(event.button), ...coordinates(event) });
+        });
+        frame.addEventListener("contextmenu", (event) => event.preventDefault());
+        frame.addEventListener("wheel", (event) => {
+          if (!ready || !frame.naturalWidth) return;
+          event.preventDefault();
+          send({ type: "wheel", deltaX: event.deltaX, deltaY: event.deltaY, ...coordinates(event) });
+        }, { passive: false });
+        screen.addEventListener("keydown", (event) => {
+          if (!ready || event.isComposing) return;
+          event.preventDefault();
+          if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") return;
+          send({ type: "key", action: "down", key: event.key === " " ? "Space" : event.key });
+        });
+        screen.addEventListener("keyup", (event) => {
+          if (!ready || event.isComposing) return;
+          event.preventDefault();
+          if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "v") return;
+          send({ type: "key", action: "up", key: event.key === " " ? "Space" : event.key });
+        });
+        screen.addEventListener("compositionend", (event) => send({ type: "text", text: event.data }));
+        screen.addEventListener("paste", (event) => {
+          if (!ready) return;
+          event.preventDefault();
+          send({ type: "text", text: event.clipboardData.getData("text/plain").slice(0, 1000) });
+        });
+
+        socket.addEventListener("message", (event) => {
+          if (typeof event.data === "string") {
+            const message = JSON.parse(event.data);
+            if (message.type === "ready") {
+              ready = true;
+              status.textContent = message.message;
+              host.textContent = message.host;
+              screen.focus({ preventScroll: true });
+            } else if (message.type === "host") {
+              host.textContent = message.host;
+            } else if (message.type === "status") {
+              status.textContent = message.message;
+              if (["expired", "error"].includes(message.status)) ended = true;
+            }
+            return;
+          }
+          const oldUrl = liveFrameUrl;
+          liveFrameUrl = URL.createObjectURL(new Blob([event.data], { type: "image/jpeg" }));
+          frame.onload = () => { if (oldUrl) URL.revokeObjectURL(oldUrl); };
+          frame.src = liveFrameUrl;
+        });
+        socket.addEventListener("close", () => {
+          ready = false;
+          if (!ended && liveSocket === socket) status.textContent = "Session disconnected. Return to the case to open a new one.";
+        });
+        socket.addEventListener("error", () => {
+          if (!ended) status.textContent = "Could not connect to the live calculator service.";
+        });
+      }
+
+      let liveFrameUrl = null;
+
+      function mouseButton(value) {
+        return value === 2 ? "right" : value === 1 ? "middle" : "left";
       }
 
       function formatMessageCell(run) {

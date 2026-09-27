@@ -114,6 +114,21 @@ Public access: disabled
 
 The worker has `concurrency=1` so one browser-heavy lender run gets an isolated request slot. Cloud Tasks controls dispatch pressure, and Cloud Run scales workers horizontally.
 
+## Interactive Live Calculator
+
+The web UI has an **Open filled calculator** action for each lender. It opens a temporary Chromium browser in the API service and streams an editable view over a WebSocket. It stops before the lender's final calculation action and does not save an amount or evidence artifact. This is independent of the Cloud Tasks lender workers.
+
+The current main API settings above are **not** sized for this feature: 1 GiB memory and a 300 second request timeout are too small for a long interactive browser session. `LIVE_CALCULATOR_ENABLED` defaults to off. Before enabling it, put the website behind authenticated access, allocate browser capacity (start by measuring 2 vCPU / 4 GiB with one live session per instance), set the request timeout above 45 minutes, and cap Cloud Run instances. The existing public service should remain disabled until access control is in place.
+
+Environment variables when the protected service is ready:
+
+```text
+LIVE_CALCULATOR_ENABLED=true
+LIVE_CALCULATOR_MAX_SESSIONS=1
+```
+
+The session limit is per instance. Closing the view closes its browser. Inactivity closes a session after 15 minutes; all sessions close after 45 minutes. A dropped Cloud Run connection cannot restore unsaved manual edits, so the user opens a new filled session. Monitor CPU, memory, active session counts, and network egress before increasing concurrency.
+
 ## Verification Commands
 
 Health:

@@ -5,6 +5,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import {
   employmentStatusValues,
   loanTypeIds,
@@ -20,6 +21,12 @@ interface PageEvidence {
 
 export const virginMoneyAdapter: LenderAdapter = {
   lender: "virgin_money",
+  prepareForReview(input, context) {
+    return prepareManualCalculator(context, VIRGIN_MONEY_CALCULATOR_URL, async (page) => {
+      await openVirginMoneyCalculator(page, context);
+      await fillVirginMoneyCalculator(page, input, context, [], true);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context, VIRGIN_MONEY_CALCULATOR_URL);
@@ -81,7 +88,7 @@ async function openVirginMoneyCalculator(page: Page, context: RunContext): Promi
   await page.locator("#purchase, #remortgage").first().waitFor({ state: "visible", timeout: Math.min(context.timeoutMs, 20000) });
 }
 
-async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
+async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[], stopBeforeCalculate = false): Promise<void> {
   await fillLoanDetails(page, input);
   await capturePageEvidence(page, context, pageEvidence, "01-loan-details");
   await continueToNextPage(page, "personal-details");
@@ -90,7 +97,7 @@ async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput, co
   await continueToNextPage(page, "outgoings");
   await fillOutgoings(page, input);
   await capturePageEvidence(page, context, pageEvidence, "03-outgoings");
-  await continueToNextPage(page, "results");
+  if (!stopBeforeCalculate) await continueToNextPage(page, "results");
 }
 
 async function fillLoanDetails(page: Page, input: LenderReadyInput): Promise<void> {
@@ -335,6 +342,7 @@ function otherPropertyRent(input: LenderReadyInput): number {
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.captureEvidence === false) return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `virgin-money-${name}`);
   pageEvidence.push({

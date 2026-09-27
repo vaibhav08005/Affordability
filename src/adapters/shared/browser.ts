@@ -60,6 +60,7 @@ export async function createBrowserSession(context: RunContext, preferredUrl: st
 }
 
 export async function captureEvidence(page: Page, context: RunContext, name: string): Promise<string> {
+  if (context.captureEvidence === false) throw new Error("Evidence capture is disabled for live calculator sessions.");
   await mkdir(context.screenshotDir, { recursive: true });
   const path = join(context.screenshotDir, `${name}-${Date.now()}.png`);
   await page.screenshot({ path, fullPage: true });

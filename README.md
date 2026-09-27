@@ -332,6 +332,8 @@ LENDER_RUN_BATCH_SIZE    Inline local batch size, default 3
 
 ## Documentation
 
+The case detail page also offers an optional live lender calculator view. Set `LIVE_CALCULATOR_ENABLED=true` on an authenticated deployment to let a user open one lender's actual form, edit the filled values, and calculate manually. This WebSocket view does not save a result or evidence artifact. See [Web Interface](docs/WEB_INTERFACE.md) for session limits and Cloud Run timeout requirements.
+
 Useful project docs:
 
 - `docs/PROJECT_HANDOFF.md`

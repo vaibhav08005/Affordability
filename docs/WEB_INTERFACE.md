@@ -13,6 +13,7 @@ The interface provides a small local page for:
 - Opening screenshot/PDF evidence artifacts for saved runs.
 - Running affordability for the selected case across all nine mapped lenders.
 - Polling asynchronous run progress when worker fanout is enabled.
+- Opening a temporary interactive lender calculator after the case data has been filled.
 
 The UI is intentionally minimal and does not use a frontend framework.
 
@@ -30,6 +31,21 @@ src/repositories/firestore-run-state-repository.ts
 ```
 
 The page is served by the same Express process as the API.
+
+## Live Lender Calculator
+
+Each lender row on a case detail page has an **Open filled calculator** action when `LIVE_CALCULATOR_ENABLED=true`. It opens a temporary browser session, fills the mapped case data, and streams the actual lender page into the website. The final Calculate action is left to the user. The live session does not return an affordability amount or save screenshots, results, or evidence.
+
+The feature is disabled by default. Enable it only behind authenticated access because the view contains case information and may expose lender portal details. The WebSocket accepts connections only from the same website origin. Sessions are limited per API instance with `LIVE_CALCULATOR_MAX_SESSIONS` (default 2, maximum 10); an inactive session closes after 15 minutes and any session closes after 45 minutes. Closing the view closes its browser.
+
+For local use, set:
+
+```powershell
+$env:LIVE_CALCULATOR_ENABLED="true"
+npm.cmd run api
+```
+
+Cloud Run must allow WebSocket connections and use a request timeout longer than the live session limit. Start with one live session per instance and size the API service for Chromium memory and CPU use. See the [worker fan-out and Cloud Storage runbook](WORKER_FANOUT_CLOUD_STORAGE_RUNBOOK.md).
 
 ## Run Locally
 

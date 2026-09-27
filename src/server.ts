@@ -1,4 +1,5 @@
 import express from "express";
+import { createServer } from "node:http";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -21,8 +22,11 @@ import { createArtifactReadStream, parseStorageUri, uploadResultArtifacts } from
 import { FirestoreRunStateRepository } from "./repositories/firestore-run-state-repository.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
 import { InMemoryRunStateRepository, type LenderRunRecord, type RunStateRepository } from "./repositories/run-state.js";
+import { installLiveCalculator } from "./infrastructure/live-calculator.js";
+import { prepareCalculatorForReview } from "./service.js";
 
 const app = express();
+const httpServer = createServer(app);
 const rootDir = process.cwd();
 const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
@@ -49,8 +53,12 @@ const mappedLenders: MappedLender[] = [
   "skipton",
   "virgin_money"
 ];
+function isMappedLender(value: string): value is MappedLender {
+  return mappedLenders.includes(value as MappedLender);
+}
 const defaultLenderRunBatchSize = 3;
 const resultRetentionMs = 24 * 60 * 60 * 1000;
+const liveCalculatorEnabled = process.env.LIVE_CALCULATOR_ENABLED === "true";
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(publicDir));
@@ -127,7 +135,7 @@ app.get("/api/cases/:caseId", async (request, response) => {
       return;
     }
 
-    response.json(caseDetails);
+    response.json({ ...caseDetails, liveCalculatorAvailable: liveCalculatorEnabled });
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
@@ -235,7 +243,20 @@ app.post("/worker/lender-task", async (request, response) => {
 });
 
 const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => {
+installLiveCalculator(httpServer, {
+  enabled: liveCalculatorEnabled,
+  maxSessions: Math.min(10, Math.max(1, Number(process.env.LIVE_CALCULATOR_MAX_SESSIONS ?? 2))),
+  idleMs: 15 * 60 * 1000,
+  maxAgeMs: 45 * 60 * 1000,
+  async loadInput(caseId, lender) {
+    if (!isMappedLender(lender)) return null;
+    const sample = await loadMappedSampleForCase(caseId, lender);
+    return sample?.input ?? null;
+  },
+  loadContext: loadRunContext,
+  prepareSession: prepareCalculatorForReview
+});
+httpServer.listen(port, () => {
   console.log(`Affordability automation API listening on ${port}`);
 });
 

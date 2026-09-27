@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
 import {
   customerTypeLabels,
@@ -17,6 +18,13 @@ import {
 
 export const natwestAdapter: LenderAdapter = {
   lender: "natwest",
+  prepareForReview(input, context) {
+    return prepareManualCalculator(context, NATWEST_CALCULATOR_URL, async (page) => {
+      await openNatWestCalculator(page, context);
+      await fillNatWestCalculator(page, input);
+      await waitBeforeCalculate(page);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context);

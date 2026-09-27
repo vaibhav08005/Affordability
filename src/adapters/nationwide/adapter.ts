@@ -16,6 +16,7 @@ import {
   selectVisibleById
 } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import { capturePageEvidence, createEvidencePdf, type PageEvidence } from "../shared/pdf-evidence.js";
 import {
   applicationTypeValues,
@@ -31,6 +32,12 @@ import {
 
 export const nationwideAdapter: LenderAdapter = {
   lender: "nationwide",
+  prepareForReview(input, context) {
+    return prepareManualCalculator(context, NATIONWIDE_CALCULATOR_URL, async (page) => {
+      await openNationwideCalculator(page, context);
+      await fillNationwideCalculator(page, input, context, [], true);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context, NATIONWIDE_CALCULATOR_URL);
@@ -111,7 +118,7 @@ async function openNationwideCalculator(page: Page, context: RunContext): Promis
   await page.waitForTimeout(1000);
 }
 
-async function fillNationwideCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
+async function fillNationwideCalculator(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[], stopBeforeCalculate = false): Promise<void> {
   await fillMortgageStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "01-mortgage-details");
   await advance(page);
@@ -129,7 +136,7 @@ async function fillNationwideCalculator(page: Page, input: LenderReadyInput, con
   await page.getByText(/Outgoings/i).first().waitFor({ state: "visible", timeout: 10000 }).catch(() => undefined);
   await fillOutgoingsStep(page, input);
   await capturePageEvidence(page, context, pageEvidence, "nationwide", "04-outgoings");
-  await clickFirstAvailableButton(page, ["Calculate", "Get results", "See results", "Next"]);
+  if (!stopBeforeCalculate) await clickFirstAvailableButton(page, ["Calculate", "Get results", "See results", "Next"]);
   await assertNoNationwideValidation(page, "Outgoings");
 }
 

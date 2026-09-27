@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { prepareManualCalculator } from "../shared/manual-review.js";
 import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels, selfEmploymentTypeLabels } from "./mapping.js";
 
 interface PageEvidence {
@@ -13,6 +14,16 @@ interface PageEvidence {
 
 export const barclaysAdapter: LenderAdapter = {
   lender: "barclays",
+  prepareForReview(input, context) {
+    return prepareManualCalculator(context, BARCLAYS_CALCULATOR_URL, async (page) => {
+      await page.setViewportSize({ width: 584, height: 900 }).catch(() => undefined);
+      await openBarclaysCalculator(page, context);
+      const evidence: PageEvidence[] = [];
+      await fillMortgageRequirements(page, input, context, evidence);
+      await fillIncomeAndCommitments(page, input, context, evidence);
+      await fillOtherMortgages(page, input, context, evidence, true);
+    });
+  },
   async run(input, context) {
     const startedAt = new Date().toISOString();
     const session = await createBrowserSession(context);
@@ -217,7 +228,7 @@ async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<vo
   await fillNthCurrency(page, "Any other annual income (if applicable)", applicant.index - 1, totalOtherIncome(applicant));
 }
 
-async function fillOtherMortgages(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[]): Promise<void> {
+async function fillOtherMortgages(page: Page, input: LenderReadyInput, context: RunContext, pageEvidence: PageEvidence[], stopBeforeCalculate = false): Promise<void> {
   await ensureOtherMortgagesStepVisible(page);
   const residentialCommitments = input.outgoings.otherMortgageCommitments;
   const buyToLetProperties = input.otherProperties.filter((property) => property.isRental);
@@ -268,7 +279,7 @@ async function fillOtherMortgages(page: Page, input: LenderReadyInput, context: 
   }
 
   await capturePageEvidence(page, context, pageEvidence, "03-other-mortgages");
-  await clickNextOrCalculate(page);
+  await clickNextOrCalculate(page, stopBeforeCalculate);
 }
 
 async function chooseMortgageType(page: Page, index: number, optionName: string): Promise<void> {
@@ -630,9 +641,10 @@ async function clickNext(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Next" }).click();
 }
 
-async function clickNextOrCalculate(page: Page): Promise<void> {
+async function clickNextOrCalculate(page: Page, stopBeforeCalculate = false): Promise<void> {
   const calculate = page.getByRole("button", { name: "Calculate" });
   if (await calculate.count() > 0) {
+    if (stopBeforeCalculate) return;
     await page.waitForTimeout(2000);
     await calculate.click();
     return;
@@ -685,6 +697,7 @@ async function captureEvidence(page: Page, context: RunContext, name: string): P
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.captureEvidence === false) return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `barclays-${name}`);
   pageEvidence.push({
