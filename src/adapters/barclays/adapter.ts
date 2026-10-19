@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import { BARCLAYS_CALCULATOR_URL, employmentStatusLabels, repaymentMethodLabels, selfEmploymentTypeLabels } from "./mapping.js";
 
 interface PageEvidence {
@@ -50,6 +51,8 @@ export const barclaysAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("barclays");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "barclays-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -92,6 +95,7 @@ interface BrowserSession {
 }
 
 async function createBrowserSession(context: RunContext): Promise<BrowserSession> {
+  if (context.page) return { page: context.page, async close() {} };
   if (context.executionMode === "attached") {
     if (!context.browserWSEndpoint) {
       throw new Error("Attached browser execution requires BROWSER_WS_ENDPOINT.");
@@ -156,7 +160,7 @@ async function fillIncomeAndCommitments(page: Page, input: LenderReadyInput, con
     await fillOptionalTextByLabelOrText(page, "Equity loan interest rate", String(input.case.equityLoanInterestRatePercent ?? 0));
   }
   await capturePageEvidence(page, context, pageEvidence, "02-income-and-commitments");
-  await clickNextOrCalculate(page);
+  await clickNextOrCalculate(page, context);
 }
 
 async function fillApplicantIncome(page: Page, applicant: Applicant): Promise<void> {
@@ -268,7 +272,8 @@ async function fillOtherMortgages(page: Page, input: LenderReadyInput, context: 
   }
 
   await capturePageEvidence(page, context, pageEvidence, "03-other-mortgages");
-  await clickNextOrCalculate(page);
+  stopBeforeCalculation(context);
+  await clickNextOrCalculate(page, context);
 }
 
 async function chooseMortgageType(page: Page, index: number, optionName: string): Promise<void> {
@@ -630,9 +635,10 @@ async function clickNext(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Next" }).click();
 }
 
-async function clickNextOrCalculate(page: Page): Promise<void> {
+async function clickNextOrCalculate(page: Page, context: RunContext): Promise<void> {
   const calculate = page.getByRole("button", { name: "Calculate" });
   if (await calculate.count() > 0) {
+    stopBeforeCalculation(context);
     await page.waitForTimeout(2000);
     await calculate.click();
     return;
@@ -685,6 +691,7 @@ async function captureEvidence(page: Page, context: RunContext, name: string): P
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.purpose === "open_filled") return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `barclays-${name}`);
   pageEvidence.push({

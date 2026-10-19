@@ -3,6 +3,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   defaultProductRange,
   employmentStatusValues,
@@ -44,6 +45,8 @@ export const kensingtonAdapter: LenderAdapter = {
         evidence: { screenshotPath, timestamp: startedAt }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("kensington");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "kensington-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -106,6 +109,7 @@ async function fillKensingtonCalculator(page: Page, input: LenderReadyInput, con
   await setInputValueById(page, "credit_expenditure1", money(monthlyCreditCommitments(input)));
   await setInputValueById(page, "revolvingCreditBalance", money(input.outgoings.creditCardBalances + input.outgoings.overdraftBalances));
 
+  stopBeforeCalculation(context);
   const apiResult = page.waitForResponse((response) => response.url().includes("/kmc-api/webcalculator"), { timeout: Math.min(context.timeoutMs, 20000) }).catch(() => null);
   await dismissKensingtonCookieBanner(page);
   await page.locator("#SubmitButton").click({ force: true });

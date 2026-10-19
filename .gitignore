@@ -1,8 +1,12 @@
 node_modules/
 dist/
+companion/dist/
+companion/node_modules/
+companion/release/
 tmp/
 .browser-profiles/
 artifacts/
+runner-packages/
 
 .env
 *.log

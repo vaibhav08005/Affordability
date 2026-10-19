@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderId, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   applicationTypeLabels,
   customerTypeApplicationLabels,
@@ -27,6 +28,7 @@ export const hsbcAdapter: LenderAdapter = {
       await openHsbcCalculator(page, context);
       await fillHsbcCalculator(page, input);
       await acceptCookies(page);
+      stopBeforeCalculation(context);
       await clickFirstAvailableButton(page, ["Calculate", "Get results", "See how much I could borrow"]);
       await waitForResult(page, context);
 
@@ -53,6 +55,8 @@ export const hsbcAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("hsbc");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "hsbc-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -84,6 +88,7 @@ interface BrowserSession {
 }
 
 async function createBrowserSession(context: RunContext): Promise<BrowserSession> {
+  if (context.page) return { page: context.page, async close() {} };
   if (context.executionMode === "attached") {
     if (!context.browserWSEndpoint) {
       throw new Error("Attached browser execution requires BROWSER_WS_ENDPOINT.");

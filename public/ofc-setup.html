@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Filled Calculator setup</title>
+  <style>
+    body { margin: 0; background: #f6f7f9; color: #1f2933; font: 16px/1.55 Arial, sans-serif; }
+    main { max-width: 680px; margin: 48px auto; padding: 28px; background: white; border: 1px solid #d8dee6; border-radius: 8px; }
+    h1 { margin-top: 0; font-size: 27px; }
+    li { margin-bottom: 12px; }
+    a { color: #1d4ed8; font-weight: 700; }
+    .download { display: inline-block; margin: 8px 0 16px; padding: 10px 14px; background: #dbeafe; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="/">← Back to cases</a>
+    <h1>Open Filled Calculator setup</h1>
+    <p>Install Google Chrome and the Open Filled Calculator companion on this computer once. You do not need a Chrome extension, Node.js, npm, or a lender login.</p>
+    <div id="download"></div>
+    <ol>
+      <li>Download and install the companion for your operating system. If there is no download button here, ask the website administrator for the installer.</li>
+      <li>Return to a case and click <strong>Open filled calculator</strong> beside a lender.</li>
+      <li>Allow your browser to open the companion. The first time, approve your website's address in the companion.</li>
+      <li>Chrome opens the lender calculator with the mapped fields filled. Edit the fields there. The companion stops before requesting the affordability result.</li>
+    </ol>
+    <p>The companion checks for updates automatically. If lender code changes, it downloads a newer release and installs it after open Chrome sessions close. Then click <strong>Open filled calculator</strong> again. If an older 0.1.x companion is installed, install the current version here once to enable automatic updates.</p>
+  </main>
+  <script>
+    fetch("/api/ofc/config")
+      .then((response) => response.json())
+      .then(({ downloads }) => {
+        const names = { windows: "Windows", macos: "macOS", linux: "Linux" };
+        for (const [platform, label] of Object.entries(names)) {
+          if (!downloads?.[platform]) continue;
+          const link = document.createElement("a");
+          link.href = downloads[platform];
+          link.className = "download";
+          link.rel = "noopener";
+          link.textContent = `Download for ${label}`;
+          document.getElementById("download").append(link, " ");
+        }
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>

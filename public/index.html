@@ -28,6 +28,25 @@
         font-weight: 700;
       }
 
+      .cases-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .cases-header h1 {
+        margin: 0;
+      }
+
+      .contact-link {
+        color: #2563eb;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+
       button {
         border: 0;
         background: transparent;
@@ -58,6 +77,39 @@
         cursor: pointer;
         font-size: 13px;
         font-weight: 700;
+      }
+
+      .ofc-button {
+        background: #dbeafe;
+        border-radius: 6px;
+        color: #1d4ed8;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+
+      .ofc-button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      .ofc-setup {
+        color: #52606d;
+        font-size: 13px;
+        margin: 10px 0 16px;
+      }
+
+      .ofc-setup a, .ofc-fallback {
+        color: #1d4ed8;
+        font-weight: 700;
+      }
+
+      .ofc-fallback {
+        display: block;
+        font-size: 12px;
+        margin-top: 6px;
       }
 
       .evidence-link {
@@ -311,17 +363,17 @@
         currentCaseTableKey = null;
         currentCaseTableDetails = null;
         currentCaseTableLenders = [];
-        app.innerHTML = "<h1>Cases</h1><div class='empty'>Loading cases...</div>";
+        app.innerHTML = `${casesHeader()}<div class='empty'>Loading cases...</div>`;
         const { cases } = await fetchJson("/api/cases");
         const activeRuns = await loadActiveRuns();
 
         if (!cases.length) {
-          app.innerHTML = "<h1>Cases</h1><div class='empty'>No cases found.</div>";
+          app.innerHTML = `${casesHeader()}<div class='empty'>No cases found.</div>`;
           return;
         }
 
         app.innerHTML = `
-          <h1>Cases</h1>
+          ${casesHeader()}
           <table class="table">
             <thead>
               <tr>
@@ -380,6 +432,15 @@
             await showInput(button.dataset.inputId);
           });
         });
+      }
+
+      function casesHeader() {
+        return `
+          <header class="cases-header">
+            <h1>Cases</h1>
+            <a class="contact-link" href="mailto:vsontakke100@gmail.com">Contact: vsontakke100@gmail.com</a>
+          </header>
+        `;
       }
 
       async function runAffordability(button) {
@@ -471,6 +532,7 @@
             ${details.summary.termYears} years
             ${run ? `<br><span data-run-progress>${escapeHtml(formatRunProgress(run))}</span>` : ""}
           </div>
+          <div class="ofc-setup">Open filled calculator uses Chrome and a one-time companion install. <a href="/ofc-setup.html">Setup guide</a><span data-ofc-download></span></div>
           <table class="table">
             <thead>
               <tr>
@@ -480,6 +542,7 @@
                 <th>Message</th>
                 <th>Output</th>
                 <th>Evidence</th>
+                <th>Open locally</th>
               </tr>
             </thead>
             <tbody>
@@ -493,6 +556,7 @@
                       <td class="muted message-cell" data-lender-message="${escapeHtml(run.lender)}">${formatMessageCell(run)}</td>
                       <td data-lender-output="${escapeHtml(run.lender)}">${formatOutput(run)}</td>
                       <td data-lender-evidence="${escapeHtml(run.lender)}">${formatEvidence(run)}</td>
+                      <td><button class="ofc-button" data-ofc-lender="${escapeHtml(run.lender)}">Open filled calculator</button></td>
                     </tr>
                   `
                 )
@@ -516,6 +580,8 @@
         });
 
         bindMessageDetails();
+        bindOfcButtons();
+        void loadOfcDownload();
       }
 
       function updateCaseTable(details, lenders, run = null) {
@@ -559,6 +625,57 @@
         });
 
         bindMessageDetails();
+        bindOfcButtons();
+      }
+
+      function bindOfcButtons() {
+        app.querySelectorAll("[data-ofc-lender]").forEach((button) => {
+          if (button.dataset.boundOfcClick === "true") return;
+          button.dataset.boundOfcClick = "true";
+          button.addEventListener("click", async () => {
+            const caseId = currentCaseTableDetails?.id;
+            const lender = button.dataset.ofcLender;
+            if (!caseId || !lender) return;
+            button.disabled = true;
+            button.textContent = "Opening...";
+            try {
+              const { deepLink } = await fetchJson(`/api/cases/${encodeURIComponent(caseId)}/ofc/${encodeURIComponent(lender)}`, {
+                method: "POST"
+              });
+              button.parentElement.querySelector(".ofc-fallback")?.remove();
+              const fallback = document.createElement("a");
+              fallback.className = "ofc-fallback";
+              fallback.href = deepLink;
+              fallback.textContent = "Click here if the companion did not open";
+              button.insertAdjacentElement("afterend", fallback);
+              window.location.href = deepLink;
+              window.setTimeout(() => {
+                button.disabled = false;
+                button.textContent = "Open filled calculator";
+              }, 2000);
+            } catch (error) {
+              button.disabled = false;
+              button.textContent = "Open filled calculator";
+              showText("Open Filled Calculator", error instanceof Error ? error.message : String(error));
+            }
+          });
+        });
+      }
+
+      async function loadOfcDownload() {
+        const container = app.querySelector("[data-ofc-download]");
+        if (!container) return;
+        try {
+          const { downloads } = await fetchJson("/api/ofc/config");
+          if (!container.isConnected || !Object.values(downloads ?? {}).some(Boolean)) return;
+          const link = document.createElement("a");
+          link.href = "/ofc-setup.html";
+          link.textContent = "Download companion";
+          link.rel = "noopener";
+          container.append(" ", link);
+        } catch {
+          // Setup guide remains available when downloads are not configured.
+        }
       }
 
       function setText(selector, value) {
@@ -578,7 +695,8 @@
       async function fetchJson(url, options = undefined) {
         const response = await fetch(url, options);
         if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
+          const body = await response.json().catch(() => null);
+          throw new Error(body?.error ?? `Request failed: ${response.status}`);
         }
 
         return response.json();

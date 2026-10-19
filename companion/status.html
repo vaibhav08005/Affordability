@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Filled Calculator</title>
+  <style>
+    body { margin: 0; padding: 28px; font: 15px/1.5 Arial, sans-serif; color: #1f2937; background: #f8fafc; }
+    h1 { font-size: 23px; margin: 0 0 20px; }
+    h2 { font-size: 18px; margin: 0 0 8px; }
+    main { background: white; border: 1px solid #dbe3ec; border-radius: 10px; padding: 20px; }
+    p { margin: 0 0 16px; overflow-wrap: anywhere; }
+    button { background: #e5edfa; border: 0; border-radius: 6px; color: #1d4ed8; cursor: pointer; font: inherit; font-weight: bold; padding: 9px 12px; }
+  </style>
+</head>
+<body>
+  <h1>Open Filled Calculator</h1>
+  <main>
+    <h2 id="status">Ready</h2>
+    <p id="detail">Click Open filled calculator on your website.</p>
+    <button id="reset" type="button">Change website</button>
+  </main>
+  <script>
+    function render(state) {
+      document.getElementById("status").textContent = state.title;
+      document.getElementById("detail").textContent = state.detail;
+    }
+    window.ofc.status().then(render);
+    window.ofc.onStatus(render);
+    document.getElementById("reset").addEventListener("click", () => window.ofc.resetWebsite());
+  </script>
+</body>
+</html>

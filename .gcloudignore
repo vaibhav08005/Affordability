@@ -1,0 +1,15 @@
+.git/
+.github/
+.browser-profiles/
+artifacts/
+companion/
+dist/
+docs/
+Mapping_xlxs/
+node_modules/
+runner-packages/
+tmp/
+.env
+.env.*
+input.yaml
+*.log

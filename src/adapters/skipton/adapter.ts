@@ -5,6 +5,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   employmentTypeRadioIndex,
   regionValues,
@@ -53,6 +54,8 @@ export const skiptonAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("skipton");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "skipton-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -97,6 +100,7 @@ async function fillSkiptonCalculator(page: Page, input: LenderReadyInput, contex
   await next(page, "CONTINUE TO STEP 4");
   await fillExpenditure(page, input);
   await capturePageEvidence(page, context, pageEvidence, "04-expenditure");
+  stopBeforeCalculation(context);
   await calculate(page);
 }
 
@@ -359,6 +363,7 @@ function otherMortgageBalance(input: LenderReadyInput): number {
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.purpose === "open_filled") return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `skipton-${name}`);
   pageEvidence.push({

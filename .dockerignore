@@ -1,11 +1,14 @@
 .browser-profiles
+.github
 .git
 .gitignore
 artifacts
+companion
 dist
 docs
 Mapping_xlxs
 node_modules
+runner-packages
 tmp
 
 .env

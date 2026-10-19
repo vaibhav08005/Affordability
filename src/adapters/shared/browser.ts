@@ -10,6 +10,9 @@ export interface BrowserSession {
 }
 
 export async function createBrowserSession(context: RunContext, preferredUrl: string): Promise<BrowserSession> {
+  if (context.page) {
+    return { page: context.page, async close() {} };
+  }
   if (context.executionMode === "attached") {
     if (!context.browserWSEndpoint) {
       throw new Error("Attached browser execution requires BROWSER_WS_ENDPOINT.");

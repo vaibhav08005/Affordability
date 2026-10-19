@@ -30,6 +30,7 @@
     "start": "node dist/server.js",
     "start:cli": "node dist/cli.js samples/halifax/test-case-1.json",
     "build": "tsc -p tsconfig.json",
+    "companion:stage": "npm run build && node scripts/stage-companion.mjs",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test dist/**/*.test.js"
   },

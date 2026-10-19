@@ -16,6 +16,7 @@ import {
   selectVisibleById
 } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import { capturePageEvidence, createEvidencePdf, type PageEvidence } from "../shared/pdf-evidence.js";
 import {
   mortgageTypeLabels,
@@ -61,6 +62,8 @@ export const santanderAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("santander");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "santander-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -107,6 +110,7 @@ async function fillSantanderCalculator(page: Page, input: LenderReadyInput, cont
       await setSantanderIncomeStore(page, input);
       await fillOutgoings(page, input);
       await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
+      stopBeforeCalculation(context);
       if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
         await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
       }
@@ -122,6 +126,7 @@ async function fillSantanderCalculator(page: Page, input: LenderReadyInput, cont
   }
   await fillOutgoings(page, input);
   await capturePageEvidence(page, context, pageEvidence, "santander", "04-commitments-and-expenditure");
+  stopBeforeCalculation(context);
   if (!(await clickLastCalculatorButton(page, ["Calculate", "Get results", "Continue"]))) {
     await clickFirstAvailableButton(page, ["Calculate", "Get results", "Continue"]);
   }

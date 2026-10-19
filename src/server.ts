@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Request } from "express";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -21,6 +21,8 @@ import { createArtifactReadStream, parseStorageUri, uploadResultArtifacts } from
 import { FirestoreRunStateRepository } from "./repositories/firestore-run-state-repository.js";
 import { InMemoryRunRepository, runResultKey } from "./repositories/run-repository.js";
 import { InMemoryRunStateRepository, type LenderRunRecord, type RunStateRepository } from "./repositories/run-state.js";
+import { adapterVersion, lenderAdapterVersion } from "./ofc/adapter-version.js";
+import { FirestoreTicketRepository, InMemoryTicketRepository, type TicketRepository } from "./ofc/ticket-repository.js";
 
 const app = express();
 const rootDir = process.cwd();
@@ -28,6 +30,9 @@ const productionCasesDir = path.join(rootDir, "samples", "test-cases");
 const publicDir = path.join(rootDir, "public");
 const runRepository = new InMemoryRunRepository();
 const runStateRepository = createRunStateRepository();
+const ticketRepository: TicketRepository = process.env.RUN_STATE_BACKEND === "firestore" || cloudTasksConfigured()
+  ? new FirestoreTicketRepository()
+  : new InMemoryTicketRepository();
 type MappedLender =
   | "barclays"
   | "halifax"
@@ -145,6 +150,74 @@ app.get("/api/cases/:caseId/input", async (request, response) => {
   } catch (error) {
     response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
+});
+
+app.post("/api/cases/:caseId/ofc/:lender", async (request, response) => {
+  try {
+    const lender = request.params.lender;
+    if (!isLenderId(lender)) {
+      response.status(400).json({ error: "Unsupported lender." });
+      return;
+    }
+    const sample = await loadMappedSampleForCase(request.params.caseId, lender as MappedLender);
+    if (!sample) {
+      response.status(404).json({ error: "Case or lender mapping not found." });
+      return;
+    }
+    const serverUrl = ofcPublicUrl(request);
+    const ticket = await ticketRepository.issue({
+      caseId: sample.id,
+      lender,
+      input: sample.input,
+      adapterVersion: await adapterVersion(),
+      lenderAdapterVersion: await lenderAdapterVersion(lender)
+    });
+    const deepLink = new URL("ofc://open");
+    deepLink.searchParams.set("ticket", ticket);
+    deepLink.searchParams.set("server", serverUrl);
+    response.setHeader("Cache-Control", "no-store");
+    response.json({ deepLink: deepLink.toString() });
+  } catch (error) {
+    response.status(503).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.post("/api/ofc/redeem", async (request, response) => {
+  try {
+    const ticket = typeof request.body?.ticket === "string" ? request.body.ticket : "";
+    const payload = await ticketRepository.redeem(ticket);
+    if (!payload) {
+      response.status(410).json({ error: "This Open Filled Calculator link expired or was already used. Click the button again." });
+      return;
+    }
+    response.setHeader("Cache-Control", "no-store");
+    response.json(payload);
+  } catch (error) {
+    response.status(500).json({ error: error instanceof Error ? error.message : String(error) });
+  }
+});
+
+app.get("/api/ofc/config", (_request, response) => {
+  const httpsUrl = (value: string | undefined) => {
+    if (!value) return null;
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && !url.username && !url.password && !url.search && !url.hash ? url.href : null;
+    } catch {
+      return null;
+    }
+  };
+  const updateFeedUrl = httpsUrl(process.env.OFC_UPDATE_FEED_URL);
+  const installer = (name: string) => updateFeedUrl ? new URL(name, updateFeedUrl.endsWith("/") ? updateFeedUrl : `${updateFeedUrl}/`).href : null;
+  response.setHeader("Cache-Control", "no-store");
+  response.json({
+    updateFeedUrl,
+    downloads: {
+      windows: httpsUrl(process.env.OFC_DOWNLOAD_URL_WINDOWS ?? process.env.OFC_DOWNLOAD_URL) ?? installer("Open-Filled-Calculator-Windows.exe"),
+      macos: httpsUrl(process.env.OFC_DOWNLOAD_URL_MACOS) ?? installer("Open-Filled-Calculator-macOS.dmg"),
+      linux: httpsUrl(process.env.OFC_DOWNLOAD_URL_LINUX) ?? installer("Open-Filled-Calculator-Linux.AppImage")
+    }
+  });
 });
 
 app.post("/api/cases/:caseId/run-affordability", async (request, response) => {
@@ -284,6 +357,23 @@ function createRunStateRepository(): RunStateRepository {
   return process.env.RUN_STATE_BACKEND === "firestore" || cloudTasksConfigured()
     ? new FirestoreRunStateRepository()
     : new InMemoryRunStateRepository();
+}
+
+function ofcPublicUrl(request: Request): string {
+  const configured = process.env.OFC_PUBLIC_URL;
+  if (configured) {
+    const url = new URL(configured);
+    if (url.protocol !== "https:" || url.username || url.password || url.pathname !== "/" || url.search || url.hash) {
+      throw new Error("OFC_PUBLIC_URL must be the HTTPS origin of this website.");
+    }
+    return url.origin;
+  }
+
+  const hostname = request.hostname.toLowerCase();
+  if (process.env.NODE_ENV !== "production" && (hostname === "localhost" || hostname === "127.0.0.1")) {
+    return `http://${request.get("host")}`;
+  }
+  throw new Error("Set OFC_PUBLIC_URL to this website's HTTPS origin before using Open Filled Calculator.");
 }
 
 function createLenderTaskDispatcher() {

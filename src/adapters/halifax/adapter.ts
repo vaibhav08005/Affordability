@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   customerTypeLabels,
   dependantOption,
@@ -31,6 +32,7 @@ export const halifaxAdapter: LenderAdapter = {
       await openHalifaxCalculator(page, context);
       await assertCalculatorAvailable(page);
       await fillHalifaxCalculator(page, input);
+      stopBeforeCalculation(context);
       await page.getByRole("button", { name: "Calculate" }).click();
       await waitForCalculationToFinish(page, context);
 
@@ -52,6 +54,8 @@ export const halifaxAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("halifax");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "halifax-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -83,6 +87,7 @@ interface BrowserSession {
 }
 
 async function createBrowserSession(context: RunContext): Promise<BrowserSession> {
+  if (context.page) return { page: context.page, async close() {} };
   if (context.executionMode === "attached") {
     return createAttachedBrowserSession(context);
   }

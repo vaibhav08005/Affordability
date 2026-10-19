@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../domain/contracts.js";
 import type { LenderAdapter, RunContext } from "../types.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   customerTypeLabels,
   employmentStatusLabels,
@@ -28,6 +29,7 @@ export const natwestAdapter: LenderAdapter = {
       await openNatWestCalculator(page, context);
       await fillNatWestCalculator(page, input);
       await waitBeforeCalculate(page);
+      stopBeforeCalculation(context);
       await clickFirstAvailableButton(page, ["Calculate", "Get results", "See how much they could borrow"]);
       await waitForResult(page, context);
 
@@ -54,6 +56,8 @@ export const natwestAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("natwest");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "natwest-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -85,6 +89,7 @@ interface BrowserSession {
 }
 
 async function createBrowserSession(context: RunContext): Promise<BrowserSession> {
+  if (context.page) return { page: context.page, async close() {} };
   if (context.executionMode === "attached") {
     if (!context.browserWSEndpoint) {
       throw new Error("Attached browser execution requires BROWSER_WS_ENDPOINT.");

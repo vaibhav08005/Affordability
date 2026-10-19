@@ -5,6 +5,7 @@ import type { AffordabilityResult, Applicant, LenderReadyInput } from "../../dom
 import type { LenderAdapter, RunContext } from "../types.js";
 import { captureEvidence, categorizeError, clickFirstAvailableButton, createBrowserSession, resultMessages } from "../shared/browser.js";
 import { saveFailureBundle } from "../shared/failure-artifacts.js";
+import { ReviewReady, reviewResult, stopBeforeCalculation } from "../shared/review-ready.js";
 import {
   employmentStatusValues,
   loanTypeIds,
@@ -53,6 +54,8 @@ export const virginMoneyAdapter: LenderAdapter = {
         }
       };
     } catch (error) {
+      if (error instanceof ReviewReady) return reviewResult("virgin_money");
+      if (context.purpose === "open_filled") throw error;
       const category = categorizeError(error);
       const screenshotPath = await captureEvidence(page, context, "virgin-money-failed").catch(() => undefined);
       const failureBundlePath = await saveFailureBundle({ page, context, input, error, category, screenshotPath, timestamp: startedAt });
@@ -90,6 +93,7 @@ async function fillVirginMoneyCalculator(page: Page, input: LenderReadyInput, co
   await continueToNextPage(page, "outgoings");
   await fillOutgoings(page, input);
   await capturePageEvidence(page, context, pageEvidence, "03-outgoings");
+  stopBeforeCalculation(context);
   await continueToNextPage(page, "results");
 }
 
@@ -335,6 +339,7 @@ function otherPropertyRent(input: LenderReadyInput): number {
 }
 
 async function capturePageEvidence(page: Page, context: RunContext, pageEvidence: PageEvidence[], name: string): Promise<void> {
+  if (context.purpose === "open_filled") return;
   await page.waitForTimeout(300);
   const path = await captureEvidence(page, context, `virgin-money-${name}`);
   pageEvidence.push({
