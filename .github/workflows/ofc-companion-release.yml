@@ -1,0 +1,91 @@
+name: Publish OFC companion
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ofc-companion-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            command: pack:win
+          - os: macos-latest
+            platform: macos
+            command: pack:mac
+          - os: ubuntu-latest
+            platform: linux
+            command: pack:linux
+    runs-on: ${{ matrix.os }}
+    env:
+      CSC_LINK: ${{ matrix.platform == 'windows' && secrets.OFC_WINDOWS_CSC_LINK || (matrix.platform == 'macos' && secrets.OFC_MAC_CSC_LINK) || '' }}
+      CSC_KEY_PASSWORD: ${{ matrix.platform == 'windows' && secrets.OFC_WINDOWS_CSC_PASSWORD || (matrix.platform == 'macos' && secrets.OFC_MAC_CSC_PASSWORD) || '' }}
+      APPLE_ID: ${{ secrets.OFC_APPLE_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.OFC_APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.OFC_APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix companion ci
+      - run: npm run companion:stage
+      - run: npm test
+      - run: npm --prefix companion test
+      - name: Set a unique companion release version
+        run: npm --prefix companion version 0.2.${{ github.run_number }} --no-git-tag-version
+      - name: Check signing configuration
+        run: node scripts/check-companion-signing.mjs
+      - run: npm --prefix companion run ${{ matrix.command }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: companion-${{ matrix.platform }}
+          path: |
+            companion/release/*.exe
+            companion/release/*.dmg
+            companion/release/*.zip
+            companion/release/*.AppImage
+            companion/release/*.deb
+            companion/release/*.blockmap
+            companion/release/latest*.yml
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: companion-*
+          path: companion/release
+          merge-multiple: true
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.OFC_GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.OFC_GCP_SERVICE_ACCOUNT }}
+      - name: Publish installers and update metadata
+        env:
+          OFC_UPDATE_BUCKET: ${{ vars.OFC_UPDATE_BUCKET }}
+          OFC_UPDATE_PREFIX: ${{ vars.OFC_UPDATE_PREFIX }}
+        run: node scripts/publish-companion-release.mjs companion/release

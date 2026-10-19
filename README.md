@@ -2,6 +2,8 @@
 
 Browser automation service for UK mortgage intermediary affordability calculators.
 
+For the local, editable Chrome workflow, see [Open Filled Calculator companion](docs/OFC_COMPANION.md).
+
 The project can accept lender-ready JSON directly, or map raw fact-find style YAML/JSON into lender-ready JSON for all registered lenders. It then selects the correct lender adapter, fills the lender affordability calculator with Playwright, extracts the result, and returns structured JSON with optional screenshot/PDF/failure-bundle evidence. The web/API service can run lenders inline in batches locally or fan out lender work through Cloud Tasks workers with Firestore state and Cloud Storage evidence.
 
 ## Supported Lenders
