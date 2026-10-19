@@ -13,14 +13,14 @@ let cachedVersion: Promise<string> | undefined;
 const lenderVersions = new Map<LenderId, Promise<string>>();
 
 export function adapterVersion(): Promise<string> {
-  cachedVersion ??= calculateVersion([adaptersDir]);
+  cachedVersion ??= calculateAdapterVersion([adaptersDir]);
   return cachedVersion;
 }
 
 export function lenderAdapterVersion(lender: LenderId): Promise<string> {
   let version = lenderVersions.get(lender);
   if (!version) {
-    version = calculateVersion([
+    version = calculateAdapterVersion([
       join(adaptersDir, lender === "virgin_money" ? "virgin-money" : lender),
       join(adaptersDir, "shared"),
       join(adaptersDir, "types.js"),
@@ -31,8 +31,13 @@ export function lenderAdapterVersion(lender: LenderId): Promise<string> {
   return version;
 }
 
-async function calculateVersion(paths: string[]): Promise<string> {
+export async function calculateAdapterVersion(paths: string[], adaptersRoot = adaptersDir): Promise<string> {
   const hash = createHash("sha256");
+  async function hashSource(file: string, relative: string): Promise<void> {
+    const source = await readFile(file, "utf8");
+    // Git checkouts and TypeScript template literals can retain platform line endings.
+    hash.update(relative).update("\0").update(source.replace(/\r\n?/g, "\n")).update("\0");
+  }
   async function visit(directory: string, prefix: string): Promise<void> {
     const entries = (await readdir(directory, { withFileTypes: true }))
       .sort((left, right) => left.name.localeCompare(right.name));
@@ -42,16 +47,16 @@ async function calculateVersion(paths: string[]): Promise<string> {
       if (entry.isDirectory()) {
         await visit(absolute, `${relative}/`);
       } else if (/\.(ts|js)$/.test(entry.name) && !entry.name.endsWith(".d.ts")) {
-        hash.update(relative).update("\0").update(await readFile(absolute)).update("\0");
+        await hashSource(absolute, relative);
       }
     }
   }
   for (const source of paths.sort()) {
-    const relative = source.startsWith(adaptersDir) ? source.slice(adaptersDir.length) : `domain/${source.split(/[\\/]/).at(-1)}`;
+    const relative = source.startsWith(adaptersRoot) ? source.slice(adaptersRoot.length) : `domain/${source.split(/[\\/]/).at(-1)}`;
     if (/\.(ts|js)$/.test(source)) {
-      hash.update(relative).update("\0").update(await readFile(source)).update("\0");
+      await hashSource(source, relative);
     } else {
-      await visit(source, source === adaptersDir ? "" : `${relative}/`);
+      await visit(source, source === adaptersRoot ? "" : `${relative}/`);
     }
   }
   return hash.digest("hex");

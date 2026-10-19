@@ -15,7 +15,7 @@ npm --prefix companion run pack:win
 
 The Windows installer and its `latest.yml` update metadata are created in `companion/release/`. On macOS use `npm --prefix companion run pack:mac`; on Linux use `npm --prefix companion run pack:linux`. Build and test each target on its own operating system. The first installation is manual; later versions can download and install automatically. The update feed must be served over HTTPS.
 
-The root `npm run companion:stage` command compiles the project and copies the compiled lender adapters and companion entry point into `companion/dist/`. This is a build artifact. Do not edit the copied files; edit `src/adapters/` and rebuild. The server and companion compare a fingerprint for the selected lender and shared adapter code. A change limited to Halifax blocks only Halifax until the companion updates. A change in `src/adapters/shared/`, `src/adapters/types.ts`, or `src/domain/validation.ts` can affect every lender.
+The root `npm run companion:stage` command compiles the project and copies the compiled lender adapters and companion entry point into `companion/dist/`. This is a build artifact. Do not edit the copied files; edit `src/adapters/` and rebuild. The server and companion compare a fingerprint for the selected lender and shared adapter code. Fingerprints normalize line endings so Windows, macOS, and Linux checkouts can match. Deploy the server and release the companion together when upgrading from raw-byte fingerprints. A change limited to Halifax blocks only Halifax until the companion updates. A change in `src/adapters/shared/`, `src/adapters/types.ts`, or `src/domain/validation.ts` can affect every lender.
 
 ## Companion releases
 
